@@ -103,9 +103,8 @@ creat = (msg) => {
             }
         } else if(evalC('queue', 'cq', 'checkqueue')) {
             check(guildId).then(songs => {
-                console.log(songs)
+                //console.log(songs)
                 if(songs) {
-                    setAsync()
                     let curentPlaying = {
                         color: 0x00ff8c,
                         author: {name: 'Current Playing'},
@@ -143,7 +142,7 @@ creat = (msg) => {
                             footer: {text: '時間: ' + new Date().toLocaleTimeString('fr-CA').replace(' min ', ':').replace(' h ', ":").replace(' s', '') + '\n提交者: ' + authorName}
                         }]})
                     }
-                    respond(res)
+                    //respond(res)
                 } else {
                     pushContents({content: 'Im not Playing.'})
                 }
