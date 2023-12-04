@@ -19,6 +19,7 @@
   "homepage": "https://github.com/594-666/SmallBot#readme",
   "dependencies": {
     "discord.js": "^13.6.0",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "ts": "^0.2.2"
   }
 }
