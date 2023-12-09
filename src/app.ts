@@ -15,9 +15,4 @@ const once = (event = '', callback = () => { }) => { if (event) client.once(even
 
 const login = (token: Snowflake) => client.login(token);
 
-module.exports = {
-    on,
-    once,
-    login,
-    client
-}
+export {on, once, login, client};
