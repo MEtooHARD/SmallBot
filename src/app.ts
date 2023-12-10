@@ -1,18 +1,18 @@
-import { Client, Intents, Snowflake } from "discord.js";
+import { Client, IntentsBitField, Snowflake } from "discord.js";
 const client = new Client(
     {
         intents: [
-            Intents.FLAGS.GUILDS,
-            Intents.FLAGS.GUILD_MESSAGES,
-            Intents.FLAGS.GUILD_MEMBERS,
+            IntentsBitField.Flags.Guilds,
+            IntentsBitField.Flags.GuildMessages,
+            IntentsBitField.Flags.GuildMembers,
         ]
     }
 );
 
-const on = (event = '', callback = () => { }) => { if (event) client.on(event, callback) };
+const on = (event = '', callback = (dummy: any) => { }) => { if (event) client.on(event, callback) };
 
-const once = (event = '', callback = () => { }) => { if (event) client.once(event, callback) };
+// const once = (event = '', callback = () => { }) => { if (event) client.once(event, callback) };
 
 const login = (token: Snowflake) => client.login(token);
 
-export {on, once, login, client};
+export {on, /* once, */ login, client};
