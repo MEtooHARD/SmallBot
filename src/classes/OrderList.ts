@@ -1,5 +1,5 @@
-import { GuildMember, Snowflake } from 'discord.js';
-import Person from './Orderlist/Person';
+import { GuildMember, ModalBuilder } from 'discord.js';
+import Person from './OrderList/Person';
 
 class OrderList {
 

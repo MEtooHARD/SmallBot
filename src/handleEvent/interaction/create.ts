@@ -1,15 +1,19 @@
-import { ButtonInteraction, CommandInteraction, ModalSubmitInteraction, AnySelectMenuInteraction, Interaction } from 'discord.js';
+import { ButtonInteraction, CommandInteraction, ModalSubmitInteraction, AnySelectMenuInteraction, Interaction, Events } from 'discord.js';
 
-const handleButton = (interaction: ButtonInteraction) => { }
-const handlleComand = (interaction: CommandInteraction) => { }
-const handleModalSubmit = (interaction: ModalSubmitInteraction) => { }
-const handleAnySelectMenu = (interaction: AnySelectMenuInteraction) => { }
+import menu from './create/menu';
+import modal from './create/modal';
+import button from './create/button';
+import command from './create/comand';
+import autocomplete from './create/autocomplete';
 
 const create = async (interaction: Interaction): Promise<void> => {
-    if (interaction.isButton()) handleButton(interaction);
-    else if (interaction.isCommand()) handlleComand(interaction);
-    else if (interaction.isModalSubmit()) handleModalSubmit(interaction);
-    else if (interaction.isAnySelectMenu()) handleAnySelectMenu(interaction);
+    // console.log('[Interaction] ' + interaction.user.username);
+
+    if (interaction.isCommand()) command(interaction);
+    else if (interaction.isButton()) button(interaction);
+    else if (interaction.isModalSubmit()) modal(interaction);
+    else if (interaction.isAnySelectMenu()) menu(interaction);
+    else if (interaction.isAutocomplete()) autocomplete(interaction);
 }
 
 export = create;

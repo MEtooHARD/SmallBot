@@ -1,7 +1,7 @@
 import { Client } from 'discord.js';
 
 const clientReady = async (client: Client): Promise<void> => {
-    console.log('message create');
+    console.log('[client] online');
 }
 
 export = clientReady;
