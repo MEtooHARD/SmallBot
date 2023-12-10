@@ -1,20 +1,17 @@
-import { TextInputBuilder, ActionRowBuilder, TextInputStyle } from "discord.js";
+import { TextInputBuilder, TextInputStyle } from "discord.js";
 
-class TextInput extends ActionRowBuilder {
-    constructor({ customId, label, maxlength, minlength, placeholder, required = false, style = TextInputStyle.Short, value }:
-        { customId: string, label: string, maxlength: number, minlength: number, placeholder: string, required: boolean, style: TextInputStyle, value: string }) {
+class TextInput extends TextInputBuilder {
+    constructor({ customId, label, placeholder = '', required = false, style = TextInputStyle.Short, value, maxLength, minLength }:
+        { customId: string, label: string, placeholder?: string, required?: boolean, style?: TextInputStyle, value?: string, maxLength?: number, minLength?: number }) {
         super();
-        const TI = new TextInputBuilder();
-        TI.setStyle(style);
-        TI.setRequired(required);
-        if (label) TI.setLabel(label);
-        if (value) TI.setValue(value);
-        if (customId) TI.setCustomId(customId);
-        if (maxlength) TI.setMaxLength(maxlength);
-        if (minlength) TI.setMinLength(minlength);
-        if (placeholder) TI.setPlaceholder(placeholder);
-        this.addComponents(TI);
+        this.setLabel(label);
+        this.setCustomId(customId);
+        this.setPlaceholder(placeholder);
+        this.setStyle(style);
+        this.setRequired(required);
+        if (value) this.setValue(value);
+        if (maxLength) this.setMaxLength(maxLength);
+        if (minLength) this.setMinLength(minLength);
     }
 }
-
 export = TextInput;

@@ -1,4 +1,5 @@
 import { Client, IntentsBitField, Snowflake } from "discord.js";
+
 const client = new Client(
     {
         intents: [
@@ -15,4 +16,4 @@ const on = (event = '', callback = (dummy: any) => { }) => { if (event) client.o
 
 const login = (token: string) => client.login(token);
 
-export {on, /* once, */ login, client};
+export {on, login};

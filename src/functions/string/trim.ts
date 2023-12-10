@@ -18,9 +18,6 @@ const trimString = (str: string, char: string[]) => {
 }
 
 export {
-    /* trimStringStartArr,
-    trimStringStart,
-    trimStringEnd, */
     trimStringStart,
     trimStringEnd,
     trimString,

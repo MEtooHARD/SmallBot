@@ -11,4 +11,4 @@ class Modal extends ModalBuilder {
     }
 }
 
-module.exports.Modal = Modal
+export = Modal

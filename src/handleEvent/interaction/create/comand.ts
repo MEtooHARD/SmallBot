@@ -4,7 +4,6 @@ import path from 'node:path';
 import fs from 'node:fs';
 
 const command = (interaction: CommandInteraction) => {
-    console.log('command');
     const log = new Log({ event: 'command', user: interaction.user });
 
     fs.readdirSync(path.join(__dirname, 'command'))
