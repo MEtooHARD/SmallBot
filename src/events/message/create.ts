@@ -1,10 +1,10 @@
-import create from "../../handleEvent/interaction/create";
+import create from "../../handleEvent/message/create";
 import { on } from "../../app";
-import { Interaction } from "discord.js";
+import { Events, Message } from "discord.js";
 
-const interactionCreate = () => on('interactionCreate', async (interaction: Interaction) => {
-    await create(interaction);
+const messageCreate = () => on(Events.MessageCreate, async (message: Message) => {
+    await create(message);
 })
 
 
-export = interactionCreate;
+export = messageCreate;

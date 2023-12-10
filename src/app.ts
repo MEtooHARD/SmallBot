@@ -13,6 +13,6 @@ const on = (event = '', callback = (dummy: any) => { }) => { if (event) client.o
 
 // const once = (event = '', callback = () => { }) => { if (event) client.once(event, callback) };
 
-const login = (token: Snowflake) => client.login(token);
+const login = (token: string) => client.login(token);
 
 export {on, /* once, */ login, client};
