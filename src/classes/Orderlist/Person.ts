@@ -4,17 +4,17 @@ class Person {
     name: string;
     id: Snowflake;
     content: string = '';
-    prise: number = 0;
+    price: number = 0;
 
     constructor(member: GuildMember) {
-        this.name = member.nickname || member.user.username;
+        this.name = member.nickname || member.user.displayName;
         this.id = member.id;
     }
 
-    order(content: string, prise: number): boolean {
-        if (this.#validatePrise(prise)) {
+    order(content: string, price: number): boolean {
+        if (this.#validatePrice(price)) {
             this.setContent(content);
-            this.setPrise(prise);
+            this.setPrice(price);
             return true;
         } else
             return false;
@@ -24,12 +24,12 @@ class Person {
         this.content = content;
     }
 
-    setPrise(prise: number) {
-        if (prise > 0) this.prise = prise;
+    setPrice(price: number) {
+        if (price > 0) this.price = price;
     }
 
-    #validatePrise(prise: number) {
-        return prise >= 0;
+    #validatePrice(price: number) {
+        return price >= 0;
     }
 }
 

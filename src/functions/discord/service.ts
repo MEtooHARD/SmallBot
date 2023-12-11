@@ -2,9 +2,9 @@ import { trimString } from "../string/trim";
 import path from 'node:path';
 import fs from 'node:fs';
 
-const getSvcInfo = (str: string): string[] | null => {
+const getSvcInfo = (str: string): string[] => {
     const result = str.match(RegExp(/\[\w+\]/, 'g'));
-    return result ? result.map(s => trimString(s, ['[', ']'])) : result;
+    return result ? result.map(s => trimString(s, ['[', ']'])) : [];
 }
 
 const getSvcDir = (dir: string, target: string): string => {

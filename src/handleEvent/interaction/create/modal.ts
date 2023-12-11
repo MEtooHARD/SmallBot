@@ -12,6 +12,7 @@ const modal = (interaction: ModalSubmitInteraction) => {
     if(!interaction.customId.startsWith('$')) 
         if (svcInfo?.length) {
             const dir = getSvcDir(path.join(__dirname, '..', '..', '..', 'features'), svcInfo[0]);
+            // console.log(dir);
             if (dir.length) require(dir)(interaction, svcInfo, log);
         }
     else {
