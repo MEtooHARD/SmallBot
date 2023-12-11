@@ -12,7 +12,7 @@ const getSvcDir = (dir: string, target: string): string => {
     try {
         resultDir = fs.readdirSync(dir);
     } catch (e) {
-        console.error(e);
+        console.log(e);
         return '';
     }
     const result = resultDir.filter(x => x === target.concat('.js'))

@@ -14,7 +14,7 @@ class OrderList {
 
     organizer: User;
     client: Client;
-    serviceName: string = 'Order List';
+    static serviceName: string = 'Order List';
 
     constructor(user: User, client: Client) {
         this.organizer = user;
@@ -52,7 +52,7 @@ class OrderList {
     board(end: boolean = false): EmbedBuilder {
         return new EmbedBuilder()
             .setColor(end ? Colors.Green : Colors.Blue)
-            .setAuthor({ name: this.serviceName + `${end?'(ended)':''}` })
+            .setAuthor({ name: OrderList.serviceName + `${end?'(ended)':''}` })
             .setTitle(this.restaurant)
             .setDescription(this.description.length ? this.description : null)
             .setFields(this.members.map(member => {

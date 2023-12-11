@@ -2,8 +2,13 @@ import { ButtonInteraction, ModalSubmitInteraction } from "discord.js";
 import OrderList from "../../classes/OrderList";
 import { getSvcInfo } from "../../functions/discord/service";
 import editSubmit from "./editSubmit";
+import chalk from "chalk";
 
 const end = (interaction: ButtonInteraction, orderlist: OrderList) => {
+    console.log(chalk.green(interaction.user.username) + ': ' + chalk.cyan(interaction.user.id) +
+        '\n\tused\n\t' +
+        chalk.yellow(interaction.customId));
+
     try {
         if (interaction.user.id === orderlist.organizer.id) {
             interaction.showModal(orderlist.editModal());
@@ -17,12 +22,18 @@ const end = (interaction: ButtonInteraction, orderlist: OrderList) => {
                 .then(i => {
                     editSubmit(i, orderlist)
                 })
-                .catch(console.error);
+                .catch(e => {
+                    console.log(chalk.red('awaiting edit submit'));
+                    console.log(e);
+                });
         } else {
             interaction.reply(OrderList.notOrganizerRpMsg());
         }
 
-    } catch (e) { console.log(e); }
+    } catch (e) {
+        console.log(chalk.red('edit'));
+        console.log(e)
+    }
 }
 
 export = end;

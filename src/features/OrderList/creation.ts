@@ -5,9 +5,14 @@ import { getSvcInfo } from "../../functions/discord/service";
 import order from "./order";
 import end from "./end";
 import edit from "./edit";
+import chalk from "chalk";
 
 const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[], log: Log) => {
     const orderlist = new OrderList(interaction.user, interaction.client);
+
+    console.log(chalk.green(interaction.user.username) + ': ' + chalk.cyan(interaction.user.id) +
+        '\n\tsubmitted\n\t' +
+        chalk.yellow(interaction.customId));
 
     orderlist.setRestaurant(interaction.components[0].components[0].value);
     if (interaction?.components[1]?.components[0])
@@ -18,6 +23,7 @@ const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[], 
         components: orderlist.panel(),
         fetchReply: true
     });
+
     const collector = rpMesage.createMessageComponentCollector({
         componentType: ComponentType.Button,
         idle: 2 * 60 * 60 * 1000
@@ -40,14 +46,17 @@ const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[], 
 
     collector.on('ignore', i => { console.log('[order] ignored ' + i.user.id) });
     // collector.on('dispose', i => { console.log('d') });
-    collector.on('end', async (i, reason: string) => {
-        console.log('[order] ended at ' + interaction.guild?.name + '\n\treason: ' + reason);
+    collector.on('end', async (collection, reason: string) => {
+        console.log(chalk.red('end') + chalk.yellow(` [${OrderList.serviceName}]`));
         try {
             await rpMesage.delete();
             interaction.channel?.send({
                 embeds: [orderlist.board(true)]
             });
-        } catch (e) { console.log(e) }
+        } catch (e) {
+            console.log('end order list');
+            console.log(e);
+        }
     });
 }
 

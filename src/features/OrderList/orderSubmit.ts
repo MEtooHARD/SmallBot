@@ -1,8 +1,13 @@
 import { ModalSubmitInteraction } from "discord.js";
 import OrderList from "../../classes/OrderList";
 import { deleteAfterSec } from "../../functions/discord/message";
+import chalk from "chalk";
 
 const orderSubmit = async (interaction: ModalSubmitInteraction, orderlist: OrderList): Promise<void> => {
+    console.log(chalk.green(interaction.user.username) + ': ' + chalk.cyan(interaction.user.id) +
+        '\n\tsubmitted\n\t' +
+        chalk.yellow(interaction.customId));
+
     try {
         await interaction.deferReply({ ephemeral: true });
         const [content, price] = [interaction.components[0].components[0].value, interaction.components[1].components[0].value];
@@ -25,8 +30,12 @@ const orderSubmit = async (interaction: ModalSubmitInteraction, orderlist: Order
             embeds: [orderlist.board()],
             components: orderlist.panel()
         });
+        // console.log('updated ' + chalk.yellow('order content') + ' at ' + interaction.guild?.name);
 
-    } catch (e) { }
+    } catch (e) {
+        console.log(chalk.red('order submittion'));
+        console.log(e);
+    }
 
 }
 

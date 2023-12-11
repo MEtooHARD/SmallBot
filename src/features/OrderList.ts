@@ -1,11 +1,12 @@
-import { Interaction } from "discord.js";
+import { Interaction, ModalSubmitInteraction } from "discord.js";
 import Log from "../classes/Log";
 import { getSvcDir } from '../functions/discord/service';
 import path from 'node:path';
+import chalk from 'chalk';
 
 const orderlist = (interaction: Interaction, svcInfo: string[], log: Log) => {
     const dir = getSvcDir(path.join(__dirname, 'OrderList'), svcInfo[1]);
-    
+
     if (dir.length)
         require(dir)(interaction, svcInfo, log);
     else
