@@ -1,4 +1,4 @@
-import { ButtonInteraction, ComponentType, Guild, GuildMFALevel, GuildMember, ModalSubmitInteraction } from "discord.js";
+import { ButtonInteraction, Collection, ComponentType, Guild, GuildMFALevel, GuildMember, ModalSubmitInteraction } from "discord.js";
 import Log from "../../classes/Log";
 import OrderList from "../../classes/OrderList";
 import { getSvcInfo } from "../../functions/discord/service";
@@ -13,11 +13,12 @@ const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[], 
     if (interaction?.components[1]?.components[0])
         orderlist.setDescription(interaction.components[1].components[0].value);
 
-    const collector = (await interaction.reply({
+    const rpMesage = await interaction.reply({
         embeds: [orderlist.board()],
         components: orderlist.panel(),
         fetchReply: true
-    })).createMessageComponentCollector({
+    });
+    const collector = rpMesage.createMessageComponentCollector({
         componentType: ComponentType.Button,
         idle: 2 * 60 * 60 * 1000
     });
@@ -39,7 +40,15 @@ const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[], 
 
     collector.on('ignore', i => { console.log('[order] ignored ' + i.user.id) });
     // collector.on('dispose', i => { console.log('d') });
-    collector.on('end', i => { console.log('[order] ended at ' + interaction.guild?.name) });
+    collector.on('end', async (i, reason: string) => {
+        console.log('[order] ended at ' + interaction.guild?.name + '\n\treason: ' + reason);
+        try {
+            await rpMesage.delete();
+            interaction.channel?.send({
+                embeds: [orderlist.board(true)]
+            });
+        } catch (e) { console.log(e) }
+    });
 }
 
 export = creation;
