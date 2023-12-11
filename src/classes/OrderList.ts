@@ -42,10 +42,18 @@ class OrderList {
     }
 
     board(): EmbedBuilder {
+
         return new EmbedBuilder()
             .setAuthor({ name: config.bot.main.name })
             .setColor(Colors.Navy)
             .setDescription(this.description)
+            .setFields(this.members.map(member => {
+                return {
+                    name: member.name,
+                    value: member.content + '\n**' + member.prise + '**',
+                    inline: true
+                }
+            }))
     }
 
     static creationModal(): Modal {

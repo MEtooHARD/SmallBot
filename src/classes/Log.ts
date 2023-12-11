@@ -20,7 +20,7 @@ class Log {
         this.functionName = name;
     }
 
-    end() {
+    log() {
         console.log(`[${this.event}][${this.functionName}][${this.user.username}]\n${this.message}`);
     }
 }
