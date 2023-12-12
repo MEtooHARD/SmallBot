@@ -12,9 +12,9 @@ const create = async (message: Message): Promise<void> => {
             if (param.length && command.toLowerCase() === 'say') {
                 let delay: number = 0;
                 message.delete();
-                if (!Number.isNaN(param[0])) delay = restrictRange(Number(param.shift()), 0, 20);
+                if (!isNaN(Number(param[0]))) delay = restrictRange(Number(param.shift()), 0, 20);
                 await doAfterSec(() => {
-                    message.channel.send(param.join(' '))
+                    message.channel.send(param.join(' '));
                 }, delay);
             }
         }
