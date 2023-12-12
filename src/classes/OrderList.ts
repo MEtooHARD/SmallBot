@@ -1,5 +1,5 @@
 import { ActionRowBuilder, AnyComponentBuilder, ButtonStyle, Client, Colors, ComponentBuilder, Embed, EmbedBuilder, GuildMember, InteractionReplyOptions, InteractionUpdateOptions, Message, MessageActionRowComponent, MessageActionRowComponentBuilder, MessageComponent, MessageComponentBuilder, MessageCreateOptions, MessagePayload, ReplyOptions, Snowflake, TextInputBuilder, TextInputStyle, User, flatten } from 'discord.js';
-import Person from './OrderList/Person';
+import Person from './Orderlist/Person'; //
 import Modal from './Modal';
 import TextInput from './TextInput';
 import { ActionRow, Button } from './ActionRaw';
