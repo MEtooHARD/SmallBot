@@ -9,7 +9,7 @@ export = {
     ,
     async execute(interaction: CommandInteraction) {
         interaction.showModal(OrderList.creationModal());
-        console.log(chalk.green(interaction.user.username) + ': ' + chalk.cyan(interaction.user.id) +
+        console.log(chalk.green(interaction.user.username) + ': ' + chalk.cyan(interaction.user.id) + ' at ' + chalk.blue(`[${interaction.guild?.name}:${interaction.guild?.id}]`) +
             '\n\tused\n\t'
             + chalk.yellow(interaction.commandName));
     }

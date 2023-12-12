@@ -8,54 +8,63 @@ import { ActionRow, Button } from './ActionRaw';
 class OrderList {
     static serviceCustomID: string = 'OrderList';
 
-    members: Person[] = [];
-    restaurant: string = '';
-    description: string = '';
-
-    organizer: User;
-    client: Client;
     static serviceName: string = 'Order List';
 
-    constructor(user: User, client: Client) {
-        this.organizer = user;
-        this.client = client;
+    #members: Person[] = [];
+    #restaurant: string = '';
+    #description: string = '';
+
+    #organizer: User;
+    // #client: Client;
+
+    constructor(user: User/* , client: Client */) {
+        this.#organizer = user;
+        // this.#client = client;
+    }
+
+    get memberCount(): number {
+        return this.#members.length;
+    }
+
+    get organizer(): User {
+        return this.#organizer;
     }
 
     addMember(member: GuildMember): void {
-        if (!this.members.find(person => person.id === member.id))
-            this.members.push(new Person(member));
+        if (!this.#members.find(person => person.id === member.id))
+            this.#members.push(new Person(member));
     }
 
     getMember(id: Snowflake): Person | undefined {
-        return this.members.find(member => member.id === id);
+        return this.#members.find(member => member.id === id);
     }
 
     setDescription(description: string): void {
-        this.description = description;
+        this.#description = description;
     }
 
     setRestaurant(restaurant: string): void {
-        this.restaurant = restaurant;
+        this.#restaurant = restaurant;
     }
 
     totalPrice(): number {
         let total = 0;
-        this.members.forEach(person => { total += person.price });
+        this.#members.forEach(person => { total += person.price });
         return total;
     }
 
     order(person: Person, content: string, price: number): boolean {
-        return Boolean(this.members.find(p => p.id = person.id)
+        return Boolean(this.#members.find(p => p.id = person.id)
             ?.order(content, price));
     }
 
     board(end: boolean = false): EmbedBuilder {
         return new EmbedBuilder()
             .setColor(end ? Colors.Green : Colors.Blue)
-            .setAuthor({ name: OrderList.serviceName + `${end?'(ended)':''}` })
-            .setTitle(this.restaurant)
-            .setDescription(this.description.length ? this.description : null)
-            .setFields(this.members.map(member => {
+            .setAuthor({ name: OrderList.serviceName + `${end ? '(ended)' : ''}` })
+            .setTitle(this.#restaurant)
+            .setDescription(this.#description.length ? this.#description : null)
+            .setFields(this.#members.map(member => {
                 return {
                     name: member.name,
                     value: member.content + '\n$**' + member.price + '**',
@@ -153,7 +162,7 @@ class OrderList {
                         customId: 'restaurant',
                         label: 'restaurant',
                         placeholder: 'Put your restaurant(s) here.',
-                        value: this.restaurant,
+                        value: this.#restaurant,
                         maxLength: 40,
                         required: true,
                     })
@@ -163,7 +172,7 @@ class OrderList {
                         customId: 'desc',
                         label: 'description',
                         placeholder: 'Write about something related to this order list',
-                        value: this.description,
+                        value: this.#description,
                         style: TextInputStyle.Paragraph,
                         maxLength: 100
                     })

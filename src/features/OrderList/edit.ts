@@ -4,14 +4,13 @@ import { getSvcInfo } from "../../functions/discord/service";
 import editSubmit from "./editSubmit";
 import chalk from "chalk";
 
-const end = (interaction: ButtonInteraction, orderlist: OrderList) => {
+const end = async (interaction: ButtonInteraction, orderlist: OrderList) => {
     console.log(chalk.green(interaction.user.username) + ': ' + chalk.cyan(interaction.user.id) +
-        '\n\tused\n\t' +
-        chalk.yellow(interaction.customId));
+        '\n\tused' + chalk.yellow(interaction.customId));
 
     try {
         if (interaction.user.id === orderlist.organizer.id) {
-            interaction.showModal(orderlist.editModal());
+            await interaction.showModal(orderlist.editModal());
 
             const filter = (i: ModalSubmitInteraction): boolean => {
                 const svcI = getSvcInfo(i.customId)
@@ -27,7 +26,7 @@ const end = (interaction: ButtonInteraction, orderlist: OrderList) => {
                     console.log(e);
                 });
         } else {
-            interaction.reply(OrderList.notOrganizerRpMsg());
+            await interaction.reply(OrderList.notOrganizerRpMsg());
         }
 
     } catch (e) {

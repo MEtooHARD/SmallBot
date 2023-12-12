@@ -8,11 +8,10 @@ import edit from "./edit";
 import chalk from "chalk";
 
 const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[], log: Log) => {
-    const orderlist = new OrderList(interaction.user, interaction.client);
-
     console.log(chalk.green(interaction.user.username) + ': ' + chalk.cyan(interaction.user.id) +
-        '\n\tsubmitted\n\t' +
-        chalk.yellow(interaction.customId));
+        '\n\tsubmitted' + chalk.yellow(interaction.customId));
+
+    const orderlist = new OrderList(interaction.user/* , interaction.client */);
 
     orderlist.setRestaurant(interaction.components[0].components[0].value);
     if (interaction?.components[1]?.components[0])
@@ -37,7 +36,7 @@ const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[], 
                     order(interaction, orderlist);
                     break;
                 case 'end':
-                    end(interaction, orderlist);
+                    end(interaction, orderlist, () => collector.emit('end'));
                     break;
                 case 'edit':
                     edit(interaction, orderlist);
