@@ -6,6 +6,7 @@ const client = new Client(
             IntentsBitField.Flags.Guilds,
             IntentsBitField.Flags.GuildMessages,
             IntentsBitField.Flags.GuildMembers,
+            IntentsBitField.Flags.MessageContent
         ]
     }
 );
@@ -16,4 +17,11 @@ const on = (event = '', callback = (dummy: any) => { }) => { if (event) client.o
 
 const login = (token: string) => client.login(token);
 
-export {on, login};
+const [prefix, divider] = ['s!', '!'];
+
+export {
+    on,
+    login,
+    prefix,
+    divider
+};
