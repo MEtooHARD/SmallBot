@@ -4,8 +4,8 @@ import path from 'node:path';
 import fs from 'node:fs';
 
 const command = (interaction: CommandInteraction) => {
-    const log = new Log({ event: 'command', user: interaction.user });
-
+    // const log = new Log({ event: 'command', user: interaction.user });
+    
     fs.readdirSync(path.join(__dirname, 'command'))
         .filter(file => file.endsWith('.js')).forEach(name => {
             let command = interaction.commandName

@@ -1,23 +1,34 @@
+const path = require('node:path');
+const fs = require('node:fs');
 
-const trimStringStartArr = (str, key) => {
-    let match;
-    key = key.filter(c => c.length);
-    while (match = key.find(c => str.substring(0, c.length) === c)) {
-        str = str.substring(match.length);
-    }
-    return str;
+// console.log(path.join('src', 'c') + '\n');
+// fs.readdirSync(path.join('src', 'classes'))
+//     .forEach(x => {
+//         console.log(x);
+//     });
+
+/**
+ * 
+ * @param {string} startPath 
+ */
+/* const fetchDoc = (startPath) => {
+    return fs.readdirSync(startPath)
+        .map(x => {
+            if (!x.includes('.')) {
+                return fetchDoc(path.join(startPath, x));
+            } else {
+                return require(path.join(startPath, x));
+            }
+        })
 }
 
-const trimStringEnd = (str, key) => {
-    let match
-    while(match = key.find(c => str.substring(str.length - c.length) === c)) 
-        str = str.substring(0, str.length - match.length);
-    
-    return str;
+const rootDir = () => {
+    return path.join(__dirname, 'src');
 }
 
-const trimString = (str, key) => {
-    return trimStringEnd(trimStringStartArr(str, key), key);
-}
+console.log(fetchDoc(path.join(rootDir(), 'docs'))) */
+// console.log(__dirname);
 
-console.log(trimString('ghhgg..', ['.', 'h']));
+// console.log(fs.readdirSync(path.join('src')));
+
+// console.log(new Date().toDateString())
