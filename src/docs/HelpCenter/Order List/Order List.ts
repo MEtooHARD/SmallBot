@@ -1,7 +1,7 @@
 import { Colors, EmbedData } from "discord.js";
-import HelpCenter from "../../classes/HelpCenter";
+import {HelpCenter} from "../../../classes/HelpCenter";
 
-const gg = (): EmbedData => {
+const OrderList = (): EmbedData => {
     return {
         author: { name: HelpCenter.serviceName },
         color: Colors.DarkGreen,
@@ -12,4 +12,4 @@ const gg = (): EmbedData => {
     }
 }
 
-export = gg;
+export = OrderList;
