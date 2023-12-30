@@ -10,18 +10,16 @@ const command = (interaction: CommandInteraction) => {
 
     fs.readdirSync(path.join(__dirname, 'command'))
         .filter(file => file.endsWith('.js')).forEach(name => {
-            let commandName = interaction.commandName
-            if (name === commandName + '.js') {
+            if (name === interaction.commandName.concat('.js')) {
                 const command = require('./command/' + name);
                 if (command.filter(interaction)) {
-                    logCommand(interaction);
-                    require('./command/' + name).execute(interaction)
-                } else {
+                    logCommand(interaction);    //  log
+                    command.execute(interaction);
+                } else
                     interaction.reply({
                         ephemeral: true,
                         content: 'You are not allowed to use this command.'
-                    })
-                }
+                    });
                 return;
             }
         })
