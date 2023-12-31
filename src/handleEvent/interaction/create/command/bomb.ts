@@ -4,22 +4,20 @@ import { range } from "../../../../functions/array/number";
 import { doAfterSec } from "../../../../functions/async/delay";
 
 const trigger = async (channel: TextBasedChannel | null, target: GuildMember | APIInteractionDataResolvedGuildMember | null, frequency: number): Promise<void> => {
-    if (target instanceof GuildMember) {
+    if (target instanceof GuildMember)
         range({ start: 1, end: frequency }).forEach(async x => {
             await doAfterSec(async () => await channel?.send(`<@${target?.id}>`), x * 5);
         })
-    }
-
 }
 
 export = new class explode extends Command {
     data = new SlashCommandBuilder()
-        .setName('explode')
-        .setDescription('Explode someone')
+        .setName('bomb')
+        .setDescription('Bomb someone')
         .setDMPermission(false)
         .addUserOption(option => option
             .setName('target')
-            .setDescription('The person you want to explode.')
+            .setDescription('The person you want to bomb.')
             .setRequired(true))
         .addNumberOption(option => option
             .setName('frequency')
@@ -32,10 +30,10 @@ export = new class explode extends Command {
         const target = interaction.options.getMember('target');
         const frequency = interaction.options.getNumber('frequency');
         interaction.reply({
-            ephemeral: true,
-            content: 'bombing'
+            // ephemeral: true,
+            content: 'Bombing...'
         });
-        await trigger(interaction.channel, target, Math.round(Number(frequency)));
+        trigger(interaction.channel, target, Math.round(Number(frequency)));
     }
 
     filter(interaction: ChatInputCommandInteraction): boolean {
