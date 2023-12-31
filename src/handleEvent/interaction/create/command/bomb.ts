@@ -3,15 +3,6 @@ import Command from "../../../../classes/Command";
 import Bomber from "../../../../classes/Bomber";
 import { atUser } from "../../../../functions/discord/text";
 
-/* const trigger = async (channel: TextBasedChannel | null, target: GuildMember | APIInteractionDataResolvedGuildMember | null, frequency: number, period: number): Promise<void> => {
-    if (target instanceof GuildMember && !isNaN(frequency))
-        range({ start: 1, end: frequency }).forEach(async x => {
-            await doAfterSec(async () => {
-                await channel?.send(`<@${target?.id}>`)
-            }, x * period);
-        })
-} */
-
 export = new class explode extends Command {
     data = new SlashCommandBuilder()
         .setName('bomb')
@@ -43,7 +34,6 @@ export = new class explode extends Command {
                 content: 'Some eror occured. pls contact my owner.'
             })
         } else {
-            // trigger(interaction.channel, target, Math.round(frequency), period);
             const bomb = new Bomber({
                 channel: interaction.channel,
                 target: target,
@@ -80,6 +70,13 @@ export = new class explode extends Command {
                         components: []
                     })
                 } catch (e) { }
+            })
+
+            collector.on('ignore', (i: MessageComponentInteraction) => {
+                i.reply({
+                    ephemeral: true,
+                    content: 'You\'re not @' + target.user.username
+                })
             })
 
             bomb.bomb();
