@@ -1,1 +1,2 @@
-console.log(new Date(Date.now()).toISOString());
+const a = NaN || 4;
+console.log(a)
