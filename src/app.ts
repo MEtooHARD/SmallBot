@@ -13,7 +13,7 @@ const client = new Client(
 
 const on = (event = '', callback = (dummy: any) => { }) => { if (event) client.on(event, callback) };
 
-// const once = (event = '', callback = () => { }) => { if (event) client.once(event, callback) };
+const test = () => client
 
 const login = (token: string) => client.login(token);
 
@@ -23,5 +23,6 @@ export {
     on,
     login,
     prefix,
-    divider
+    divider,
+    test
 };
