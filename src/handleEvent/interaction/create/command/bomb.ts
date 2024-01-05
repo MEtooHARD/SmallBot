@@ -1,7 +1,8 @@
-import { ActionRowBuilder, ChatInputCommandInteraction, Collection, GuildMember, MessageActionRowComponentBuilder, MessageComponentInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, GuildMember, MessageComponentInteraction, SlashCommandBuilder } from "discord.js";
 import Command from "../../../../classes/Command";
 import Bomber from "../../../../classes/Bomber";
 import { atUser } from "../../../../functions/discord/text";
+import ButtonRow from "../../../../classes/ActionRow/ButtonRow";
 
 export = new class explode extends Command {
     data = new SlashCommandBuilder()
@@ -43,8 +44,9 @@ export = new class explode extends Command {
             const reply = await interaction.reply({
                 content: 'Bombing...',
                 components: [
-                    new ActionRowBuilder<MessageActionRowComponentBuilder>()
-                        .addComponents(bomb.imHere())
+                    new ButtonRow([
+                        bomb.imHere()
+                    ])
                 ],
                 fetchReply: true
             });

@@ -1,8 +1,10 @@
-import { ActionRowBuilder, AnyComponentBuilder, ButtonStyle, Client, Colors, ComponentBuilder, Embed, EmbedBuilder, GuildMember, InteractionReplyOptions, InteractionUpdateOptions, Message, MessageActionRowComponent, MessageActionRowComponentBuilder, MessageComponent, MessageComponentBuilder, MessageCreateOptions, MessagePayload, ReplyOptions, Snowflake, TextInputBuilder, TextInputStyle, User, flatten } from 'discord.js';
+import { ButtonStyle, Colors, EmbedBuilder, GuildMember, InteractionReplyOptions, InteractionUpdateOptions, Snowflake, TextInputStyle, User } from 'discord.js';
 import Person from './Orderlist/Person';
 import Modal from './Modal';
 import TextInput from './TextInput';
-import { ActionRow, Button } from './ActionRaw';
+import Button from './ActionRow/Button';
+import ButtonRow from './ActionRow/ButtonRow';
+import TextInputRow from './ActionRow/TextInputRow';
 
 
 class OrderList {
@@ -74,9 +76,9 @@ class OrderList {
             .setFooter({ text: 'Total Price: $' + this.totalPrice() })
     }
 
-    panel(): ActionRowBuilder<MessageActionRowComponentBuilder>[] {
+    panel(): ButtonRow[] {
         return [
-            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([
+            new ButtonRow([
                 new Button({
                     customId: `$[${OrderList.serviceCustomID}][order][button]`,
                     label: 'Order',
@@ -101,16 +103,15 @@ class OrderList {
             customId: `[${OrderList.serviceCustomID}][creation][modal]`,
             title: 'Start an Order List',
             components: [
-                new ActionRowBuilder<TextInputBuilder>().addComponents(
+                new TextInputRow(
                     new TextInput({
                         customId: 'theme',
                         label: 'theme',
                         placeholder: 'Put your restaurant(s) here.',
                         maxLength: 40,
                         required: true,
-                    })
-                ),
-                new ActionRowBuilder<TextInputBuilder>().addComponents(
+                    })),
+                new TextInputRow(
                     new TextInput({
                         customId: 'desc',
                         label: 'description',
@@ -129,7 +130,7 @@ class OrderList {
             customId: `$[${OrderList.serviceCustomID}][order][modal]`,
             title: 'Make your order',
             components: [
-                new ActionRowBuilder<TextInputBuilder>().addComponents(
+                new TextInputRow(
                     new TextInput({
                         customId: 'content',
                         label: 'content',
@@ -139,7 +140,7 @@ class OrderList {
                         required: true
                     })
                 ),
-                new ActionRowBuilder<TextInputBuilder>().addComponents(
+                new TextInputRow(
                     new TextInput({
                         customId: 'total_price',
                         label: 'total price',
@@ -157,7 +158,7 @@ class OrderList {
             customId: `$[${OrderList.serviceCustomID}][edit][modal]`,
             title: 'Edit',
             components: [
-                new ActionRowBuilder<TextInputBuilder>().addComponents(
+                new TextInputRow(
                     new TextInput({
                         customId: 'restaurant',
                         label: 'restaurant',
@@ -167,7 +168,7 @@ class OrderList {
                         required: true,
                     })
                 ),
-                new ActionRowBuilder<TextInputBuilder>().addComponents(
+                new TextInputRow(
                     new TextInput({
                         customId: 'desc',
                         label: 'description',
@@ -231,13 +232,13 @@ class OrderList {
                 }
             ],
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+                new ButtonRow([
                     new Button({
                         customId: `$[${OrderList.serviceCustomID}]`,
                         label: 'Yes',
                         style: ButtonStyle.Success
                     })
-                )
+                ])
             ]
         }
     }

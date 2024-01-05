@@ -1,8 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { NestedArray } from './NestedArray';
-import { ActionRowBuilder, AnyComponentBuilder, Embed, EmbedBuilder, EmbedData, InteractionReplyOptions, MessageActionRowComponentBuilder, MessageCreateOptions, ReplyOptions, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
-import { ActionRow, Menu } from './ActionRaw';
+import { EmbedBuilder, InteractionReplyOptions, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
+import MenuRow from './ActionRow/MenuRow';
 
 class Doc {
     dir: string[];
@@ -16,10 +15,6 @@ class Doc {
         this.embed = embed;
         this.childDocsName = childDocsName;
     }
-
-
-
-
 }
 
 class HelpCenter {
@@ -28,15 +23,6 @@ class HelpCenter {
 
     static docRoot = 'docs';
 
-    /* static docDirs = (paths: string[]): NestedArray<string | EmbedData> => {
-        return fs.readdirSync(path.join(...paths)).map(x => {
-            if (!x.includes('.')) {
-                return this.docDirs([...paths, x]);
-            } else {
-                return require(path.join('..', ...paths, x))();
-            }
-        })
-    } */
     static home = (): Doc => {
         return this.fetchDoc(['..', 'docs', 'HelpCenter']);
     }
@@ -46,11 +32,11 @@ class HelpCenter {
             ephemeral: true,
             embeds: [this.home().embed],
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([
+                new MenuRow(
                     new StringSelectMenuBuilder()
                         .setCustomId('[HelpCenter][]')
                         .setOptions()
-                ])
+                )
             ]
         }
     }
@@ -59,19 +45,22 @@ class HelpCenter {
         return [];
     }
 
-    static docMessage = (paths: string[]): InteractionReplyOptions => {
+    /* static docMessage = (paths: string[]): InteractionReplyOptions => {
         return {
             ephemeral: true,
             embeds: [this.home().embed],
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([
-                    new StringSelectMenuBuilder()
-                        .setCustomId('[HelpCenter][]')
-                        .setOptions()
-                ])
+                new MenuRow(
+                    new Menu({
+                        customId: '[HelpCenter][]',
+                        options: [
+                            new StringSelectMenuOptionBuilder()
+                        ]
+                    })
+                )
             ]
         }
-    }
+    } */
 
     static fetchDoc = (paths: string[]): Doc => {
         return {
@@ -81,16 +70,6 @@ class HelpCenter {
             childDocsName: fs.readdirSync(path.join(...paths.slice(1))).filter(x => x.substring(x.length - 3) === '.js').map(x => x.substring(0, x.length - 3))
         }
     }
-
-
-    /* static fetchDoc = (paths: string[]): Doc => {
-        return {
-            dir: paths,
-            name: paths.slice(-1)[0],
-            embed: require(path.join(...paths)),
-            childDocsName: fs.readdirSync(path.join(...paths)).filter(x => !x.includes('.'))
-        }
-    } */
 
 }
 

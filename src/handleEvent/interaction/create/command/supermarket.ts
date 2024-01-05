@@ -1,6 +1,7 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandSubcommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import Command from "../../../../classes/Command";
 import { atUser } from "../../../../functions/discord/text";
+import ButtonRow from "../../../../classes/ActionRow/ButtonRow";
 
 export = new class explode extends Command {
     data = new SlashCommandBuilder()
@@ -17,6 +18,7 @@ export = new class explode extends Command {
         if (loli)
             interaction.reply({
                 content: `${atUser(loli)}有人想要超市你`,
+                components: [new ButtonRow([])]
             })
         else
             interaction.reply({
