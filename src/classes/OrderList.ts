@@ -1,7 +1,7 @@
 import { ButtonStyle, Colors, EmbedBuilder, GuildMember, InteractionReplyOptions, InteractionUpdateOptions, Snowflake, TextInputStyle, User } from 'discord.js';
 import Person from './Orderlist/Person';
 import Modal from './Modal';
-import TextInput from './TextInput';
+import TextInput from './ActionRow/TextInput';
 import Button from './ActionRow/Button';
 import ButtonRow from './ActionRow/ButtonRow';
 import TextInputRow from './ActionRow/TextInputRow';
