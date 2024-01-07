@@ -5,6 +5,7 @@ import { atUser } from "../../../../functions/discord/text";
 import ButtonRow from "../../../../classes/ActionRow/ButtonRow";
 
 export = new class explode extends Command {
+
     data = new SlashCommandBuilder()
         .setName('bomb')
         .setDescription('Bomb someone')
@@ -58,14 +59,11 @@ export = new class explode extends Command {
             const collector = reply.createMessageComponentCollector({ filter: filter, time: frequency * period * 1000, max: 1 });
 
             collector.on('collect', (i: MessageComponentInteraction) => {
-                bomb.stop();
-                i.update({
-                    content: 'We strongly condemn ' + atUser(interaction.user.id),
-                    components: []
-                })
+                collector.emit('end');
             })
-
+            
             collector.on('end', (collected, reason: string) => {
+                bomb.stop();
                 try {
                     reply.edit({
                         content: 'We strongly condemn ' + atUser(interaction.user.id),
@@ -87,6 +85,5 @@ export = new class explode extends Command {
 
     filter(interaction: ChatInputCommandInteraction): boolean {
         return true;
-        // return Boolean(interaction.memberPermissions?.has(PermissionFlagsBits.Administrator));
     }
 }

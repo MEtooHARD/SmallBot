@@ -1,17 +1,15 @@
 import { CommandInteraction } from 'discord.js';
-import Log from '../../../classes/Log';
-import path from 'node:path';
-import fs from 'node:fs';
 import { logCommand } from '../../../functions/log/log';
 import Command from '../../../classes/Command';
+import path from 'node:path';
+import fs from 'node:fs';
 
 const command = (interaction: CommandInteraction) => {
-    // const log = new Log({ event: 'command', user: interaction.user });
 
     fs.readdirSync(path.join(__dirname, 'command'))
         .filter(file => file.endsWith('.js')).forEach(name => {
             if (name === interaction.commandName.concat('.js')) {
-                const command = require('./command/' + name);
+                const command: Command = require('./command/' + name);
                 if (command.filter(interaction)) {
                     logCommand(interaction);    //  log
                     command.execute(interaction);
