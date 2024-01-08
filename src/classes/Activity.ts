@@ -60,13 +60,9 @@ class Activity extends ActivityData {
         return this;
     }
 
-    start() {
+    start(): Activity {
         this.process();
-    }
-
-    goNext() {
-        if (this.next)
-            this.next.start();
+        return this;
     }
 }
 
