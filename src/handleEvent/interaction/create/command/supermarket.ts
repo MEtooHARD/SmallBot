@@ -1,4 +1,4 @@
-import { BaseInteraction, ButtonInteraction, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import Command from "../../../../classes/Command";
 import SuperMarket from "../../../../classes/SuperMarket";
 import { byChance } from "../../../../functions/number/number";

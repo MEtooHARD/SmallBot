@@ -1,4 +1,4 @@
-import { Base, BaseInteraction, ButtonInteraction, ButtonStyle, Colors, User } from "discord.js";
+import { BaseInteraction, ButtonInteraction, ButtonStyle, Colors, User } from "discord.js";
 import Activity from "./Activity";
 import ButtonRow from "./ActionRow/ButtonRow";
 import Button from "./ActionRow/Button";
