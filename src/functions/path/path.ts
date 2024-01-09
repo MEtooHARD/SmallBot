@@ -11,4 +11,6 @@ const getDirectories = (dir: string, forImport: boolean = false) => {
     return result;
 }
 
-export { getDirectories }
+export {
+    getDirectories,
+}
