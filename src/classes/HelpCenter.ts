@@ -66,7 +66,7 @@ class HelpCenter {
         const options = HelpCenter.options(doc);
         if (paths.length >= 4) options.push(backOption(paths));
         if (paths.length >= 5) options.push(homeOption());
-        console.log(options);
+        // console.log(options);
         return {
             ephemeral: true,
             embeds: [doc.embed],
