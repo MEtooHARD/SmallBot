@@ -11,7 +11,12 @@ const client = new Client(
     }
 );
 
-const on = (event = '', callback = (dummy: any) => { }) => { if (event) client.on(event, callback) };
+const on = (event = '', callback = (dummy: any) => { }) => {
+    if (event) {
+        console.log('on ' + event);
+        client.on(event, callback);
+    }
+};
 
 const test = () => client
 

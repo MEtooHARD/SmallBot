@@ -7,8 +7,6 @@ import command from './create/comand';
 import autocomplete from './create/autocomplete';
 
 const create = async (interaction: Interaction): Promise<void> => {
-    console.log();
-
     if (interaction.isCommand()) command(interaction);
     else if (interaction.isButton()) button(interaction);
     else if (interaction.isModalSubmit()) modal(interaction);

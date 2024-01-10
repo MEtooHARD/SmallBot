@@ -3,7 +3,6 @@ import { on } from "../../app";
 import { Events, Message } from "discord.js";
 
 const messageDelete = () => {
-    console.log('on ' + Events.MessageDelete);
     on(Events.MessageDelete, async (message: Message) => {
         await del(message);
     });
