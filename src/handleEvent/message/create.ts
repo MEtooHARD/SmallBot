@@ -8,13 +8,12 @@ import { byChance, restrictRange } from '../../functions/number/number';
 const create = async (message: Message): Promise<void> => {
 
 
-     if (shouldRpMsg(message)) {
+    if (shouldRpMsg(message)) {
         if (/* message.content.substring(0, prefix.length) === prefix */message.content.startsWith(prefix)) {
             const [command, ...param] = getCmdInfo(message.content);
             if (param.length && command.toLowerCase() === 'say') {
                 if (byChance(100)) {
-
-                    // message.channel.send('QWQ');
+                    message.reply('笑死');
                 }
                 else {
                     let delay: number = 0;
@@ -26,7 +25,7 @@ const create = async (message: Message): Promise<void> => {
                 }
             }
         }
-    } 
+    }
 }
 
 export = create;
