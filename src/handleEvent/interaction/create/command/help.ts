@@ -9,23 +9,18 @@ export = new class help extends Command {
         .setDescription('Get some help from here.')
 
     execute = async (interaction: CommandInteraction) => {
-        // console.log(HelpCenter.docDirs([HelpCenter.docRoot, 'HelpCenter']));
-        // console.log(HelpCenter.homeDoc());
-        // interaction.reply(HelpCenter.homeDoc());
-        /* interaction.reply({
-            ephemeral: true,
-            content: 'lmao',
-
-        }) */
         const helpCenter = new HelpCenter();
-        // console.log(helpCenter.docMsg(['..', 'docs', 'HelpCenter']));
-        const replyMessage = await interaction.reply(helpCenter.docMsg(['..', 'docs', 'HelpCenter']));
+        const replyMessage = await interaction.reply(helpCenter.home());
         const collector = replyMessage.createMessageComponentCollector({ idle: 5 * 60 * 1000 });
 
         collector.on('collect', async (interaction: BaseInteraction) => {
             if (interaction instanceof StringSelectMenuInteraction) {
                 // await interaction.deferUpdate();
-                interaction.editReply(helpCenter.docMsg(interaction.values[0].split('/')));
+                const update = helpCenter.docMsg(interaction.values[0].split('/'));
+                interaction.update({
+                    embeds: update.embeds,
+                    components: update.components
+                });
             }
         });
 

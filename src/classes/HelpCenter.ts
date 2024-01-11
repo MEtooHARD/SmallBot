@@ -41,24 +41,8 @@ class HelpCenter {
 
     static docRoot = 'docs';
 
-    static home = (): Doc => {
-        return this.fetchDoc(['..', 'docs', 'HelpCenter']);
-    }
-
-    static homeDoc = (): InteractionReplyOptions => {
-        return {
-            ephemeral: true,
-            embeds: [this.home().embed],
-            components: [
-                new MenuRow(
-                    new Menu({
-                        customId: ``,
-                        options: [],
-                        placeholder: 'Select for more details.'
-                    })
-                )
-            ]
-        }
+    home = (): InteractionReplyOptions => {
+        return this.docMsg(['..', 'docs', 'HelpCenter']);
     }
 
     docMsg = (paths: string[]): InteractionReplyOptions => {
@@ -66,7 +50,6 @@ class HelpCenter {
         const options = HelpCenter.options(doc);
         if (paths.length >= 4) options.push(backOption(paths));
         if (paths.length >= 5) options.push(homeOption());
-        // console.log(options);
         return {
             ephemeral: true,
             embeds: [doc.embed],
@@ -83,7 +66,6 @@ class HelpCenter {
     }
 
     static options = (doc: Doc): Option[] => {
-        // console.log(doc);
         return doc.childDocs.filter(x => (x.name.replace('.js', '') !== doc.name) && ((x.isFile() && x.name.endsWith('.js')) || x.isDirectory())).map(x => {
             return new Option({
                 label: x.name,
@@ -93,34 +75,7 @@ class HelpCenter {
         });
     }
 
-    /* static docMessage = (paths: string[]): InteractionReplyOptions => {
-        return {
-            ephemeral: true,
-            embeds: [this.home().embed],
-            components: [
-                new MenuRow(
-                    new Menu({
-                        customId: '[HelpCenter][]',
-                        options: [
-                            new StringSelectMenuOptionBuilder()
-                        ]
-                    })
-                )
-            ]
-        }
-    } */
-
-    /* static fetchDoc = (paths: string[]): Doc => {
-        return {
-            dir: paths,
-            name: paths.slice(-1)[0],
-            embed: require(path.join(...paths, paths[paths.length - 1]))(),
-            childDocs: fs.readdirSync(path.join(...paths.slice(1)), { withFileTypes: true })
-        }
-    } */
-
     static fetchDoc = (paths: string[]): Doc => {
-        // console.log(paths)
         let p = paths;
         if (!paths[paths.length - 1].endsWith('.js'))
             p = p.concat(paths[paths.length - 1] + '.js');

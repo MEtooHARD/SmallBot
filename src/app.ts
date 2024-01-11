@@ -1,4 +1,4 @@
-import { Client, IntentsBitField, Snowflake } from "discord.js";
+import { Client, GatewayIntentBits, IntentsBitField } from "discord.js";
 
 const client = new Client(
     {
@@ -6,7 +6,7 @@ const client = new Client(
             IntentsBitField.Flags.Guilds,
             IntentsBitField.Flags.GuildMessages,
             IntentsBitField.Flags.GuildMembers,
-            IntentsBitField.Flags.MessageContent
+            IntentsBitField.Flags.MessageContent,
         ]
     }
 );

@@ -8,5 +8,4 @@ const ready = () => {
     });
 }
 
-
 export = ready;
