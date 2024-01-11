@@ -6,12 +6,16 @@ import { prefix } from '../../app';
 import { byChance, restrictRange } from '../../functions/number/number';
 
 const create = async (message: Message): Promise<void> => {
-    if (shouldRpMsg(message)) {
-        if (message.content.substring(0, prefix.length) === prefix) {
+
+
+     if (shouldRpMsg(message)) {
+        if (/* message.content.substring(0, prefix.length) === prefix */message.content.startsWith(prefix)) {
             const [command, ...param] = getCmdInfo(message.content);
             if (param.length && command.toLowerCase() === 'say') {
-                if (byChance(9))
-                    message.reply('笑死');
+                if (byChance(100)) {
+
+                    // message.channel.send('QWQ');
+                }
                 else {
                     let delay: number = 0;
                     message.delete();
@@ -22,7 +26,7 @@ const create = async (message: Message): Promise<void> => {
                 }
             }
         }
-    }
+    } 
 }
 
 export = create;

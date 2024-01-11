@@ -56,7 +56,7 @@ class Bomber {
             range({ start: 1, end: this.frequency }).forEach(async x => {
                 await doAfterSec(async () => {
                     if (this.bombing && this.target instanceof GuildMember)
-                        await this.channel?.send(`<@${this.target?.id}> ${byChance(75) ? this.additionalMessage() : ''}`);
+                        await this.channel?.send(`<@${this.target?.id}> ${byChance(100) ? this.additionalMessage() : ''}`);
                 }, x * this.period);
             })
     }
