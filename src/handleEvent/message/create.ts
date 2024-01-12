@@ -3,7 +3,7 @@ import { shouldRpMsg } from '../../functions/config/shouldReply';
 import { getCmdInfo } from '../../functions/discord/msgCommand';
 import { doAfterSec } from '../../functions/async/delay';
 import { prefix } from '../../app';
-import { byChance, restrictRange } from '../../functions/number/number';
+import { byChance, restrictRange } from '../../functions/number/random';
 
 const create = async (message: Message): Promise<void> => {
 

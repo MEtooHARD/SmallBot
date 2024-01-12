@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import Command from "../../../../classes/Command";
 import SuperMarket from "../../../../classes/SuperMarket";
-import { byChance } from "../../../../functions/number/number";
+import { byChance } from "../../../../functions/number/random";
 import { atUser } from "../../../../functions/discord/text";
 
 export = new class explode extends Command {
