@@ -2,7 +2,7 @@ import { BaseInteraction, ButtonInteraction, ButtonStyle, Colors, User } from "d
 import Activity from "./Activity";
 import ButtonRow from "./ActionRow/ButtonRow";
 import Button from "./ActionRow/Button";
-import { atUser } from "../functions/discord/text";
+import { atUser } from "../functions/discord/mention";
 
 enum gender { male = 'male', female = 'female' };
 

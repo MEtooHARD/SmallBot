@@ -1,8 +1,9 @@
 import { ChatInputCommandInteraction, GuildMember, MessageComponentInteraction, SlashCommandBuilder } from "discord.js";
 import Command from "../../../../classes/Command";
 import Bomber from "../../../../classes/Bomber";
-import { atUser } from "../../../../functions/discord/text";
+import { atUser } from "../../../../functions/discord/mention";
 import ButtonRow from "../../../../classes/ActionRow/ButtonRow";
+import { doAfterSec } from "../../../../functions/async/delay";
 
 export = new class explode extends Command {
 
@@ -35,6 +36,12 @@ export = new class explode extends Command {
                 ephemeral: true,
                 content: 'Some eror occured. pls contact my owner.'
             })
+        } else if (target.user.bot) {
+            interaction.reply(`你他媽想炸${atUser(target)}啊?`);
+            doAfterSec(() => {
+                if (interaction.channel)
+                    interaction.channel.send(`${atUser(interaction.user)}根本笑死`);
+            }, 5);
         } else {
             const bomb = new Bomber({
                 channel: interaction.channel,
@@ -61,7 +68,7 @@ export = new class explode extends Command {
             collector.on('collect', (i: MessageComponentInteraction) => {
                 collector.emit('end');
             })
-            
+
             collector.on('end', (collected, reason: string) => {
                 bomb.stop();
                 try {

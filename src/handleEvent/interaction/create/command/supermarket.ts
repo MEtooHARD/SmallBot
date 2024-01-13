@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import Command from "../../../../classes/Command";
 import SuperMarket from "../../../../classes/SuperMarket";
 import { byChance } from "../../../../functions/number/random";
-import { atUser } from "../../../../functions/discord/text";
+import { atUser } from "../../../../functions/discord/mention";
 
 export = new class explode extends Command {
     data = new SlashCommandBuilder()

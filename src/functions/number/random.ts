@@ -14,7 +14,7 @@ const randomInt = (low: number, high: number): number => {
 }
 
 /**
- * See whethere come true by given percentage
+ * See whether come true by given percentage
  * @param percentage 
  * @returns 
  */

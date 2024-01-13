@@ -7,27 +7,36 @@ const client = new Client(
             IntentsBitField.Flags.GuildMessages,
             IntentsBitField.Flags.GuildMembers,
             IntentsBitField.Flags.MessageContent,
+            IntentsBitField.Flags.GuildVoiceStates
         ]
     }
 );
 
-const on = (event = '', callback = (dummy: any) => { }) => {
+const on = (event = '', callback = (...inputs: any) => { }) => {
     if (event) {
         console.log('on ' + event);
         client.on(event, callback);
     }
 };
 
-const test = () => client
-
-const login = (token: string) => client.login(token);
+const login = async (token: string) => {
+    /* console.log(await  */client.login(token)/* ); */
+}
 
 const [prefix, divider] = ['s!', '!'];
+
+enum CommandStatus {
+    dev = 'dev',
+    main = 'main'
+}
+
+const status = CommandStatus['dev'];
 
 export {
     on,
     login,
     prefix,
     divider,
-    test
+    status,
+    CommandStatus
 };

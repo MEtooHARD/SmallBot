@@ -1,10 +1,16 @@
 import { login } from "./app";
 import config from './config.json';
+import { deploy, shouldDeployCommand } from "./functions/config/doDeployment";
 import { getDirectories } from "./functions/path/path";
 import { join } from 'node:path';
 
-getDirectories(join(__dirname, 'events'), true).forEach(dir => {
-    require(dir)();
-});
+(async () => {
+    if (shouldDeployCommand())
+        await deploy();
 
-login(config.bot.main.token);
+    getDirectories(join(__dirname, 'events'), true).forEach(dir => {
+        require(dir)();
+    });
+
+    await login(config.bot.main.token);
+})();
