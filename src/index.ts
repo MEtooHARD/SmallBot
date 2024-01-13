@@ -1,11 +1,11 @@
-import { login } from "./app";
+import { login, status } from "./app";
 import config from './config.json';
 import { deploy, shouldDeployCommand } from "./functions/config/doDeployment";
 import { getDirectories } from "./functions/path/path";
 import { join } from 'node:path';
 
 (async () => {
-    if (shouldDeployCommand())
+    if (shouldDeployCommand(status))
         await deploy();
 
     getDirectories(join(__dirname, 'events'), true).forEach(dir => {

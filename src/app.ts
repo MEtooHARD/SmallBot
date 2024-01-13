@@ -30,7 +30,7 @@ enum CommandStatus {
     main = 'main'
 }
 
-const status = CommandStatus['dev'];
+const status = CommandStatus['main'];
 
 export {
     on,

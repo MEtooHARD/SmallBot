@@ -1,6 +1,6 @@
-import { CommandStatus, status } from "../../app"
+import { CommandStatus } from "../../app"
 
-const shouldDeployCommand = () => {
+const shouldDeployCommand = (status: CommandStatus) => {
     return status === CommandStatus.dev;
 }
 
