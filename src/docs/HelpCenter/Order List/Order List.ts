@@ -3,7 +3,7 @@ import {HelpCenter} from "../../../classes/HelpCenter";
 
 const OrderList = (): EmbedData => {
     return {
-        author: { name: HelpCenter.serviceName },
+        author: { name: HelpCenter.DisplayName },
         color: Colors.DarkGreen,
         title: 'Order List',
         description: 'Welcome to Help Center! Here you can learn about some use of my functions. ',

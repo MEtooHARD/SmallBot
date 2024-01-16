@@ -105,3 +105,5 @@ dist
 
 config.json
 test/
+
+.DS_Store

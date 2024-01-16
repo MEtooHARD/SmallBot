@@ -1,4 +1,4 @@
-import { BaseInteraction, CacheType, CommandInteraction, SlashCommandBuilder, StringSelectMenuInteraction } from 'discord.js';
+import { BaseInteraction, CommandInteraction, SlashCommandBuilder, StringSelectMenuInteraction } from 'discord.js';
 import { HelpCenter } from '../../../../classes/HelpCenter';
 import Command from '../../../../classes/Command';
 
@@ -10,17 +10,22 @@ export = new class help extends Command {
 
     execute = async (interaction: CommandInteraction) => {
         const helpCenter = new HelpCenter();
-        const replyMessage = await interaction.reply(helpCenter.home());
+        const replyMessage = await interaction.reply(helpCenter.reply());
         const collector = replyMessage.createMessageComponentCollector({ idle: 5 * 60 * 1000 });
 
         collector.on('collect', async (interaction: BaseInteraction) => {
             if (interaction instanceof StringSelectMenuInteraction) {
-                // await interaction.deferUpdate();
-                const update = helpCenter.docMsg(interaction.values[0].split('/'));
-                interaction.update({
-                    embeds: update.embeds,
-                    components: update.components
-                });
+                switch (interaction.values[0]) {
+                    case 'back':
+                        helpCenter.back();
+                        break;
+                    case 'home':
+                        helpCenter.home();
+                        break;
+                    default:
+                        helpCenter.goto(interaction.values[0]);
+                }
+                interaction.update(helpCenter.update());
             }
         });
 

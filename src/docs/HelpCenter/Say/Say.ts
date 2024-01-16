@@ -1,9 +1,9 @@
 import { Colors, EmbedData } from "discord.js";
-import {HelpCenter} from "../../../classes/HelpCenter";
+import { HelpCenter } from "../../../classes/HelpCenter";
 
 const Say = (): EmbedData => {
     return {
-        author: { name: HelpCenter.serviceName },
+        author: { name: HelpCenter.DisplayName },
         color: Colors.DarkGreen,
         title: 'Say',
         description: 'test',

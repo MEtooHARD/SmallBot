@@ -1,8 +1,4 @@
+const fs = require('node:fs');
+const path = require('node:path');
 
-let a = {
-    '0': 4,
-    '1': 6,
-    length: 5
-}
-
-console.log(Array.from(a))
+console.log(fs.readdirSync(path.join('dist')))
