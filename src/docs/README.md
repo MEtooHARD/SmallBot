@@ -9,3 +9,5 @@ HelpCenter
 | |-Say.js
 
 HelpCenter is a Doc with two childs.
+A Doc is a function that returns an message mebed.
+The reason to use a function is that there can be some dynamic informations on it.
