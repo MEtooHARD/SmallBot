@@ -1,4 +1,4 @@
-import { trimStringEnd } from "../string/trim";
+import { trimStringEnd } from "./trim";
 import { readdirSync } from 'node:fs';
 
 const getDirectories = (dir: string, forImport: boolean = false) => {

@@ -1,5 +1,5 @@
 import { InteractionReplyOptions, InteractionUpdateOptions } from 'discord.js';
-import Option from './ActionRow/StringMenuOption';
+import StringOption from './ActionRow/StringMenuOption';
 import Menu from './ActionRow/StringSelectMenu';
 import MenuRow from './ActionRow/MenuRow';
 import path from 'node:path';
@@ -59,9 +59,9 @@ class HelpCenter extends Doc {
      * The Options of the `Doc`.
      * @returns options
      */
-    get options(): Option[] {
+    get options(): StringOption[] {
         const options = this.childs.map(dirent => {
-            return new Option({
+            return new StringOption({
                 label: dirent.name,
                 value: dirent.name,
                 emoji: fs.readdirSync(path.join(dirent.path, dirent.name)).length <= 1 ? '📄' : '📁'
@@ -75,7 +75,7 @@ class HelpCenter extends Doc {
      * The go back option.
      * @returns go back option.
      */
-    static backOption = new Option({
+    static backOption = new StringOption({
         label: 'Back',
         value: 'back',
         emoji: '◀️'
@@ -84,7 +84,7 @@ class HelpCenter extends Doc {
      * The home option.
      * @returns home option.
      */
-    static homeOption = new Option({
+    static homeOption = new StringOption({
         label: 'Home',
         value: 'home',
         emoji: '🏠'

@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, IntentsBitField } from "discord.js";
+import { Client, IntentsBitField } from "discord.js";
 
 const client = new Client(
     {

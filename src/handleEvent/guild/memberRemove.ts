@@ -1,5 +1,5 @@
 import { GuildMember } from "discord.js";
-import { doAfterSec } from "../../functions/async/delay";
+import { doAfterSec } from "../../functions/general/delay";
 
 const handleMemberRemove = async (member: GuildMember) => {
     console.log(member.user.username + ' left ' + member.guild.name);

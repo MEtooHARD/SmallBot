@@ -1,9 +1,9 @@
 import { StringSelectMenuBuilder } from "discord.js";
-import Option from "./StringMenuOption";
+import StringOption from "./StringMenuOption";
 
 class Menu extends StringSelectMenuBuilder {
     constructor({customId, placeholder, options}:
-        {customId: string, placeholder: string, options: Option[]}) {
+        {customId: string, placeholder: string, options: StringOption[]}) {
         super();
         this.setCustomId(customId);
         this.setPlaceholder(placeholder);

@@ -1,6 +1,6 @@
 import { StringSelectMenuOptionBuilder } from "discord.js";
 
-class Option extends StringSelectMenuOptionBuilder {
+class StringOption extends StringSelectMenuOptionBuilder {
     constructor({ isDefault = false, description, emoji, label, value }:
         { isDefault?: boolean, description?: string, emoji?: string, label: string, value: string }) {
         super();
@@ -12,4 +12,4 @@ class Option extends StringSelectMenuOptionBuilder {
     }
 }
 
-export = Option;
+export = StringOption;

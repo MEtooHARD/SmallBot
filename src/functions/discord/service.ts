@@ -1,4 +1,4 @@
-import { trimString } from "../string/trim";
+import { trimString } from "../general/trim";
 import path from 'node:path';
 import fs from 'node:fs';
 

@@ -1,9 +1,9 @@
 import { Message } from 'discord.js';
 import { shouldRpMsg } from '../../functions/config/shouldReply';
 import { getCmdInfo } from '../../functions/discord/msgCommand';
-import { doAfterSec } from '../../functions/async/delay';
+import { doAfterSec } from '../../functions/general/delay';
 import { prefix } from '../../app';
-import { byChance, restrictRange } from '../../functions/number/random';
+import { byChance, restrictRange } from '../../functions/general/random';
 
 const create = async (message: Message): Promise<void> => {
 

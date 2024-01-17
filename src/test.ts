@@ -1,3 +1,14 @@
-// import { test } from "./app";
+let gg = 1;
 
-// console.log(test())
+const add = () => {
+    gg++;
+}
+
+const get = () => {
+    return gg;
+}
+
+export {
+    add,
+    get
+}

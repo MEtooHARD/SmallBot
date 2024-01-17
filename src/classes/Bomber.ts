@@ -1,22 +1,31 @@
 import { APIInteractionDataResolvedGuildMember, ButtonStyle, GuildMember, TextBasedChannel } from "discord.js";
-import { doAfterSec } from "../functions/async/delay";
-import { range } from "../functions/array/number";
-import { byChance, randomInt, randomNumberRange } from "../functions/number/random";
+import { doAfterSec } from "../functions/general/delay";
+import { range } from "../functions/general/number";
+import { byChance, randomInt } from "../functions/general/random";
 import Button from "./ActionRow/Button";
 
+type BomberOptions = {
+    channel: TextBasedChannel | null,
+    target: GuildMember | APIInteractionDataResolvedGuildMember | null,
+    count: number,
+    period: number
+}
+
 class Bomber {
+    //  The channel to send bombs.
     channel: TextBasedChannel | null;
+    //  The target, i.e., the user to be tagged.
     target: GuildMember | APIInteractionDataResolvedGuildMember | null;
-    frequency: number;
+    //  The times to bomb.
+    count: number;
+    //  The interval between each bomb.
     period: number;
-
+    //  The status for controlling bombing.
     bombing: boolean = true;
-
-    constructor({ channel, target, frequency, period }:
-        { channel: TextBasedChannel | null, target: GuildMember | APIInteractionDataResolvedGuildMember | null, frequency: number, period: number }) {
+    constructor({ channel, target, count, period }: BomberOptions) {
         this.channel = channel;
         this.target = target;
-        this.frequency = frequency;
+        this.count = count;
         this.period = period;
     }
 
@@ -42,25 +51,27 @@ class Bomber {
         '兄弟，你好緊',
         '兄弟，到底?'
     ]
-
-    trigger = () => {
-        this.bombing = true;
-    }
-
+    /**
+     * Stop bombing.
+     */
     stop = () => {
         this.bombing = false;
     }
-
+    /**
+     * Start bombing.
+     */
     bomb = async (): Promise<void> => {
-        if (!isNaN(this.frequency))
-            range({ start: 1, end: this.frequency }).forEach(async x => {
+        if (!isNaN(this.count))
+            range({ start: 1, end: this.count }).forEach(async x => {
                 await doAfterSec(async () => {
                     if (this.bombing && this.target instanceof GuildMember)
                         await this.channel?.send(`<@${this.target?.id}> ${byChance(75) ? this.additionalMessage() : ''}`);
                 }, x * this.period);
             })
     }
-
+    /**
+     * @returns The button for the target to stop the bomb.
+     */
     imHere = (): Button => {
         return new Button({
             customId: '$stopbomb',
@@ -68,7 +79,9 @@ class Bomber {
             style: ButtonStyle.Primary,
         })
     }
-
+    /**
+     * @returns The rendom selected additional message, which wil be attached after the target tag.
+     */
     additionalMessage = (): string => {
         const index = randomInt(0, this.randomMessages.length - 1);
         return this.randomMessages.splice(index, 1)[0];

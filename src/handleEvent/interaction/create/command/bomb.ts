@@ -3,7 +3,7 @@ import Command from "../../../../classes/Command";
 import Bomber from "../../../../classes/Bomber";
 import { atUser } from "../../../../functions/discord/mention";
 import ButtonRow from "../../../../classes/ActionRow/ButtonRow";
-import { doAfterSec } from "../../../../functions/async/delay";
+import { doAfterSec } from "../../../../functions/general/delay";
 
 export = new class explode extends Command {
 
@@ -16,7 +16,7 @@ export = new class explode extends Command {
             .setDescription('The person you want to bomb.')
             .setRequired(true))
         .addNumberOption(option => option
-            .setName('frequency')
+            .setName('count')
             .setDescription('How many times you want to be hate. *wink')
             .setMinValue(1)
             .setMaxValue(20)
@@ -29,9 +29,9 @@ export = new class explode extends Command {
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         const target = interaction.options.getMember('target');
-        const frequency = Number(interaction.options.getNumber('frequency'));
+        const count = Number(interaction.options.getNumber('count'));
         const period = Number(interaction.options.getNumber('period')) || 5;
-        if (isNaN(frequency) || !(target instanceof GuildMember) || !target) {
+        if (isNaN(count) || !(target instanceof GuildMember) || !target) {
             interaction.reply({
                 ephemeral: true,
                 content: 'Some eror occured. pls contact my owner.'
@@ -46,7 +46,7 @@ export = new class explode extends Command {
             const bomb = new Bomber({
                 channel: interaction.channel,
                 target: target,
-                frequency: Math.round(frequency),
+                count: Math.round(count),
                 period: period
             })
             const reply = await interaction.reply({
@@ -63,7 +63,7 @@ export = new class explode extends Command {
                 return interaction.user.id === target.id
             }
 
-            const collector = reply.createMessageComponentCollector({ filter: filter, time: frequency * period * 1000, max: 1 });
+            const collector = reply.createMessageComponentCollector({ filter: filter, time: count * period * 1000, max: 1 });
 
             collector.on('collect', (i: MessageComponentInteraction) => {
                 collector.emit('end');

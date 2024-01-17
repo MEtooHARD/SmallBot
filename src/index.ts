@@ -1,7 +1,7 @@
 import { login, status } from "./app";
 import config from './config.json';
 import { deploy, shouldDeployCommand } from "./functions/config/doDeployment";
-import { getDirectories } from "./functions/path/path";
+import { getDirectories } from "./functions/general/path";
 import { join } from 'node:path';
 
 (async () => {
