@@ -16,6 +16,10 @@ class Doc {
     readonly base = [__dirname, '..', 'docs'];
 
     /**
+     * The embed chain.
+     */
+    embeds: any[] = [];
+    /**
      * Whether this Doc now reached the end of the folders.
      */
     get end() {
@@ -47,25 +51,29 @@ class Doc {
     constructor(name: string) {
         this.name = name;
         this.paths = [this.name];
+        this.embeds.push(this.embed);
     }
     /**
-     * Sets the next child to go.
+     * Sets the next child to go and append embed chain.
      * @param togo the selected child.
      */
     goto(togo: string) {
         this.paths.push(togo);
+        this.embeds.push(this.embed);
     }
     /**
-     * Back a step to the upper folder.
+     * Back a step to the upper folder and cut off the last embed.
      */
     back() {
         this.paths.pop();
+        this.embeds.pop();
     }
     /**
-     * Set as the position where this Doc is initialized to.
+     * Set as the position where this Doc is initialized to. And reset embed chain.
      */
     home() {
         this.paths = [this.name];
+        this.embeds = [this.embed];
     }
 }
 

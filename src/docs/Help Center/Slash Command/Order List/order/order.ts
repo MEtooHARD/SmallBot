@@ -1,14 +1,14 @@
 import { Colors, EmbedData } from "discord.js";
-import { HelpCenter } from "../../../classes/HelpCenter";
+import {HelpCenter} from "../../../../../classes/HelpCenter";
 
-const Say = (): EmbedData => {
+const order = (): EmbedData => {
     return {
         author: { name: HelpCenter.DisplayName },
         color: Colors.DarkGreen,
-        title: 'Say',
-        description: 'test',
+        title: 'Order',
+        description: 'To order, just ',
         footer: { text: new Date().toLocaleDateString() }
     }
 }
 
-export = Say;
+export = order;

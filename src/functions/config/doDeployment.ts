@@ -1,7 +1,7 @@
-import { CommandStatus } from "../../app"
+import { CommandDeployStatus } from "../../config/status";
 
-const shouldDeployCommand = (status: CommandStatus) => {
-    return status === CommandStatus.dev;
+const shouldDeployCommand = (status: CommandDeployStatus) => {
+    return status === CommandDeployStatus.dev;
 }
 
 const deploy = async () => {

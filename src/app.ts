@@ -1,4 +1,6 @@
 import { Client, IntentsBitField } from "discord.js";
+import Central from "./classes/Central";
+import { CommandDeployStatus } from "./config/status";
 
 const client = new Client(
     {
@@ -14,23 +16,20 @@ const client = new Client(
 
 const on = (event = '', callback = (...inputs: any) => { }) => {
     if (event) {
-        console.log('on ' + event);
         client.on(event, callback);
+        console.log('client on ' + event);
     }
 };
 
 const login = async (token: string) => {
-    /* console.log(await  */client.login(token)/* ); */
+    client.login(token)
 }
 
 const [prefix, divider] = ['s!', '!'];
 
-enum CommandStatus {
-    dev = 'dev',
-    main = 'main'
-}
+const status = CommandDeployStatus['main'];
 
-const status = CommandStatus['main'];
+const central = new Central();
 
 export {
     on,
@@ -38,5 +37,5 @@ export {
     prefix,
     divider,
     status,
-    CommandStatus
+    central
 };

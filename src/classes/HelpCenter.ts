@@ -14,7 +14,7 @@ class HelpCenter extends Doc {
     /**
      * The name of HelpCneter Doc.
      */
-    static Name = 'HelpCenter';
+    static Name = 'Help Center';
     constructor() {
         super(HelpCenter.Name);
     }
@@ -24,7 +24,7 @@ class HelpCenter extends Doc {
      */
     reply = (): InteractionReplyOptions => {
         return {
-            embeds: [this.embed],
+            embeds: this.embeds,
             components: [this.optionMenu],
             ephemeral: true
         }
@@ -35,7 +35,7 @@ class HelpCenter extends Doc {
      */
     update = (): InteractionUpdateOptions => {
         return {
-            embeds: [this.embed],
+            embeds: this.embeds,
             components: [this.optionMenu]
         }
     }
