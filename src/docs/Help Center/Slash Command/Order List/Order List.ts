@@ -1,13 +1,14 @@
 import { Colors, EmbedData } from "discord.js";
-import {HelpCenter} from "../../../../classes/HelpCenter";
+import { HelpCenter } from "../../../../classes/HelpCenter";
 
 const OrderList = (): EmbedData => {
     return {
-        author: { name: HelpCenter.DisplayName },
+        // author: { name: HelpCenter.DisplayName },
         color: Colors.DarkGreen,
         title: 'Order List',
-        description: 'Welcome to Help Center! Here you can learn about some use of my functions. ',
-        footer: { text: new Date().toLocaleDateString() }
+        description: '</order_list:1183464374162182144>\n' +
+            'Create an order list, which users can add and edit their order. And I\'ll sum up the prices for you.',
+        footer: { text: 'last edited: 2024-01-19' }
     }
 }
 

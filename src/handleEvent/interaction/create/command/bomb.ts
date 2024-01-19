@@ -36,16 +36,17 @@ export = new class explode extends Command {
                 ephemeral: true,
                 content: 'Some eror occured. pls contact my owner.'
             })
-        } else if (target.user.bot) {
-            interaction.reply(`你他媽想炸${atUser(target)}啊?`);
-            doAfterSec(() => {
-                if (interaction.channel)
-                    interaction.channel.send(`${atUser(interaction.user)}根本笑死`);
-            }, 5);
         } else {
+            if (target.user.bot && interaction.member)
+                // target = interaction.member;
+                doAfterSec(() => {
+                    if (interaction.channel)
+                        interaction.channel.send(`${atUser(interaction.user)} 還敢炸bot啊`);
+                }, 8);
+
             const bomb = new Bomber({
                 channel: interaction.channel,
-                target: target,
+                target: target.user.bot ? interaction.member : target,
                 count: Math.round(count),
                 period: period
             })
