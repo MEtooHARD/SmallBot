@@ -1,7 +1,7 @@
 import { APIInteractionDataResolvedGuildMember, ButtonStyle, GuildMember, TextBasedChannel } from "discord.js";
 import { doAfterSec } from "../functions/general/delay";
 import { range } from "../functions/general/number";
-import { byChance, randomInt } from "../functions/general/random";
+import { byChance, randomInt } from "../functions/general/number";
 import Button from "./ActionRow/Button";
 
 type BomberOptions = {

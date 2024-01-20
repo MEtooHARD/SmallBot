@@ -64,7 +64,7 @@ export = new class explode extends Command {
                 return interaction.user.id === target.id
             }
 
-            const collector = reply.createMessageComponentCollector({ filter: filter, time: count * period * 1000, max: 1 });
+            const collector = reply.createMessageComponentCollector({ filter: filter, time: (count * period + 1) * 1000, max: 1 });
 
             collector.on('collect', (i: MessageComponentInteraction) => {
                 collector.emit('end');
