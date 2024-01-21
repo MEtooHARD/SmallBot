@@ -1,5 +1,3 @@
-import { gg, f } from "./test";
+const a = [1, 2];
 
-f();
-
-console.log(gg)
+console.log(Object.getOwnPropertyNames(a));
