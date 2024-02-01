@@ -1,8 +1,16 @@
 import { ButtonBuilder, ButtonStyle } from "discord.js";
 
-class Button extends ButtonBuilder {
-    constructor({ customId, label, style, url, disabled, emoji }:
-        { customId: string, label: string, style: ButtonStyle, url?: string, disabled?: boolean, emoji?: string }) {
+export interface ButtonOptions {
+    customId: string,
+    label: string,
+    style: ButtonStyle,
+    url?: string,
+    disabled?: boolean,
+    emoji?: string
+}
+
+export class Button extends ButtonBuilder {
+    constructor({ customId, label, style, url, disabled, emoji }: ButtonOptions) {
         super();
         if (url) this.setURL(url);
         if (label) this.setLabel(label);
@@ -12,5 +20,3 @@ class Button extends ButtonBuilder {
         if (disabled) this.setDisabled(disabled);
     }
 }
-
-export = Button;

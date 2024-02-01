@@ -2,7 +2,7 @@ import { APIInteractionDataResolvedGuildMember, ButtonStyle, GuildMember, TextBa
 import { doAfterSec } from "../functions/general/delay";
 import { range } from "../functions/general/number";
 import { byChance, randomInt } from "../functions/general/number";
-import Button from "./ActionRow/Button";
+import { Button } from "./ActionRow/Button";
 
 type BomberOptions = {
     channel: TextBasedChannel | null,

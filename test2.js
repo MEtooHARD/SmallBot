@@ -1,3 +1,9 @@
-const a = [1, 2];
+let a = 0;
 
-console.log(Object.getOwnPropertyNames(a));
+const adddone = (a) => {
+    a++;
+}
+
+adddone();
+
+console.log(a);

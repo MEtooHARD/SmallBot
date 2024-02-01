@@ -1,6 +1,6 @@
 import { ActionRowBuilder } from "@discordjs/builders";
 import { APIEmbed, InteractionResponse, Message } from "discord.js";
-import Button from "./ActionRow/Button";
+import { Button } from "./ActionRow/Button";
 import Menu from "./ActionRow/StringSelectMenu";
 
 class ActivityData {

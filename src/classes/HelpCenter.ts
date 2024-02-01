@@ -1,7 +1,7 @@
 import { InteractionReplyOptions, InteractionUpdateOptions } from 'discord.js';
 import StringOption from './ActionRow/StringMenuOption';
 import Menu from './ActionRow/StringSelectMenu';
-import MenuRow from './ActionRow/MenuRow';
+import { MenuRow } from './ActionRow/MenuRow';
 import path from 'node:path';
 import fs from 'node:fs';
 import Doc from './Doc';

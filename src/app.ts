@@ -27,7 +27,7 @@ const login = async (token: string) => {
 
 const [prefix, divider] = ['s!', '!'];
 
-const status = CommandDeployStatus['main'];
+const status = CommandDeployStatus['dev'];
 
 const central = new Central();
 
