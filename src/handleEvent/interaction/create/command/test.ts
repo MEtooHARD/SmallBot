@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { filterOptionType, Command } from "../../../../classes/Command";
+import { CommandFilterOptionType, Command } from "../../../../classes/Command";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
@@ -18,7 +18,7 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         DM.send('your UID: ' + UID);
     }
 
-    filter(interaction: filterOptionType): boolean {
+    filter(interaction: CommandFilterOptionType): boolean {
         return true;
     }
 }
