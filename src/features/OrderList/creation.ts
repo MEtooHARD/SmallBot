@@ -1,5 +1,4 @@
-import { ButtonInteraction, Collection, ComponentType, Guild, GuildMFALevel, GuildMember, ModalSubmitInteraction } from "discord.js";
-import Log from "../../classes/Log";
+import { ButtonInteraction, ComponentType, ModalSubmitInteraction } from "discord.js";
 import OrderList from "../../classes/OrderList";
 import { getSvcInfo } from "../../functions/discord/service";
 import order from "./order";
@@ -7,7 +6,7 @@ import end from "./end";
 import edit from "./edit";
 import chalk from "chalk";
 
-const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[], log: Log) => {
+const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[]) => {
     console.log(chalk.green(interaction.user.username) + ': ' + chalk.cyan(interaction.user.id) +
         '\n\tsubmitted' + chalk.yellow(interaction.customId));
 
