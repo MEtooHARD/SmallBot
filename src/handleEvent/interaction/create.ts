@@ -1,5 +1,4 @@
 import { Interaction } from 'discord.js';
-
 import menu from './create/menu';
 import modal from './create/modal';
 import button from './create/button';
