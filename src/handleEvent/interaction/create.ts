@@ -2,7 +2,7 @@ import { Interaction } from 'discord.js';
 import menu from './create/menu';
 import modal from './create/modal';
 import button from './create/button';
-import command from './create/comand';
+import command from './create/command';
 import autocomplete from './create/autocomplete';
 
 const create = async (interaction: Interaction): Promise<void> => {
