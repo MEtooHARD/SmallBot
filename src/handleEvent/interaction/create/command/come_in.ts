@@ -1,9 +1,9 @@
 import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
-import Command from "../../../../classes/Command";
-import { createAudioPlayer, createAudioResource, joinVoiceChannel } from "@discordjs/voice";
+import { Command, CommandFilterOptionType } from "../../../../classes/Command";
+import { joinVoiceChannel } from "@discordjs/voice";
 import { atVoiceChannel } from "../../../../functions/discord/mention";
 
-export = new class explode extends Command {
+export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
         .setName('come_in')
         .setDescription('Invite me to join a voice channel')
@@ -36,7 +36,7 @@ export = new class explode extends Command {
             }
     }
 
-    filter(interaction: ChatInputCommandInteraction): boolean {
+    filter(interaction: CommandFilterOptionType): boolean {
         return true;
     }
 }

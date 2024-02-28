@@ -1,9 +1,9 @@
-import { CommandInteraction, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
+import { ChatInputCommandInteraction, CommandInteraction, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
 
-abstract class Command {
-    abstract execute(interaction: CommandInteraction): void;
-    abstract data: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | SlashCommandSubcommandsOnlyBuilder;
-    abstract filter(interaction: CommandInteraction): boolean;
+export interface Command<T extends ChatInputCommandInteraction | CommandInteraction> {
+    data: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | SlashCommandSubcommandsOnlyBuilder;
+    execute: (interaction: T) => Promise<void>;
+    filter: (interaction: ChatInputCommandInteraction | CommandInteraction) => boolean;
 }
 
-export = Command;
+export type CommandFilterOptionType = ChatInputCommandInteraction | CommandInteraction;

@@ -1,7 +1,7 @@
-import { ChatInputCommandInteraction, PermissionsBitField, SlashCommandBuilder } from "discord.js";
-import Command from "../../../../classes/Command";
+import { ChatInputCommandInteraction, CommandInteraction, SlashCommandBuilder } from "discord.js";
+import { filterOptionType, Command } from "../../../../classes/Command";
 
-export = new class explode extends Command {
+export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
         .setName('test')
         .setDescription('test')
@@ -18,7 +18,7 @@ export = new class explode extends Command {
         DM.send('your UID: ' + UID);
     }
 
-    filter(interaction: ChatInputCommandInteraction): boolean {
+    filter(interaction: filterOptionType): boolean {
         return true;
     }
 }
