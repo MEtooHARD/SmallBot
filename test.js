@@ -1,1 +1,4 @@
-console.log(require('./test2').bot.dev)
+class gg {
+}
+
+console.log(gg + '')

@@ -12,7 +12,7 @@ const create = async (message: Message): Promise<void> => {
     if (shouldRpMsg(message)) {
         if (message.content.startsWith(prefix)) {
             const [command, ...param] = getCmdInfo(message.content);
-            if (command.toLowerCase() === 'fuckoff') {
+            if (command === 'fUCKoFF') {
                 await message.client.destroy();
                 process.exit(1);
             } else if (param.length && command.toLowerCase() === 'say') {
