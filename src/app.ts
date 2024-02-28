@@ -1,6 +1,4 @@
-import { Client, IntentsBitField } from "discord.js";
-import Central from "./classes/Central";
-import { CommandDeployStatus } from "./config/status";
+import { Client, ClientEvents, IntentsBitField } from "discord.js";
 
 const client = new Client(
     {
@@ -14,28 +12,20 @@ const client = new Client(
     }
 );
 
-const on = (event = '', callback = (...inputs: any) => { }) => {
-    if (event) {
-        client.on(event, callback);
-        console.log('client on ' + event);
-    }
+export const on = (event: keyof ClientEvents, callback = (...inputs: any) => { }) => {
+    client.on(event, callback);
+    console.log('client on ' + event);
 };
 
-const login = async (token: string) => {
-    client.login(token)
+export const login = async (token: string) => { client.login(token) };
+
+export const [prefix, divider] = ['s', '!'];
+
+export const shouldDeployCommand = false;
+
+enum Session {
+    dev = 'dev',
+    main = 'main'
 }
 
-const [prefix, divider] = ['s!', '!'];
-
-const status = CommandDeployStatus['dev'];
-
-const central = new Central();
-
-export {
-    on,
-    login,
-    prefix,
-    divider,
-    status,
-    central
-};
+export const session = Session['dev'];

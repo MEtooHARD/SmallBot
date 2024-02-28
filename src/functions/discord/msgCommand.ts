@@ -1,8 +1,8 @@
-import { prefix } from "../../app"
+import { divider, prefix } from "../../app"
 
 
 const getCmdInfo = (content: string) => {
-    return content.substring(prefix.length).split(' ');
+    return content.substring(prefix.length + divider.length).split(' ');
 }
 
 export {

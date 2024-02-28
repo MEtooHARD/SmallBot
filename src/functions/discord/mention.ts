@@ -1,11 +1,9 @@
 import { GuildMember, Snowflake, StageChannel, User, VoiceChannel } from "discord.js";
 
-const atUser = (ID: Snowflake | User | GuildMember) => {
-    if (ID instanceof User)
-        return `<@${ID.id}>`;
-    if (ID instanceof GuildMember)
-        return `<@${ID.user.id}>`;
-    return `<@${ID}>`;
+const atUser = (user: Snowflake | User | GuildMember) => {
+    if (user instanceof User || user instanceof GuildMember)
+        return `<@${user.id}>`;
+    return `<@${user}>`;
 }
 
 const atVoiceChannel = (ID: Snowflake | VoiceChannel | StageChannel) => {

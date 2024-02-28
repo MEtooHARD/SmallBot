@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "postinstall": "tsc",
-    "start": "tsc && node dist/index.js"
+    "start": "tsc && node dist/index.js",
+    "cp": "tsc"
   },
   "repository": {
     "type": "git",

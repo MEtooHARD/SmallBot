@@ -1,9 +1,14 @@
-import { ButtonInteraction, Events } from 'discord.js';
-import Log from '../../../classes/Log';
+import { ButtonInteraction } from 'discord.js';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const button = (interaction: ButtonInteraction) => {
-    const log = new Log({event: 'button', user: interaction.user});
-    
+    fs.readdirSync(path.join(__dirname, 'button'))
+        .filter(file => file.endsWith('.js'))
+        .forEach(name => {
+            if (name === interaction.customId.concat('.js'))
+                require('./button/' + interaction.customId)(interaction);
+        });
 }
 
 export = button;
