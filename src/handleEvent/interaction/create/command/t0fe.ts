@@ -35,7 +35,7 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
             components: t0fe.boardDisplay,
             fetchReply: true
         }));
-        t0fe.setControllerMessage(await (t0fe.boardMessage as Message).reply({ content: t0fe.progress, components: t0fe.controller }));
+        t0fe.setControllerMessage(await (t0fe.boardMessage as Message).reply({ embeds: [t0fe.progress], components: t0fe.controller }));
 
         const collector = (t0fe.controllerMessage as Message)
             .createMessageComponentCollector({
@@ -48,6 +48,9 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
             t0fe.resolveAction(i);
         });
 
+        collector.on('end', dummy => {
+            t0fe.gameover();
+        })
     }
 
     filter(interaction: CommandFilterOptionType): boolean {

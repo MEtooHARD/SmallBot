@@ -1,8 +1,10 @@
-import { ButtonInteraction, ButtonStyle, Message, User } from "discord.js";
-import { randomInt, range } from "../functions/general/number";
+import { APIEmbed, ButtonInteraction, ButtonStyle, Message, User } from "discord.js";
 import { Button, EmptyButton } from "./ActionRow/Button";
-import ButtonRow from "./ActionRow/ButtonRow";
 import { randomPick } from "../functions/general/array";
+import { delaySec } from "../functions/general/delay";
+import { atUser } from "../functions/discord/mention";
+import { byChance, range } from "../functions/general/number";
+import ButtonRow from "./ActionRow/ButtonRow";
 
 type XY = {
     x: number
@@ -45,6 +47,14 @@ export default class T0FE {
         this._newNumber = this.randPutNumber();
     };
 
+    gameover = () => {
+        this._gameover = true
+        this.controllerMessage?.edit({
+            embeds: [this.progress],
+            components: []
+        });
+    };
+
     async resolveAction(interaction: ButtonInteraction) {
         await interaction.deferUpdate();
         switch (interaction.customId.replace('$', '')) {
@@ -65,24 +75,32 @@ export default class T0FE {
         this._gameover = Boolean(!this._newNumber);
         if (!this._gameover) this._steps++;
         await (this.boardMessage as Message).edit({ components: this.boardDisplay });
-        await interaction.editReply({ content: this.progress, components: this.controller });
+        await delaySec(0.5);
+        await interaction.editReply({ embeds: [this.progress], components: this.controller });
     }
 
-    get progress() {
-        return (this._gameover ? 'GAME OVER\n' : '')
-            + this.score + '\n'
-            + this.steps + '\n'
-            + this.highScore;
-    }
-
-    get score() {
-        return `Score: ${this._score}`;
-    }
-    get steps() {
-        return `Steps: ${this._steps}`;
-    }
-    get highScore() {
-        return `High Score: ${this._highScore}`;
+    get progress(): APIEmbed {
+        return {
+            title: (this._gameover ? 'Game Over' : ''),
+            description: 'Player: ' + atUser(this.player),
+            fields: [
+                {
+                    name: 'Score',
+                    value: this._score.toString(),
+                    inline: true
+                },
+                {
+                    name: 'Steps',
+                    value: this._steps.toString(),
+                    inline: true
+                },
+                {
+                    name: 'High Score',
+                    value: this._highScore.toString(),
+                    inline: true
+                }
+            ]
+        }
     }
 
     left() {
@@ -212,8 +230,18 @@ export default class T0FE {
 
     setControllerMessage = (message: Message): void => { this.controllerMessage = message };
 
-    randPutNumber(number: number = 2): NewNumber | null {
-        let emptyXY: XY[] = [];
+    randPutNumber(): NewNumber | null {
+        let emptyXY: XY[] = [], number: number =
+            this._highScore >= 512 ?
+                this._highScore >= 1024 ?
+                    this._highScore >= 2048 ?
+                        (randomPick([64, 32, 16, 8, 4, 2]) as number[])[0]
+                        :
+                        ((randomPick([32, 16, 8, 4, 2]) as number[])[0])
+                    :
+                    ((randomPick([8, 4, 2]) as number[])[0])
+                :
+                (byChance(50) ? 4 : 2);
         this.board.forEach((nums, i) => nums.forEach((num, j) => {
             if (num === 0) { emptyXY.push({ x: i, y: j }) }
         }));
@@ -235,10 +263,13 @@ export default class T0FE {
                     style: (x === this._newNumber?.position.x && y === this._newNumber.position.y) ?
                         ButtonStyle.Success
                         :
-                        (number === 0) ?
+                        number === 0 ?
                             ButtonStyle.Secondary
                             :
-                            ButtonStyle.Primary
+                            number >= 512 ?
+                                ButtonStyle.Danger
+                                :
+                                ButtonStyle.Primary
                     ,
                     disabled: true,
                 }))

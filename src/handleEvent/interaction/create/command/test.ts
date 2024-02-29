@@ -10,23 +10,23 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         .setDMPermission(false)
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-        const t0fe = new T0FE(interaction.user, 5, 5);
-        t0fe.setBoardMessage(await interaction.reply({
-            components: t0fe.boardDisplay,
-            fetchReply: true
-        }));
-        t0fe.setControllerMessage(await (t0fe.boardMessage as Message).reply({ content: t0fe.progress, components: t0fe.controller }));
+        // const t0fe = new T0FE(interaction.user, 5, 5);
+        // t0fe.setBoardMessage(await interaction.reply({
+        //     components: t0fe.boardDisplay,
+        //     fetchReply: true
+        // }));
+        // t0fe.setControllerMessage(await (t0fe.boardMessage as Message).reply({ content: t0fe.progress, components: t0fe.controller }));
 
-        const collector = (t0fe.controllerMessage as Message)
-            .createMessageComponentCollector({
-                filter: interaction => interaction.user.id === t0fe.player.id,
-                idle: T0FE.idleTime,
-                componentType: ComponentType.Button
-            });
+        // const collector = (t0fe.controllerMessage as Message)
+        //     .createMessageComponentCollector({
+        //         filter: interaction => interaction.user.id === t0fe.player.id,
+        //         idle: T0FE.idleTime,
+        //         componentType: ComponentType.Button
+        //     });
 
-        collector.on('collect', i => {
-            t0fe.resolveAction(i);
-        });
+        // collector.on('collect', i => {
+        //     t0fe.resolveAction(i);
+        // });
 
     }
 
