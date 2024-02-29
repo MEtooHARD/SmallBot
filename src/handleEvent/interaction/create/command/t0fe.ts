@@ -1,7 +1,6 @@
-import { ChatInputCommandInteraction, CommandInteraction, ComponentType, Message, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, ComponentType, Message, SlashCommandBuilder } from "discord.js";
 import { CommandFilterOptionType, Command } from "../../../../classes/Command";
 import T0FE from "../../../../classes/T0FE";
-import { range } from "../../../../functions/general/number";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
@@ -30,7 +29,7 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         .setDMPermission(false)
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-        const [rowSize, colSize] = [interaction.options.getInteger('row_size'), interaction.options.getInteger('col_size')]
+        const [rowSize, colSize] = [interaction.options.getInteger('row_size'), interaction.options.getInteger('col_size')];
         const t0fe = new T0FE(interaction.user, rowSize || 5, colSize || 5);
         t0fe.setBoardMessage(await interaction.reply({
             components: t0fe.boardDisplay,

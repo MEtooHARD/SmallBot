@@ -30,19 +30,19 @@ export default class T0FE {
     private _gameover: boolean = false;
     private _newNumber: NewNumber | null;
     private _highScore: number = 2;
-    private _rowSize: number = 5;
-    private _colSize: number = 5;
+    private _rowSize: number = 4;
+    private _colSize: number = 4;
 
     boardMessage: Message | null = null;
     controllerMessage: Message | null = null;
     player: User;
 
     constructor(player: User, row: number, col: number) {
+        this._rowSize = row - 1;
+        this._colSize = col - 1;
         this.board = range(0, this._rowSize).map(num => range(0, this._colSize).map(num => 0));
         this.player = player;
         this._newNumber = this.randPutNumber();
-        this._rowSize = row;
-        this._colSize = col;
     };
 
     async resolveAction(interaction: ButtonInteraction) {
@@ -227,8 +227,8 @@ export default class T0FE {
     };
 
     get boardDisplay() {
-        return this.board.map((numberRow, x) =>
-            new ButtonRow(numberRow.map((number, y) =>
+        return this.board.map((numbers, x) =>
+            new ButtonRow(numbers.map((number, y) =>
                 new Button({
                     customId: `$${x}${y}`,
                     label: number === 0 ? '\u200b' : number.toString(),
