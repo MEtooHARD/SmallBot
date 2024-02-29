@@ -1,4 +1,5 @@
 const { REST, Routes } = require('discord.js');
+import { session } from './app';
 import config from './config.json';
 const fs = require('node:fs');
 const path = require('node:path');
@@ -13,7 +14,7 @@ const deployCommand = async () => {
 	const commands = commandFiles.map((file: string) => require('./handleEvent/interaction/create/command/' + file).data)
 
 	// Construct and prepare an instance of the REST module
-	const rest = new REST({ version: '10' }).setToken(config.bot.main.token);
+	const rest = new REST({ version: '10' }).setToken(config.bot[session].token);
 
 	// and deploy your commands!
 	try {
@@ -21,7 +22,7 @@ const deployCommand = async () => {
 
 		// The put method is used to fully refresh all commands in the guild with the current set
 		const data = await rest.put(
-			Routes.applicationCommands(config.bot.main.id),
+			Routes.applicationCommands(config.bot[session].id),
 			{ body: commands },
 		);
 

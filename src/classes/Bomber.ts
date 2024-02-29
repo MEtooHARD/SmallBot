@@ -62,7 +62,7 @@ class Bomber {
      */
     bomb = async (): Promise<void> => {
         if (!isNaN(this.count))
-            range({ start: 1, end: this.count }).forEach(async x => {
+            range(1, this.count).forEach(async x => {
                 await doAfterSec(async () => {
                     if (this.bombing && this.target instanceof GuildMember)
                         await this.channel?.send(`<@${this.target?.id}> ${byChance(75) ? this.additionalMessage() : ''}`);
