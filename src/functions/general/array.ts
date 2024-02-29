@@ -9,9 +9,10 @@ import { randomInt } from "./number";
  * @param cut Whether to cut the chosen ones. default `false`
  * @return An array containing the picked elements.
  */
-const randomPick = (source: any[], count: number = 1, cut: boolean = false): any[] => {
+const randomPick = <T>(source: T[], count: number = 1, cut: boolean = false): T[] | null[] => {
+    if (source.length < 1) return [null];
     if (count <= 0) return [];
-    const result: any[] = [];
+    const result: T[] = [];
     let randomN: number;
     for (let i = 0; i < count; i++) {
         randomN = randomInt(0, source.length - 1);

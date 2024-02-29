@@ -1,13 +1,9 @@
 
 
 const range = (start = 0, end = 0): Array<number> => {
-    if (start <= end) return Array.from(Array(end - start + 1).keys()).map(x => x + start);
-    try {
-        new Array(end - start);
-    } catch (e) {
-        console.error(e);
-    }
-    return [];
+    if (start < end) return Array.from(Array(end - start + 1).keys()).map(x => x + start);
+    if (start === end) return [];
+    return Array.from(Array(start - end + 1).keys()).reverse().map(x => x + end);
 }
 
 const restrictRange = (num: number, lowLimit: number, highLimit: number) => {
@@ -15,8 +11,10 @@ const restrictRange = (num: number, lowLimit: number, highLimit: number) => {
 }
 
 const randomNumberRange = (low: number, high: number): number => {
-    if (low === high) throw new Error('low and high cannnot be equal.');
-    if (low > high) [low, high] = [high, low];
+    if (low > high) {
+        [low, high] = [high, low]
+        console.log('warning: low is higher than high');
+    };
     return Math.random() * (high - low) + low;
 }
 
