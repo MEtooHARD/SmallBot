@@ -5,7 +5,6 @@ import { doAfterSec } from '../../functions/general/delay';
 import { prefix } from '../../app';
 import { byChance, restrictRange } from '../../functions/general/number';
 import ButtonRow from '../../classes/ActionRow/ButtonRow';
-import { atUser } from '../../functions/discord/mention';
 
 const create = async (message: Message): Promise<void> => {
 
@@ -30,7 +29,7 @@ const create = async (message: Message): Promise<void> => {
             }
         } else if (message.content.includes('臭')) {
             if (byChance(50)) message.reply('好臭');
-        } else if (byChance(5)) {
+        } else if (byChance(5) && !message.channel.isDMBased()) {
             const earn500 = (disabled: boolean = false) => [new ButtonRow([{
                 customId: 'earn500',
                 label: 'Earn $500',

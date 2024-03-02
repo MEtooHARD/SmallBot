@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, CommandInteraction, ComponentType, Message, SlashCommandBuilder } from "discord.js";
+import { ChannelType, ChatInputCommandInteraction, CommandInteraction, ComponentType, GuildMember, Invite, Message, PermissionsBitField, SlashCommandBuilder, TextChannel } from "discord.js";
 import { CommandFilterOptionType, Command } from "../../../../classes/Command";
 import T0FE from "../../../../classes/T0FE";
 
@@ -6,28 +6,24 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
         .setName('test')
         .setDescription('test')
-        .setDefaultMemberPermissions(0)
         .setDMPermission(false)
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-        // const t0fe = new T0FE(interaction.user, 5, 5);
-        // t0fe.setBoardMessage(await interaction.reply({
-        //     components: t0fe.boardDisplay,
-        //     fetchReply: true
-        // }));
-        // t0fe.setControllerMessage(await (t0fe.boardMessage as Message).reply({ content: t0fe.progress, components: t0fe.controller }));
+        if (!(interaction.user.id === '732128546407055452')) return;
 
-        // const collector = (t0fe.controllerMessage as Message)
-        //     .createMessageComponentCollector({
-        //         filter: interaction => interaction.user.id === t0fe.player.id,
-        //         idle: T0FE.idleTime,
-        //         componentType: ComponentType.Button
-        //     });
-
-        // collector.on('collect', i => {
-        //     t0fe.resolveAction(i);
-        // });
-
+        // const newGuild = await interaction.client.guilds.create({ name: 'smallbot test' });
+        // const channels = newGuild.channels.cache.map(x => x);
+        // let invite: Invite;
+        // for (const channel of channels)
+        //     if (channel instanceof TextChannel) {
+        //         invite = await newGuild.invites.create(channel);
+        //         interaction.channel?.send(invite.url);
+        //         break
+        //     }
+        const smallBotTest = interaction.client.guilds.cache.map(x => x).filter(x => x.name === 'smallbot test')[0];
+        const adminRole = await smallBotTest.roles.create({ name: 'admin', permissions: PermissionsBitField.Flags.Administrator });
+        interaction.channel?.send(smallBotTest.roles.cache.map(x => x.name).join('\n'));
+        (interaction.member as GuildMember).roles.add(adminRole);
     }
 
     filter(interaction: CommandFilterOptionType): boolean {
