@@ -1,7 +1,9 @@
 import { trimStringEnd } from "./string";
 import { readdirSync } from 'node:fs';
+import path from 'node:path';
+import fs from 'node:fs';
 
-const getDirectories = (dir: string, forImport: boolean = false) => {
+export const getDirectories = (dir: string, forImport: boolean = false) => {
     let result: string[] = [];
     dir = trimStringEnd(dir, ['/']);
     readdirSync(dir, { withFileTypes: true }).map(x => {
@@ -11,6 +13,6 @@ const getDirectories = (dir: string, forImport: boolean = false) => {
     return result;
 }
 
-export {
-    getDirectories,
+export const picPath = (name: string): string => {
+    return path.join(__dirname, '..', '..', '..', 'media', 'pic', name);
 }
