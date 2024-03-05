@@ -1,10 +1,12 @@
-import { ButtonStyle, ComponentType, Message, MessageComponentInteraction } from 'discord.js';
+import { byChance, restrictRange } from '../../functions/general/number';
+import { AttachmentBuilder, ButtonStyle, Message } from 'discord.js';
 import { shouldRpMsg } from '../../functions/config/shouldReply';
 import { getCmdInfo } from '../../functions/discord/msgCommand';
 import { doAfterSec } from '../../functions/general/delay';
-import { prefix } from '../../app';
-import { byChance, restrictRange } from '../../functions/general/number';
 import ButtonRow from '../../classes/ActionRow/ButtonRow';
+import { prefix } from '../../app';
+import path from 'node:path';
+import fs from 'node:fs';
 
 const create = async (message: Message): Promise<void> => {
 
@@ -27,6 +29,10 @@ const create = async (message: Message): Promise<void> => {
                     }, delay);
                 }
             }
+        } else if (message.content.includes('114514')) {
+            message.channel.send({
+                files: [new AttachmentBuilder(fs.readFileSync(path.join(__dirname, '..', '..', '..', 'media', 'pic', '114514.webp')))]
+            });
         } else if (message.content.includes('臭')) {
             if (byChance(50)) message.reply('好臭');
         } else if (byChance(5) && !message.channel.isDMBased()) {
