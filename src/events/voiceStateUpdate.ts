@@ -1,6 +1,6 @@
-import { on } from "../../app";
+import { on } from "../app";
 import { Events, VoiceState } from "discord.js";
-import update from "../../handleEvent/update/voiceState";
+import update from "../handleEvent/voiceStateUpdate";
 
 const voiceStateUpdate = () => {
     on(Events.VoiceStateUpdate, async (oldState: VoiceState, newState: VoiceState) => {

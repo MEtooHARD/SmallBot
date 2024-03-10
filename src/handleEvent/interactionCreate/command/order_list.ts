@@ -1,6 +1,6 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import OrderList from '../../../../classes/OrderList';
-import { Command, CommandFilterOptionType } from '../../../../classes/Command';
+import OrderList from '../../../classes/OrderList';
+import { Command } from '../../../classes/Command';
 
 
 export = new class order_list implements Command<CommandInteraction> {
@@ -13,7 +13,7 @@ export = new class order_list implements Command<CommandInteraction> {
         interaction.showModal(OrderList.creationModal());
     }
 
-    filter = (interaction: CommandFilterOptionType) => {
+    filter(interaction: CommandInteraction): true | string {
         return true;
     }
 }

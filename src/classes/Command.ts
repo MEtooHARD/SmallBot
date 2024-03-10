@@ -3,7 +3,5 @@ import { ChatInputCommandInteraction, CommandInteraction, SlashCommandBuilder, S
 export interface Command<T extends ChatInputCommandInteraction | CommandInteraction> {
     data: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | SlashCommandSubcommandsOnlyBuilder;
     execute: (interaction: T) => Promise<void>;
-    filter: (interaction: ChatInputCommandInteraction | CommandInteraction) => boolean;
+    filter: (interaction: T) => true | string;
 }
-
-export type CommandFilterOptionType = ChatInputCommandInteraction | CommandInteraction;

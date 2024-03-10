@@ -1,9 +1,9 @@
 import { Interaction } from 'discord.js';
-import menu from './create/menu';
-import modal from './create/modal';
-import button from './create/button';
-import command from './create/command';
-import autocomplete from './create/autocomplete';
+import menu from './interactionCreate/menu';
+import modal from './interactionCreate/modal';
+import button from './interactionCreate/button';
+import command from './interactionCreate/command';
+import autocomplete from './interactionCreate/autocomplete';
 
 const create = async (interaction: Interaction): Promise<void> => {
     if (interaction.isCommand()) command(interaction);

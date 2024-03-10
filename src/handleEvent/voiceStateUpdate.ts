@@ -1,8 +1,8 @@
 import { VoiceConnectionStatus, createAudioPlayer, createAudioResource, entersState, generateDependencyReport, joinVoiceChannel } from '@discordjs/voice';
 import { VoiceState } from 'discord.js';
 import path from 'node:path';
-import { byChance, randomInt } from '../../functions/general/number';
-import { delaySec, doAfterSec } from '../../functions/general/delay';
+import { byChance, randomInt } from '../functions/general/number';
+import { delaySec, doAfterSec } from '../functions/general/delay';
 
 const update = async (oldState: VoiceState, newState: VoiceState): Promise<void> => {
     if (!newState.member?.user.equals(newState.client.user) && newState.channel && newState.guild) {

@@ -1,10 +1,10 @@
-import { byChance, restrictRange } from '../../functions/general/number';
+import { byChance, restrictRange } from '../functions/general/number';
 import { AttachmentBuilder, ButtonStyle, Message } from 'discord.js';
-import { shouldRpMsg } from '../../functions/config/shouldReply';
-import { getCmdInfo } from '../../functions/discord/msgCommand';
-import { doAfterSec } from '../../functions/general/delay';
-import ButtonRow from '../../classes/ActionRow/ButtonRow';
-import { prefix } from '../../app';
+import { shouldRpMsg } from '../functions/config/shouldReply';
+import { getCmdInfo } from '../functions/discord/msgCommand';
+import { doAfterSec } from '../functions/general/delay';
+import ButtonRow from '../classes/ActionRow/ButtonRow';
+import { prefix } from '../app';
 import path from 'node:path';
 import fs from 'node:fs';
 

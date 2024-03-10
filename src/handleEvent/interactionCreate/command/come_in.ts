@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
-import { Command, CommandFilterOptionType } from "../../../../classes/Command";
+import { Command } from "../../../classes/Command";
 import { joinVoiceChannel } from "@discordjs/voice";
-import { atVoiceChannel } from "../../../../functions/discord/mention";
+import { atVoiceChannel } from "../../../functions/discord/mention";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
@@ -36,7 +36,7 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
             }
     }
 
-    filter(interaction: CommandFilterOptionType): boolean {
+    filter(interaction: ChatInputCommandInteraction): true | string {
         return true;
     }
 }

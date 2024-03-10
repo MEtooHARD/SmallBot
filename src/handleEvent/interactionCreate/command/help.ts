@@ -1,6 +1,6 @@
 import { BaseInteraction, CommandInteraction, SlashCommandBuilder, StringSelectMenuInteraction } from 'discord.js';
-import { HelpCenter } from '../../../../classes/HelpCenter';
-import { Command, CommandFilterOptionType } from '../../../../classes/Command';
+import { HelpCenter } from '../../../classes/HelpCenter';
+import { Command } from '../../../classes/Command';
 
 
 export = new class help implements Command<CommandInteraction> {
@@ -39,7 +39,7 @@ export = new class help implements Command<CommandInteraction> {
         });
     }
 
-    filter = (interaction: CommandFilterOptionType) => {
+    filter(interaction: CommandInteraction): true | string {
         return true;
     }
 }

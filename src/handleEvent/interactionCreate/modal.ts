@@ -1,5 +1,5 @@
 import { ModalSubmitInteraction } from 'discord.js';
-import { getSvcDir, getSvcInfo } from '../../../functions/discord/service';
+import { getSvcDir, getSvcInfo } from '../../functions/discord/service';
 import path from 'node:path';
 import chalk from 'chalk';
 

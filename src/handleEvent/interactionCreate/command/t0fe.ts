@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, ComponentType, Message, SlashCommandBuilder } from "discord.js";
-import { CommandFilterOptionType, Command } from "../../../../classes/Command";
-import T0FE from "../../../../classes/T0FE";
+import { Command } from "../../../classes/Command";
+import T0FE from "../../../classes/T0FE";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
@@ -53,7 +53,7 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         })
     }
 
-    filter(interaction: CommandFilterOptionType): boolean {
+    filter(interaction: ChatInputCommandInteraction): true | string {
         return true;
     }
 }

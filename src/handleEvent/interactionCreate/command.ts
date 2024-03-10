@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js';
-import { logCommand } from '../../../functions/general/log';
-import { Command } from '../../../classes/Command';
+import { logCommand } from '../../functions/general/log';
+import { Command } from '../../classes/Command';
 import path from 'node:path';
 import fs from 'node:fs';
 

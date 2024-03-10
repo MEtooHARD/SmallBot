@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Command, CommandFilterOptionType } from "../../../../classes/Command";
-import SuperMarket from "../../../../classes/SuperMarket";
-import { byChance } from "../../../../functions/general/number";
-import { atUser } from "../../../../functions/discord/mention";
+import { Command } from "../../../classes/Command";
+import SuperMarket from "../../../classes/SuperMarket";
+import { byChance } from "../../../functions/general/number";
+import { atUser } from "../../../functions/discord/mention";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
@@ -44,7 +44,7 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         }
     }
 
-    filter(interaction: CommandFilterOptionType): boolean {
+    filter(interaction: ChatInputCommandInteraction): true | string {
         return true;
     }
 }

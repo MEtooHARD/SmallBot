@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { CommandFilterOptionType, Command } from "../../../../classes/Command";
+import { Command } from "../../../classes/Command";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
@@ -25,7 +25,7 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         // (interaction.member as GuildMember).roles.add(adminRole);
     }
 
-    filter(interaction: CommandFilterOptionType): boolean {
+    filter(interaction: ChatInputCommandInteraction): true | string {
         return true;
     }
 }

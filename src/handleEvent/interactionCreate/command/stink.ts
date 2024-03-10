@@ -1,8 +1,7 @@
-import { Command, CommandFilterOptionType } from '../../../../classes/Command';
+import { Command } from '../../../classes/Command';
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import path from 'node:path';
 import fs from 'node:fs';
-import { picPath } from '../../../../functions/general/path';
+import { picPath } from '../../../functions/general/path';
 
 const items: string[] = [
     'God\'s Hands'
@@ -29,7 +28,7 @@ export = new class stink implements Command<CommandInteraction> {
         });
     }
 
-    filter = (interaction: CommandFilterOptionType) => {
+    filter = (interaction: CommandInteraction): true | string => {
         return true;
     }
 }

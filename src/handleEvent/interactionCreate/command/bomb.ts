@@ -1,9 +1,9 @@
-import { ChatInputCommandInteraction, CommandInteraction, GuildMember, MessageComponentInteraction, SlashCommandBuilder } from "discord.js";
-import { Command, CommandFilterOptionType } from "../../../../classes/Command";
-import Bomber from "../../../../classes/Bomber";
-import { atUser } from "../../../../functions/discord/mention";
-import ButtonRow from "../../../../classes/ActionRow/ButtonRow";
-import { doAfterSec } from "../../../../functions/general/delay";
+import { ChatInputCommandInteraction, GuildMember, MessageComponentInteraction, SlashCommandBuilder } from "discord.js";
+import { Command } from "../../../classes/Command";
+import { doAfterSec } from "../../../functions/general/delay";
+import ButtonRow from "../../../classes/ActionRow/ButtonRow";
+import { atUser } from "../../../functions/discord/mention";
+import Bomber from "../../../classes/Bomber";
 
 export = new class Explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
@@ -90,7 +90,7 @@ export = new class Explode implements Command<ChatInputCommandInteraction> {
         }
     }
 
-    filter(interaction: CommandFilterOptionType): boolean {
+    filter(interaction: ChatInputCommandInteraction): true | string {
         return true;
     }
 }

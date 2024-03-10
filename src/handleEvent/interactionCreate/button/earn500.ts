@@ -1,7 +1,7 @@
 import { ButtonInteraction, Locale } from "discord.js";
-import { atUser } from "../../../../functions/discord/mention";
-import { delaySec } from "../../../../functions/general/delay";
-import { randomNumberRange } from "../../../../functions/general/number";
+import { atUser } from "../../../functions/discord/mention";
+import { delaySec } from "../../../functions/general/delay";
+import { randomNumberRange } from "../../../functions/general/number";
 
 export = async (interaction: ButtonInteraction) => {
     const collector = (await interaction.reply({

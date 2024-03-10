@@ -1,5 +1,5 @@
-import del from "../../handleEvent/message/delete";
-import { on } from "../../app";
+import del from "../handleEvent/messageDelete";
+import { on } from "../app";
 import { Events, Message } from "discord.js";
 
 const messageDelete = () => {
