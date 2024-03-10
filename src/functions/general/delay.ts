@@ -12,7 +12,7 @@ const doAfterSec = async (callback: Function, sec: number) => {
     return null;
 }
 
-const delaySec = (sec: number) => new Promise(resolve => setTimeout(resolve, sec * 1000))
+const delaySec = (sec: number) => new Promise(resolve => setTimeout(resolve, sec * 1000));
 
 export {
     doAfterSec,

@@ -1,7 +1,6 @@
 import { APIEmbed, ButtonInteraction, ButtonStyle, Message, User } from "discord.js";
 import { Button, EmptyButton } from "./ActionRow/Button";
 import { randomPick } from "../functions/general/array";
-import { delaySec } from "../functions/general/delay";
 import { atUser } from "../functions/discord/mention";
 import { byChance, range } from "../functions/general/number";
 import ButtonRow from "./ActionRow/ButtonRow";
@@ -26,24 +25,24 @@ enum Action {
 export default class T0FE {
     static idleTime = 60 * 1000;
 
-    private board: number[][];
+    private board: number[][] = [];
     private _score: number = 0;
     private _steps: number = 0;
-    private _gameover: boolean = false;
-    private _newNumber: NewNumber | null;
-    private _highScore: number = 2;
     private _rowSize: number = 4;
     private _colSize: number = 4;
+    private _highScore: number = 2;
+    private _gameover: boolean = false;
+    private _newNumber: NewNumber | null;
 
+    player: User;
     boardMessage: Message | null = null;
     controllerMessage: Message | null = null;
-    player: User;
 
     constructor(player: User, row: number, col: number) {
+        this.player = player;
         this._rowSize = row - 1;
         this._colSize = col - 1;
         this.board = range(0, this._rowSize).map(num => range(0, this._colSize).map(num => 0));
-        this.player = player;
         this._newNumber = this.randPutNumber();
     };
 
@@ -74,9 +73,8 @@ export default class T0FE {
         this._newNumber = this.randPutNumber();
         this._gameover = Boolean(!this._newNumber);
         if (!this._gameover) this._steps++;
-        await (this.boardMessage as Message).edit({ components: this.boardDisplay });
-        await delaySec(0.5);
-        await interaction.editReply({ embeds: [this.progress], components: this.controller });
+        (this.boardMessage as Message).edit({ components: this.boardDisplay });
+        interaction.editReply({ embeds: [this.progress], components: this.controller });
     }
 
     get progress(): APIEmbed {
