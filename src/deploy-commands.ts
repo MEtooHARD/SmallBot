@@ -7,11 +7,11 @@ const path = require('node:path');
 const deployCommand = async () => {
 
 	// Grab all the command files from the commands directory you created earlier
-	const commandsPath = path.join(__dirname, 'handleEvent', 'interaction', 'create', 'command');
+	const commandsPath = path.join(__dirname, 'handleEvent', 'interactionCreate', 'command');
 	const commandFiles = fs.readdirSync(commandsPath).filter((file: string) => file.endsWith('.js'));
 
 	// Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
-	const commands = commandFiles.map((file: string) => require('./handleEvent/interaction/create/command/' + file).data)
+	const commands = commandFiles.map((file: string) => require('./handleEvent/interactionCreate/command/' + file).data)
 
 	// Construct and prepare an instance of the REST module
 	const rest = new REST({ version: '10' }).setToken(config.bot[session].token);
