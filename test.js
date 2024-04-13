@@ -1,11 +1,2 @@
-class g {
-
-}
-
-class gg extends g {
-
-}
-class ggg {
-
-}
-console.log(new gg() instanceof ggg);
+const a = Array.from(Array(10).keys()).map(x => Array.from(Array(10).keys()))
+console.log(a)
