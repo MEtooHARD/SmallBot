@@ -35,7 +35,7 @@ const create = async (message: Message): Promise<void> => {
             });
         } else if (message.content.includes('臭')) {
             if (byChance(50)) message.reply('好臭');
-        } else if (byChance(5) && !message.channel.isDMBased()) {
+        } else if (byChance(2) && !message.channel.isDMBased()) {
             const earn500 = (disabled: boolean = false) => [new ButtonRow([{
                 customId: 'earn500',
                 label: 'Earn $500',
