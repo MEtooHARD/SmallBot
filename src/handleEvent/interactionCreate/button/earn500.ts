@@ -4,7 +4,7 @@ import { delaySec } from "../../../functions/general/delay";
 import { byChance, randomNumberRange } from "../../../functions/general/number";
 
 export = async (interaction: ButtonInteraction) => {
-    interaction.message.delete();
+    try { interaction.message.edit({ components: [] }); } catch (e) { }
     if (byChance(50)) {
         const collector = (await interaction.reply({
             content: atUser(interaction.user) + ' 這你也信?',
