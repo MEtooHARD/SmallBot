@@ -1,12 +1,13 @@
-import { byChance, restrictRange } from '../functions/general/number';
+import { byChance, randomInt, restrictRange } from '../functions/general/number';
 import { AttachmentBuilder, ButtonStyle, Message } from 'discord.js';
 import { shouldRpMsg } from '../functions/config/shouldReply';
 import { getCmdInfo } from '../functions/discord/msgCommand';
-import { doAfterSec } from '../functions/general/delay';
+import { delaySec, doAfterSec } from '../functions/general/delay';
 import ButtonRow from '../classes/ActionRow/ButtonRow';
 import { prefix } from '../app';
 import path from 'node:path';
 import fs from 'node:fs';
+import { earn500 } from '../functions/discord/cmps';
 
 const create = async (message: Message): Promise<void> => {
 
@@ -17,10 +18,9 @@ const create = async (message: Message): Promise<void> => {
                 await message.client.destroy();
                 process.exit(1);
             } else if (param.length && command.toLowerCase() === 'say') {
-                if (byChance(100)) {
+                if (byChance(5)) {
                     message.reply('笑死');
-                }
-                else {
+                } else {
                     let delay: number = 0;
                     message.delete();
                     if (!isNaN(Number(param[0]))) delay = restrictRange(Number(param.shift()), 0, 20);
@@ -28,7 +28,19 @@ const create = async (message: Message): Promise<void> => {
                         message.channel.send(param.join(' '));
                     }, delay);
                 }
+            } else if (command === 't') {
+                const emojiRegex = /\b\w+\:\d{19}\b/g;
+                // console.log(param)
+                message.delete();
+                await message.channel.sendTyping();
+                // await delaySec(randomInt(5, 10));
+                if (param.length) message.channel.send(param.map(text => emojiRegex.test(text) ? `<:${text}>` : text).join(' '));
             }
+        } else if (byChance(1)) {
+            do {
+                try { message.channel.sendTyping(); } catch (e) { }
+                delaySec(randomInt(8, 15));
+            } while (byChance(10))
         } else if (message.content.includes('114514')) {
             message.channel.send({
                 files: [new AttachmentBuilder(fs.readFileSync(path.join(__dirname, '..', '..', '..', 'media', 'pic', '114514.webp')))]
@@ -36,12 +48,7 @@ const create = async (message: Message): Promise<void> => {
         } else if (message.content.includes('臭')) {
             if (byChance(50)) message.reply('好臭');
         } else if (byChance(2) && !message.channel.isDMBased()) {
-            const earn500 = (disabled: boolean = false) => [new ButtonRow([{
-                customId: 'earn500',
-                label: 'Earn $500',
-                style: ButtonStyle.Primary,
-                disabled: disabled
-            }])];
+
 
             message.channel.send({
                 content: 'Being poor?',

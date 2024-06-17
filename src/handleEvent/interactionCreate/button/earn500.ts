@@ -2,9 +2,10 @@ import { ButtonInteraction, Locale } from "discord.js";
 import { atUser } from "../../../functions/discord/mention";
 import { delaySec } from "../../../functions/general/delay";
 import { byChance, randomNumberRange } from "../../../functions/general/number";
+import { earn500 } from "../../../functions/discord/cmps";
 
 export = async (interaction: ButtonInteraction) => {
-    try { interaction.message.edit({ components: [] }); } catch (e) { }
+    try { interaction.message.edit({ components: earn500(true) }); } catch (e) { }
     if (byChance(50)) {
         const collector = (await interaction.reply({
             content: atUser(interaction.user) + ' 這你也信?',

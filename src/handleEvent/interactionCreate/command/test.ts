@@ -9,7 +9,18 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         if (!(interaction.user.id === '732128546407055452')) return;
-
+        interaction.reply({
+            embeds: [
+                {
+                    fields: [
+                        {
+                            name: 'test',
+                            value: '```test```'
+                        }
+                    ]
+                }
+            ]
+        })
         // const newGuild = await interaction.client.guilds.create({ name: 'smallbot test' });
         // const channels = newGuild.channels.cache.map(x => x);
         // let invite: Invite;
