@@ -1,4 +1,4 @@
-import { Colors, EmbedData } from "discord.js";
+import { EmbedData } from "discord.js";
 
 const LiteraryInquisition = (): EmbedData => {
     return {
