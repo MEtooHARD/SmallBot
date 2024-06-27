@@ -1,13 +1,13 @@
 import { byChance, randomInt, restrictRange } from '../functions/general/number';
-import { AttachmentBuilder, ButtonStyle, Message } from 'discord.js';
+import { AttachmentBuilder, Message } from 'discord.js';
 import { shouldRpMsg } from '../functions/config/shouldReply';
 import { getCmdInfo } from '../functions/discord/msgCommand';
 import { delaySec, doAfterSec } from '../functions/general/delay';
-import ButtonRow from '../classes/ActionRow/ButtonRow';
 import { prefix } from '../app';
 import path from 'node:path';
 import fs from 'node:fs';
 import { earn500 } from '../functions/discord/cmps';
+import homo from '../functions/general/homo';
 
 const create = async (message: Message): Promise<void> => {
 
@@ -36,6 +36,11 @@ const create = async (message: Message): Promise<void> => {
                 // await delaySec(randomInt(5, 10));
                 if (param.length) message.channel.send(param.map(text => emojiRegex.test(text) ? `<:${text}>` : text).join(' '));
             }
+        } else if (/\d/.test(message.content) && byChance(5)) {
+            const numbers = message.content.match(/\d+/gm) as RegExpMatchArray;
+            const theOneChosenShit = numbers[randomInt(0, numbers.length - 1)];
+            const result = homo(Number(theOneChosenShit));
+            message.reply(`${theOneChosenShit} = \`${result}\``);
         } else if (byChance(1)) {
             do {
                 try { message.channel.sendTyping(); } catch (e) { }

@@ -40,7 +40,7 @@ export = new class Explode implements Command<ChatInputCommandInteraction> {
                 // target = interaction.member;
                 doAfterSec(() => {
                     if (interaction.channel)
-                        interaction.channel.send(`${atUser(interaction.user)} 還敢炸bot啊`);
+                        interaction.channel.send(`${atUser(interaction.user)} 還想炸bot啊`);
                 }, 8);
 
             const bomb = new Bomber({
