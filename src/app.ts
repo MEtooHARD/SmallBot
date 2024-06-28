@@ -21,7 +21,7 @@ export const login = async (token: string) => { client.login(token) };
 
 export const [prefix, divider] = ['s', '!'];
 
-export const shouldDeployCommand = true;
+export const shouldDeployCommand = false;
 
 enum Session {
     dev = 'dev',
