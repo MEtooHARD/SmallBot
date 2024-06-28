@@ -19,4 +19,4 @@ export = new class say extends MessageCommand {
             }, delay);
         }
     };
-}
+};

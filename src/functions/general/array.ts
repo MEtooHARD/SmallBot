@@ -6,11 +6,14 @@ import { randomInt } from "./number";
  * - If you don't want the picked element to be duplicate without cutting your source array, put a copy of the source array instead.
  * @param source The source array.
  * @param count How many you want to pick. default `1`
- * @param cut Whether to cut the chosen ones. default `false`
+ * @param cut Whether to remove the chosen ones. default `false`
  * @return An array containing the picked elements.
  */
-const randomPick = <T>(source: T[], count: number = 1, cut: boolean = false): T[] | null[] => {
-    if (source.length < 1) return [null];
+const randomPick = <T>(source: T[], count: number = 1, cut: boolean = false): T[] => {
+    if (source.length == 0) {
+        console.log('warning: random pick encounterred empty array.')
+        return [];
+    }
     if (count <= 0) return [];
     const result: T[] = [];
     let randomN: number;
@@ -21,6 +24,8 @@ const randomPick = <T>(source: T[], count: number = 1, cut: boolean = false): T[
     }
     return result;
 }
+
+
 
 export {
     randomPick

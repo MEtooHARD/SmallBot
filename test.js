@@ -1,2 +1,5 @@
+const { rootPath } = require('get-root-path');
 
-console.log(null === null)
+// const rootDir = require('');
+
+console.log(rootPath);

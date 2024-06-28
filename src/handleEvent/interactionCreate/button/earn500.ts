@@ -4,7 +4,7 @@ import { delaySec } from "../../../functions/general/delay";
 import { byChance, randomNumberRange } from "../../../functions/general/number";
 import { earn500 } from "../../../functions/discord/cmps";
 
-export = async (interaction: ButtonInteraction) => {
+export = async (interaction: ButtonInteraction): Promise<void> => {
     try { interaction.message.edit({ components: earn500(true) }); } catch (e) { }
     if (byChance(50)) {
         const collector = (await interaction.reply({

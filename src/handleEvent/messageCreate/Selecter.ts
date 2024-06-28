@@ -4,6 +4,7 @@ import { prefix } from "../../app";
 import fs from "node:fs";
 import path from "node:path";
 import { getCmdInfo } from "../../functions/discord/msgCommand";
+import { randomPick } from "../../functions/general/array";
 
 export = new class Selecter extends MessageFeature {
     filter = (message: Message<boolean>): boolean => { return true; };
@@ -21,8 +22,12 @@ export = new class Selecter extends MessageFeature {
             const features = fs.readdirSync(path.join(__dirname, "features"))
                 .filter(name => name.endsWith(".js"));
 
-            for (const f of features) {
-                const feature = require(path.join(__dirname, "features", f)) as MessageFeature;
+            const temp = Object.keys(features);
+
+            for (let i = 0; i < features.length; i++) {
+                const chose = features[Number(randomPick(temp, 1, true)[0])];
+                console.log(chose);
+                const feature = require(path.join(__dirname, "features", chose)) as MessageFeature;
                 if (feature.filter(message)) {
                     await feature.exe(message);
                     break;
