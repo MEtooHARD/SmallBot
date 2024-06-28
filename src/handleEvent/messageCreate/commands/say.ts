@@ -12,7 +12,7 @@ export = new class say extends MessageCommand {
             message.reply('笑死');
         } else {
             let delay: number = 0;
-            message.delete();
+            try { message.delete(); } catch (e) { };
             if (!isNaN(Number(param[0]))) delay = restrictRange(Number(param.shift()), 0, 20);
             await doAfterSec(() => {
                 message.channel.send(param.join(' '));

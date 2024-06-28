@@ -11,13 +11,13 @@ const logCommand = (interaction: CommandInteraction): void => {
 const logMsgCommand = (message: Message, command: string): void => {
     console.log(`${chalk.bgBlackBright(new Date().toISOString())}\n` +
         `\t${chalk.blueBright(message.author.username)} in ${chalk.greenBright(message.guild?.name)}\n` +
-        `\t\t${prefix}${chalk.yellow(command)}`);
+        `\t\t${prefix}!${chalk.yellow(command)}`);
 }
 
 const logMsgFeature = (message: Message, feature: string): void => {
     console.log(`${chalk.bgBlackBright(new Date().toISOString())}\n` +
         `\t${chalk.blueBright(message.author.username)} in ${chalk.greenBright(message.guild?.name)}\n` +
-        `\t\ttriggerred${chalk.yellow(feature)}`);
+        `\t\ttriggerred ${chalk.yellow(feature)}`);
 }
 
 export {
