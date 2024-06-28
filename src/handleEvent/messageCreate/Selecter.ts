@@ -31,9 +31,9 @@ export = new class Selecter extends MessageFeature {
 
             for (let i = 0; i < features.length; i++) {
                 const featureName = features[Number(randomPick(temp, 1, true)[0])];
-                logMsgFeature(message, featureName);
                 const feature = require(path.join(__dirname, "features", featureName)) as MessageFeature;
                 if (feature.filter(message)) {
+                    logMsgFeature(message, featureName);
                     await feature.exe(message);
                     break;
                 }
