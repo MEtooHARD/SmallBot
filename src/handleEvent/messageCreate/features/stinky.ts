@@ -4,7 +4,7 @@ import { byChance } from "../../../functions/general/number";
 
 export = new class stinky extends MessageFeature {
     filter(message: Message<boolean>, ...params: any): boolean {
-        return byChance(10);
+        return message.content.includes('臭') && byChance(5);
     };
 
     async exe(message: Message<boolean>, ...params: any): Promise<void> {

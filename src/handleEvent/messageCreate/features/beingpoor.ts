@@ -5,7 +5,7 @@ import { earn500 } from "../../../functions/discord/cmps";
 
 export = new class beingpoor extends MessageFeature {
     filter(message: Message<boolean>, ...params: any): boolean {
-        return byChance(2) && !message.channel.isDMBased();
+        return byChance(0.25) && !message.channel.isDMBased();
     };
 
     async exe(message: Message<boolean>, ...params: any): Promise<void> {

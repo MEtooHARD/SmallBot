@@ -5,11 +5,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { getCmdInfo } from "../../functions/discord/msgCommand";
 import { randomPick } from "../../functions/general/array";
-import chalk from "chalk";
 import { logMsgCommand, logMsgFeature } from "../../functions/general/log";
 
 export = new class Selecter extends MessageFeature {
     filter = (message: Message<boolean>): boolean => { return true; };
+
     exe = async (message: Message<boolean>): Promise<void> => {
         if (message.content.startsWith(prefix)) {
             const [command, ...param] = getCmdInfo(message.content);
