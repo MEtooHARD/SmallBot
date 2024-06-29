@@ -23,9 +23,9 @@ export const [prefix, divider] = ['s', '!'];
 
 export const shouldDeployCommand = false;
 
-enum Session {
+export enum Session {
     dev = 'dev',
     main = 'main'
 }
 
-export const session = Session['dev'];
+export const session: Session = Session['dev'];
