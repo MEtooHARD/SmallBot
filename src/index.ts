@@ -1,5 +1,5 @@
 import { deployCommand } from "./functions/config/doDeployment";
-import { login, session, shouldDeployCommand } from "./app";
+import { login, mongoDB, session, shouldDeployCommand } from "./app";
 import { getDirectories } from "./functions/general/path";
 import config from './config.json';
 import { join } from 'node:path';
@@ -15,11 +15,13 @@ import { connectMongoDB } from "./mongoose";
     await login(config.bot[session].token);
 
     /* mongodb */
-    getDirectories(join(__dirname, 'events', 'mongoose'), true)
-        .forEach(dir => {
-            // console.log(dir);
-            require(dir)();
-        });
+    if (mongoDB) {
+        getDirectories(join(__dirname, 'events', 'mongoose'), true)
+            .forEach(dir => {
+                // console.log(dir);
+                require(dir)();
+            });
 
-    await connectMongoDB(config.mongodb[session].username, config.mongodb[session].password);
+        await connectMongoDB(config.mongodb[session].username, config.mongodb[session].password, config.mongodb[session].serial);
+    }
 })();
