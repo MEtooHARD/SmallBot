@@ -7,7 +7,7 @@ export = new class fUCKoFF extends MessageCommand {
     };
 
     exe = async (message: Message<boolean>, param: string[]): Promise<void> => {
-        await message.client.destroy();
-        process.exit(1);
+        await message.channel.send('@SmallBot 離開了 狗窩');
+        message.guild?.leave();
     };
 };
