@@ -1,7 +1,7 @@
 import { ConnectionStates, connect, connection } from "mongoose";
 
-export const connectMongoDB = async (username: string, password: string): Promise<void> => {
-    await connect(`mongodb+srv://${username}:${password}@servicedata.mt5g7hs.mongodb.net/?retryWrites=true&w=majority&appName=ServiceData`);
+export const connectMongoDB = async (username: string, password: string, serial: string): Promise<void> => {
+    await connect(`mongodb+srv://${username}:${password}@servicedata.${serial}.mongodb.net/?retryWrites=true&w=majority&appName=ServiceData`);
 };
 
 export const connectionStatus = new class ConnectionStatus {

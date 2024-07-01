@@ -29,3 +29,5 @@ export enum Session {
 }
 
 export const session: Session = Session.main;
+
+export const mongoDB: boolean = true;
