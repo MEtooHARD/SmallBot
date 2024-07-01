@@ -14,7 +14,7 @@ const client = new Client(
 
 export const on = (event: keyof ClientEvents, callback = (...inputs: any) => { }) => {
     client.on(event, callback);
-    console.log('client on ' + event);
+    console.log('[djs client] on ' + event);
 };
 
 export const login = async (token: string) => { client.login(token) };
