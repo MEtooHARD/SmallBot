@@ -1,10 +1,8 @@
-import { ButtonStyle, Colors, EmbedBuilder, GuildMember, InteractionReplyOptions, InteractionUpdateOptions, Snowflake, TextInputStyle, User } from 'discord.js';
+import { ButtonStyle, Colors, EmbedBuilder, GuildMember, InteractionReplyOptions, InteractionUpdateOptions, ModalComponentData, Snowflake, TextInputStyle, User } from 'discord.js';
 import Person from './Orderlist/Person';
-import Modal from './Modal';
-import TextInput from './ActionRow/TextInput';
 import { Button } from './ActionRow/Button';
 import ButtonRow from './ActionRow/ButtonRow';
-import TextInputRow from './ActionRow/TextInputRow';
+import { TextInputRow } from './ActionRow/Modal';
 
 
 class OrderList {
@@ -98,89 +96,78 @@ class OrderList {
         ]
     }
 
-    static creationModal(): Modal {
-        return new Modal({
+    static creationModal(): ModalComponentData {
+        return {
             customId: `[${OrderList.serviceCustomID}][creation][modal]`,
             title: 'Start an Order List',
             components: [
-                new TextInputRow(
-                    new TextInput({
-                        customId: 'theme',
-                        label: 'theme',
-                        placeholder: 'Put your restaurant(s) here.',
-                        maxLength: 40,
-                        required: true,
-                    })),
-                new TextInputRow(
-                    new TextInput({
-                        customId: 'desc',
-                        label: 'description',
-                        placeholder: 'Write about something related to this order list',
-                        style: TextInputStyle.Paragraph,
-                        maxLength: 100
-                    })
-                )
+                new TextInputRow({
+                    customId: 'theme',
+                    label: 'theme',
+                    placeholder: 'Put your restaurant(s) here.',
+                    maxLength: 40,
+                    required: true,
+                }),
+                new TextInputRow({
+                    customId: 'desc',
+                    label: 'description',
+                    placeholder: 'Write about something related to this order list',
+                    style: TextInputStyle.Paragraph,
+                    maxLength: 100
+                })
             ]
-        })
-    }
+        };
+    };
 
-    orderModal(id: Snowflake): Modal {
+    orderModal(id: Snowflake): ModalComponentData {
         const member = this.getMember(id);
-        return new Modal({
+        return {
             customId: `$[${OrderList.serviceCustomID}][order][modal]`,
             title: 'Make your order',
             components: [
-                new TextInputRow(
-                    new TextInput({
-                        customId: 'content',
-                        label: 'content',
-                        style: TextInputStyle.Paragraph,
-                        value: member ? member.content : '',
-                        maxLength: 300,
-                        required: true
-                    })
-                ),
-                new TextInputRow(
-                    new TextInput({
-                        customId: 'total_price',
-                        label: 'total price',
-                        value: member ? member.price.toString() : '',
-                        maxLength: 10,
-                        required: true
-                    })
-                )
+                new TextInputRow({
+                    customId: 'content',
+                    label: 'content',
+                    style: TextInputStyle.Paragraph,
+                    value: member ? member.content : '',
+                    maxLength: 300,
+                    required: true
+                }),
+                new TextInputRow({
+                    customId: 'total_price',
+                    label: 'total price',
+                    value: member ? member.price.toString() : '',
+                    maxLength: 10,
+                    required: true
+                })
             ]
-        })
-    }
+        };
+    };
 
-    editModal = (): Modal => {
-        return new Modal({
+    editModal = (): ModalComponentData => {
+        return {
             customId: `$[${OrderList.serviceCustomID}][edit][modal]`,
             title: 'Edit',
             components: [
-                new TextInputRow(
-                    new TextInput({
-                        customId: 'restaurant',
-                        label: 'restaurant',
-                        placeholder: 'Put your restaurant(s) here.',
-                        value: this.#restaurant,
-                        maxLength: 40,
-                        required: true,
-                    })
-                ),
-                new TextInputRow(
-                    new TextInput({
-                        customId: 'desc',
-                        label: 'description',
-                        placeholder: 'Write about something related to this order list',
-                        value: this.#description,
-                        style: TextInputStyle.Paragraph,
-                        maxLength: 100
-                    })
-                )
+                new TextInputRow({
+                    customId: 'restaurant',
+                    label: 'restaurant',
+                    placeholder: 'Put your restaurant(s) here.',
+                    value: this.#restaurant,
+                    maxLength: 40,
+                    required: true,
+                }),
+                new TextInputRow({
+                    customId: 'desc',
+                    label: 'description',
+                    placeholder: 'Write about something related to this order list',
+                    value: this.#description,
+                    style: TextInputStyle.Paragraph,
+                    maxLength: 100
+                })
             ]
-        })
-    }
+        };
+    };
 
     static orderFailedRpMsg(): InteractionReplyOptions {
         return {

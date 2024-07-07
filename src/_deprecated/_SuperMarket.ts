@@ -1,7 +1,7 @@
 import { BaseInteraction, ButtonInteraction, ButtonStyle, Colors, User } from "discord.js";
-import Activity from "./Activity";
-import ButtonRow from "./ActionRow/ButtonRow";
-import { Button } from "./ActionRow/Button";
+import Activity from "./_Activity";
+import ButtonRow from "../classes/ActionRow/ButtonRow";
+import { Button } from "../classes/ActionRow/Button";
 import { atUser } from "../functions/discord/mention";
 
 enum gender { male = 'male', female = 'female' };
@@ -115,14 +115,6 @@ class SuperMarket {
     }
 
     superMarketPage = (): Activity => {
-        /* const content = this.marketer.gender === gender.male
-            ? (this.object.gender === this.marketer.gender
-                ? [`媽的塊陶有臭甲想超市你`, `你有認識任何臭甲嗎?`, `俗話說汁男而上...`, `https://tenor.com/view/%E9%87%8E%E7%8D%B8%E5%85%88%E8%BC%A9-gif-21736344`, `菊花殘，滿地傷...`]
-                : [`有變態。`, `你有沒有認識那種會在網路上雜交的?`, `你應該會防身術?`]
-            ) : (this.object.gender === this.marketer.gender
-                ? [`百合滿地開`, `這是勝者的早餐`, `百合很香`]
-                : [`你的外送?`, ``]
-            ); */
         const supermarket = new Activity({
             content: `${atUser(this.object.user)} 有個可憐的孤兒想要超你`,
             components: [

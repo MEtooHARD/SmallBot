@@ -1,6 +1,12 @@
-import { TextInputBuilder, TextInputStyle } from "discord.js";
+import { ActionRowBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 
-class TextInput extends TextInputBuilder {
+export type Modal = {
+    customId: string;
+    title: string;
+    components: [];
+}
+
+export class TextInput extends TextInputBuilder {
     constructor({ customId, label, placeholder = '', required = false, style = TextInputStyle.Short, value, maxLength, minLength }:
         { customId: string, label: string, placeholder?: string, required?: boolean, style?: TextInputStyle, value?: string, maxLength?: number, minLength?: number }) {
         super();
@@ -14,4 +20,21 @@ class TextInput extends TextInputBuilder {
         if (minLength) this.setMinLength(minLength);
     }
 }
-export = TextInput;
+
+interface TextInputData {
+    customId: string,
+    label: string,
+    placeholder?: string,
+    required?: boolean,
+    style?: TextInputStyle,
+    value?: string,
+    maxLength?: number,
+    minLength?: number
+}
+
+export class TextInputRow extends ActionRowBuilder<TextInput> {
+    constructor(data: TextInputData) {
+        super();
+        this.addComponents([new TextInput(data)]);
+    }
+}

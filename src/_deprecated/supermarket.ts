@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Command } from "../../../classes/Command";
-import SuperMarket from "../../../classes/SuperMarket";
-import { byChance } from "../../../functions/general/number";
-import { atUser } from "../../../functions/discord/mention";
+import { Command } from "../classes/Command";
+import SuperMarket from "./_SuperMarket";
+import { byChance } from "../functions/general/number";
+import { atUser } from "../functions/discord/mention";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()

@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IVote } from "../classes/Vote";
+import { ActivityStage } from "../classes/Activity";
 
 const VoteSchema: Schema<IVote> = new Schema({
     title: { type: String, required: true, index: true },
@@ -12,12 +13,13 @@ const VoteSchema: Schema<IVote> = new Schema({
     }],
     maxSelect: { type: Number, default: 1 },
     global: { type: Boolean, default: false, index: true },
+    startTime: { type: Number, required: true },
     createdIn: { type: String, required: true, index: true }, // Snowflake (guild)
     createdAt: { type: Number, default: Date.now, index: true },
     createdBy: { type: String, required: true }, // Snowflake (user)
     duration: { type: Number, default: 0 },  // milliseconds
-    latestVote: { type: Number, default: 0 },
-    closed: { type: Boolean, default: false },
+    lastVoted: { type: Number, default: 0 },
+    stage: { type: String, default: ActivityStage.PREPARING },
 }, {
     collection: 'VoteSchema'
 });
