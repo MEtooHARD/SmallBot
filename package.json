@@ -28,7 +28,7 @@
     "get-root-path": "^2.0.2",
     "libsodium-wrappers": "^0.7.13",
     "mongoose": "^8.4.4",
-    "opusscript": "^0.0.8"
+    "typescript": "^5.5.3"
   },
   "devDependencies": {
     "@types/node": "^20.14.10"

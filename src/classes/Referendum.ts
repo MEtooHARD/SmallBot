@@ -1,5 +1,6 @@
 import { APIEmbedField, Snowflake } from "discord.js";
 import { ActivityStage } from "./Activity";
+import { Document } from "mongoose";
 
 export interface IReferendum extends Document {
     title: string;

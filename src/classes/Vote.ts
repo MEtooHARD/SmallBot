@@ -10,9 +10,20 @@ class test extends EventEmitter {
         // this.
 
         const gg = new EventEmitter();
-        gg
+        gg;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 class VoteCounter {
     _id: string;
