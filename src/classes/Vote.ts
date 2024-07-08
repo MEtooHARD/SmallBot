@@ -55,7 +55,7 @@ export class VoteManager extends EventEmitter {
 
     newVote(_id: string): void {
         // @ts-ignore
-        this.emit();
+        // this.emit();
     }
 };
 
