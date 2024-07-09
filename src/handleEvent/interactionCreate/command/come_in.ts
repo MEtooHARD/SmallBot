@@ -3,7 +3,7 @@ import { Command } from "../../../classes/Command";
 import { joinVoiceChannel } from "@discordjs/voice";
 import { atVoiceChannel } from "../../../functions/discord/mention";
 
-export = new class explode implements Command<ChatInputCommandInteraction> {
+export = new class comein implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
         .setName('come_in')
         .setDescription('Invite me to join a voice channel')

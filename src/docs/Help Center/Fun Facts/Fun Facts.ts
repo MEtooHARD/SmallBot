@@ -1,12 +1,12 @@
-import { Colors, EmbedData } from "discord.js";
-import Embed from "../../../classes/Embed";
+import { APIEmbed, Colors, EmbedData } from "discord.js";
+// import Embed from "../../../classes/Embed";
 import { HelpCenter } from "../../../classes/HelpCenter";
 import { randomInt } from "../../../functions/general/number";
 
-const FunFacts = (): EmbedData | Embed => {
+const FunFacts = (): /* EmbedData  |*/ APIEmbed => {
     const colors = Object.keys(Colors);
 
-    return new Embed({
+    return {
         // color: ,
         author: { name: 'You Suck' },
         title: 'You Suck',
@@ -18,8 +18,9 @@ const FunFacts = (): EmbedData | Embed => {
             }
         ],
         footer: { text: 'You Suck' }
-    }).setColor('Random')
-        .setImage('https://tenor.com/view/you-suck-suck-sucks-spongbob-gif-13704895');
+    }
+    // .setColor('Random')
+    //     .setImage('https://tenor.com/view/you-suck-suck-sucks-spongbob-gif-13704895');
     /* {
         // author: { name: HelpCenter.DisplayName },
         color: ,

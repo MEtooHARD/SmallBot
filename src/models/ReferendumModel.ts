@@ -4,7 +4,7 @@ import { ActivityStage } from "../classes/Activity";
 
 const ReferendumSchema: Schema<IReferendum> = new Schema({
     title: { type: String, required: true },
-    topics: [{
+    proposals: [{
         title: { type: String, required: true },
         description: { type: String, required: true },
         proponents: { type: Number, default: 0 },
@@ -14,7 +14,7 @@ const ReferendumSchema: Schema<IReferendum> = new Schema({
     users: [{ type: String, required: true }],
     description: { type: String, default: '', index: true },
     startTime: { type: Number, required: true, index: true },
-    createdAt: { type: Number, default: Date.now },
+    // createdAt: { type: Number, default: Date.now },
     createdBy: { type: String, required: true }, // Snowflake (user)
     createdIn: { type: String, required: true, index: true }, // Snowflake (guild)
     duration: { type: Number, default: 0 },  // milliseconds

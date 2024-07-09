@@ -4,27 +4,6 @@ import { ActivityStage } from './Activity';
 import { TextInputRow } from './ActionRow/Modal';
 import { EventEmitter } from 'node:events';
 
-class test extends EventEmitter {
-    constructor() {
-        super();
-        // this.
-
-        const gg = new EventEmitter();
-        gg;
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
 class VoteCounter {
     _id: string;
     map: Map<string, VoteCounter>;
@@ -35,7 +14,7 @@ class VoteCounter {
         this._id = _id;
         this.map = map;
         this.setupTimer();
-    }
+    };
 
     setupTimer() {
         if (this.count === 0 && this.timer) {
@@ -45,7 +24,9 @@ class VoteCounter {
             this.count = 0;
             this.timer = setTimeout(() => this.setupTimer(), 3000);
         }
-    }
+    };
+
+    newVote(): void { this.count++; };
 }
 
 export class VoteManager extends EventEmitter {
@@ -62,12 +43,7 @@ export class VoteManager extends EventEmitter {
             vote.count++;
         else
             this.votes.set(_id, new VoteCounter(_id, this.votes));
-    }
-
-    newVote(_id: string): void {
-        // @ts-ignore
-        // this.emit();
-    }
+    };
 };
 
 // Define the interface for the Vote schema

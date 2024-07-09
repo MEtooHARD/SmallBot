@@ -1,5 +1,16 @@
 
 
+/**
+ * get the ordinal number
+ * @param number 
+ * @returns corresponding ordinal number
+ */
+const ordinal = (number: number): string => {
+    const suffixes = ["th", "st", "nd", "rd"];
+    const v = number % 100;
+    return number + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
+}
+
 const range = (start = 0, end = 0): Array<number> => {
     if (start < end) return Array.from(Array(end - start + 1).keys()).map(x => x + start);
     if (start === end) return [];
@@ -46,6 +57,7 @@ const byChance = (percentage: number): boolean => {
 
 
 export {
+    ordinal,
     range,
     randomInt,
     randomNumberRange,

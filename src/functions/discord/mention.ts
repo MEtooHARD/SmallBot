@@ -1,18 +1,16 @@
 import { GuildMember, Snowflake, StageChannel, User, VoiceChannel } from "discord.js";
+import t from "../../handleEvent/messageCreate/commands/t";
 
-const atUser = (user: Snowflake | User | GuildMember) => {
+export const atUser = (user: Snowflake | User | GuildMember) => {
     if (user instanceof User || user instanceof GuildMember)
         return `<@${user.id}>`;
     return `<@${user}>`;
 }
 
-const atVoiceChannel = (ID: Snowflake | VoiceChannel | StageChannel) => {
+export const atVoiceChannel = (ID: Snowflake | VoiceChannel | StageChannel) => {
     if (ID instanceof VoiceChannel || ID instanceof StageChannel)
         return `<#${ID.id}>`;
     return `<#${ID}>`;
-}
+};
 
-export {
-    atUser,
-    atVoiceChannel
-}
+export const timestamp = (time: number) => (`<t:${t}>`);
