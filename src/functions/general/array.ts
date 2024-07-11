@@ -9,7 +9,7 @@ import { randomInt } from "./number";
  * @param cut Whether to remove the chosen ones. default `false`
  * @return An array containing the picked elements.
  */
-const randomPick = <T>(source: T[], count: number = 1, cut: boolean = false): T[] => {
+export const randomPick = <T>(source: T[], count: number = 1, cut: boolean = false): T[] => {
     if (source.length == 0) {
         console.log('warning: random pick encounterred empty array.')
         return [];
@@ -25,8 +25,6 @@ const randomPick = <T>(source: T[], count: number = 1, cut: boolean = false): T[
     return result;
 }
 
-
-
-export {
-    randomPick
-}
+export const splitArray = <T>(arr: T[], size: number): T[][] => Array.from(
+    { length: Math.ceil(arr.length / size) },
+    (_, i) => arr.slice(i * size, i * size + size));

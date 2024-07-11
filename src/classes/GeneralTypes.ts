@@ -6,4 +6,6 @@ export class Position {
         this.x = x;
         this.y = y;
     }
-}
+};
+
+export interface NestedArray<T> extends Array<T | NestedArray<T>> { };

@@ -13,4 +13,4 @@ export const atVoiceChannel = (ID: Snowflake | VoiceChannel | StageChannel) => {
     return `<#${ID}>`;
 };
 
-export const timestamp = (time: number) => (`<t:${t}>`);
+export const timestamp = (time: number) => `<t:${time.toString().slice(0, -3)}>`;

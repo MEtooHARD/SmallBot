@@ -2,6 +2,9 @@ import { ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, SlashComma
 import { Command } from "../../../classes/Command";
 import ButtonRow from "../../../classes/ActionRow/ButtonRow";
 import { Button } from "../../../classes/ActionRow/Button";
+import { TimeSelector } from "../../../classes/TimeSelector";
+import { timestamp } from "../../../functions/discord/mention";
+import { Question, ResponseCollector } from "../../../classes/ResponseCollector";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
@@ -10,35 +13,57 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         .setDMPermission(false);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-        // const reply = await interaction.reply({
-        //     content: '0',
-        //     components: [
-        //         new ButtonRow([
-        //             new Button({
-        //                 customId: 'test',
-        //                 style: ButtonStyle.Primary,
-        //                 label: 'test'
-        //             })
-        //         ])
-        //     ]
-        // })
+        const responsor = new ResponseCollector([
+            new Question({
+                question: 'are u gae',
+                options: [
+                    {
+                        customId: 'y',
+                        style: ButtonStyle.Success,
+                        label: 'gaeeeeee'
+                    },
+                    {
+                        customId: 'yyy',
+                        style: ButtonStyle.Success,
+                        label: 'sure'
+                    },
+                    {
+                        customId: 'yy',
+                        style: ButtonStyle.Success,
+                        label: 'absolutely'
+                    }
+                ]
+            })
+        ]);
 
-        // const collector = reply.createMessageComponentCollector({ time: 120 * 1000 });
+        const reply = await interaction.reply({
+            embeds: [responsor.header],
+            components: responsor.panel,
+            ephemeral: true,
+            fetchReply: true
+        });
 
-        // collector.on('collect', (interaction: ButtonInteraction) => {
-        //     interaction.update({
-        //         content: String(Number(interaction.message.content) + 1)
-        //     })
-        // })
-        interaction.reply({
-            embeds: [
-                {
-                    title: 'test',
-                    fields: []
-                }
-            ]
-        })
-    }
+        responsor.start(reply, (answer) => {
+            responsor.addQuestions([
+                new Question({
+                    question: 'do you suck',
+                    options: [
+                        {
+                            customId: 's',
+                            style: ButtonStyle.Success,
+                            label: 'always'
+                        },
+                        {
+                            customId: 'ss',
+                            style: ButtonStyle.Success,
+                            label: 'yeet'
+                        }
+                    ]
+                })
+            ]);
+            interaction.channel?.send('from command recieved: ' + (answer.label || answer.emoji));
+        });
+    };
 
     filter(interaction: ChatInputCommandInteraction): true | string {
         return true;

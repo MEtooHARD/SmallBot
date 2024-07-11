@@ -1,8 +1,5 @@
-// console.log(setTimeout(() => { }, 20));
-const { EventEmitter } = require('events');
+const a = Array.from({ length: 10 }, (_, i) => i);
 
-const test = new EventEmitter();
+const splitArray = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (_, i) => arr.slice(i * size, i * size + size));
 
-test.emit();
-
-console.log(typeof test);
+console.log(splitArray(a, 3));

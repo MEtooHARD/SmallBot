@@ -5,6 +5,11 @@ import { TextInputRow } from "./ActionRow/Modal";
 import { ordinal } from "../functions/general/number";
 import { atUser, timestamp } from "../functions/discord/mention";
 
+export enum ReferendumModalFieldsCustomID {
+    title = 'title',
+    description = 'desc'
+};
+
 export enum ReferendumBallot {
     ADVOCATE = 'ADVOCATE',
     OPPONENT = 'OPPONENT',
@@ -14,12 +19,12 @@ export enum ReferendumBallot {
 export interface UserInfo {
     id: Snowflake;
     name: string;
-}
+};
 
 export interface GuildInfo {
     id: Snowflake,
     name: string
-}
+};
 
 export interface IReferendum extends Document {
     title: string;
@@ -85,13 +90,13 @@ export class Referendum {
             title: 'Create a Referendum',
             components: [
                 new TextInputRow({
-                    label: 'Title', customId: 'title',
+                    label: 'Title', customId: ReferendumModalFieldsCustomID.title,
                     required: true, maxLength: 80,
                     style: TextInputStyle.Short,
                     placeholder: 'The main idea:'
                 }),
                 new TextInputRow({
-                    label: 'Description', customId: 'desc',
+                    label: 'Description', customId: ReferendumModalFieldsCustomID.description,
                     required: true, maxLength: 500,
                     style: TextInputStyle.Paragraph,
                     placeholder: 'Write about this referendum:'

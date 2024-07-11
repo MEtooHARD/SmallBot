@@ -11,6 +11,11 @@ const ReferendumSchema: Schema<IReferendum> = new Schema({
         opponents: { type: Number, default: 0 },
         spoiled: { type: Number, default: 0 }
     }],
+    guilds: [{
+        guildId: { type: String, required: true },
+        channelId: { type: String, required: true },
+        messageId: { type: String, required: true }
+    }],
     users: [{ type: String, required: true }],
     description: { type: String, default: '', index: true },
     startTime: { type: Number, required: true, index: true },
@@ -25,4 +30,4 @@ const ReferendumSchema: Schema<IReferendum> = new Schema({
     collection: 'ReferendumSchema'
 });
 
-export const VoteModel = mongoose.model('ReferendumModel', ReferendumSchema);
+export const ReferendumModel = mongoose.model('ReferendumModel', ReferendumSchema);
