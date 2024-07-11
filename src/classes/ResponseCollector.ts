@@ -1,4 +1,4 @@
-import { APIEmbed, ButtonInteraction, ComponentType, InteractionCollector, InteractionUpdateOptions, Message } from "discord.js";
+import { APIEmbed, ButtonInteraction, Colors, ComponentType, InteractionCollector, InteractionUpdateOptions, Message } from "discord.js";
 import { ButtonOptions } from "./ActionRow/Button";
 import { x_min_y_sec } from "../functions/general/string";
 import ButtonRow from "./ActionRow/ButtonRow";
@@ -14,6 +14,7 @@ interface QuestionData {
     question: string;
     description?: string;
     options: ButtonOptions[];
+    color?: number;
 };
 
 export class Question {
@@ -21,6 +22,14 @@ export class Question {
     description: string = '';
     options: ButtonOptions[];
     answer: Answer = { customId: '' };
+    color: number = Colors.Aqua;
+
+    constructor(data: QuestionData) {
+        this.question = data.question;
+        this.options = data.options;
+        if (data.color) this.color = data.color;
+        if (data.description) this.description = data.description;
+    };
 
     set response(ans: string) {
         const option = this.options.find(button => button.customId === ans);
@@ -39,19 +48,18 @@ export class Question {
         }
     };
 
-    constructor(data: QuestionData) {
-        this.question = data.question;
-        this.options = data.options;
-        if (data.description) this.description = data.description;
+    setColor(color: number): Question {
+        this.color = color;
+        return this;
     };
 };
 
 export class ResponseCollector {
-    questions: Question[] = [];
-    collector: InteractionCollector<ButtonInteraction> | null = null;
-    progress: number = 0;
-    started: boolean = false;
-    idle: number = 60 * 1000;
+    private questions: Question[] = [];
+    private collector: InteractionCollector<ButtonInteraction> | null = null;
+    private progress: number = 0;
+    private started: boolean = false;
+    private idle: number = 60 * 1000;
     reporter: (answer: Answer) => void = () => { };
 
     constructor(questions: Question[]) { this.questions = questions; };
@@ -98,6 +106,7 @@ export class ResponseCollector {
     get header(): APIEmbed {
         return {
             author: { name: ResponseCollector.AUTHOR },
+            color: this.questions[this.progress].color,
             title: this.questions[this.progress].question,
             description: this.questions[this.progress].description,
             footer: { text: `${this.progress + 1}/${this.questions.length} questions • idle: ${x_min_y_sec(this.idle)}` }

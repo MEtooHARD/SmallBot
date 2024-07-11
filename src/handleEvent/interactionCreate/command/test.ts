@@ -39,7 +39,7 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         const reply = await interaction.reply({
             embeds: [responsor.header],
             components: responsor.panel,
-            ephemeral: true,
+            // ephemeral: true,
             fetchReply: true
         });
 
