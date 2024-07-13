@@ -1,10 +1,7 @@
-import { ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ButtonStyle, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command } from "../../../classes/Command";
-import ButtonRow from "../../../classes/ActionRow/ButtonRow";
-import { Button } from "../../../classes/ActionRow/Button";
-import { TimeSelector } from "../../../classes/TimeSelector";
-import { timestamp } from "../../../functions/discord/mention";
-import { Question, ResponseCollector } from "../../../classes/ResponseCollector";
+import { Dialog, Question } from "../../../classes/Dialog";
+import { delaySec } from "../../../functions/general/delay";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
@@ -13,56 +10,51 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         .setDMPermission(false);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-        const responsor = new ResponseCollector([
-            new Question({
-                question: 'are u gae',
-                options: [
-                    {
-                        customId: 'y',
-                        style: ButtonStyle.Success,
-                        label: 'gaeeeeee'
-                    },
-                    {
-                        customId: 'yyy',
-                        style: ButtonStyle.Success,
-                        label: 'sure'
-                    },
-                    {
-                        customId: 'yy',
-                        style: ButtonStyle.Success,
-                        label: 'absolutely'
-                    }
-                ]
-            })
-        ]);
+        const q: Question = {
+            ephemeral: true,
+            header: {
+                title: 'test',
+                description: 'lslaldals'
+            },
+            options: [
+                {
+                    customId: 'test',
+                    style: ButtonStyle.Primary,
+                    label: 'teststs'
+                },
+                {
+                    customId: 'testt',
+                    style: ButtonStyle.Success,
+                    label: 'testestes'
+                }
+            ]
+        };
 
-        const reply = await interaction.reply({
-            embeds: [responsor.header],
-            components: responsor.panel,
-            // ephemeral: true,
-            fetchReply: true
-        });
+        await interaction.deferReply();
+        await delaySec(1);
+        console.log(interaction.deferred);
+        interaction.followUp('rp');
 
-        responsor.start(reply, (answer) => {
-            responsor.addQuestions([
-                new Question({
-                    question: 'do you suck',
-                    options: [
-                        {
-                            customId: 's',
-                            style: ButtonStyle.Success,
-                            label: 'always'
-                        },
-                        {
-                            customId: 'ss',
-                            style: ButtonStyle.Success,
-                            label: 'yeet'
-                        }
-                    ]
-                })
-            ]);
-            interaction.channel?.send('from command recieved: ' + (answer.label || answer.emoji));
-        });
+        const f = async () => {
+            try {
+                const g = await new Dialog({
+                    interaction: interaction,
+                    idle: 6 * 1000
+                }).awaitResponse(q);
+
+                interaction.channel?.send('got ' + g.customId);
+            } catch (e) {
+                await f();
+            }
+        };
+
+        // await f();
+
+        // await interaction.reply('rp');
+        // await delaySec(3);
+        // await interaction.followUp({ content: 'fu', ephemeral: true });
+        // await delaySec(3);
+        // await interaction.followUp('fu2');
     };
 
     filter(interaction: ChatInputCommandInteraction): true | string {

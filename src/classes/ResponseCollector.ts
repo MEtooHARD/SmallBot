@@ -10,7 +10,7 @@ interface Answer {
     emoji?: string;
 };
 
-interface QuestionData {
+export interface QuestionData {
     question: string;
     description?: string;
     options: ButtonOptions[];
@@ -60,27 +60,23 @@ export class ResponseCollector {
     private progress: number = 0;
     private started: boolean = false;
     private idle: number = 60 * 1000;
-    reporter: (answer: Answer) => void = () => { };
+    reporter: (answer: Answer, interaction: ButtonInteraction) => void = () => { };
 
     constructor(questions: Question[]) { this.questions = questions; };
 
-    start(message: Message, callback: (answer: Answer) => void): void {
+    start(message: Message, callback: (answer: Answer, interaction: ButtonInteraction) => void): void {
         this.reporter = callback;
         this.started = true;
         this.collector = message.createMessageComponentCollector<ComponentType.Button>({ idle: this.idle });
 
         this.collector.on('collect', async (interaction: ButtonInteraction) => {
-            this.reportResponse(interaction.customId);
+            this.reportResponse(interaction);
             this.next();
             if (this.progress < this.questions.length)
                 message = await interaction.update({ ...this.UI, fetchReply: true });
             else
                 interaction.update(this.review);
         });
-
-        // this.collector.on('end', async (collection) => {
-
-        // });
     };
 
     stop(): void { if (this.collector) this.collector.stop(); };
@@ -91,9 +87,9 @@ export class ResponseCollector {
 
     };
 
-    reportResponse(answer: string): void {
-        this.questions[this.progress].response = answer;
-        this.reporter(this.questions[this.progress].answer);
+    reportResponse(interaction: ButtonInteraction): void {
+        this.questions[this.progress].response = interaction.customId;
+        this.reporter(this.questions[this.progress].answer, interaction);
     };
 
     get UI(): InteractionUpdateOptions {
