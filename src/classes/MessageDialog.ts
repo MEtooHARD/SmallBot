@@ -42,7 +42,7 @@ export class MessageDialog {
         return new Promise(async (resolve, reject) => {
             this._message = await this.post(question);
             this._collector = this._message.channel
-                .createMessageCollector({ idle: this._idle, filter: (message) => message.author.id === '' });
+                .createMessageCollector({ idle: this._idle, filter: (message) => message.author.id === question.UID });
 
             this._collector.on('collect', async (message: Message) => {
                 resolve(message);
