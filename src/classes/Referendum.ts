@@ -5,9 +5,23 @@ import { TextInputRow } from "./ActionRow/Modal";
 import { ordinal } from "../functions/general/number";
 import { atUser, timestamp } from "../functions/discord/mention";
 
+interface Item {
+    name: string;
+    check: boolean;
+};
+
+const CheckList: string[] = [
+    'title',
+    'description',
+    'global',
+    'startTime',
+    'endTime',
+    'stage',
+];
+
 export enum ReferendumModalFieldsCustomID {
-    title = 'title',
-    description = 'desc'
+    TITLE = 'title',
+    DESCRIPTION = 'desc'
 };
 
 export enum ReferendumBallot {
@@ -18,71 +32,62 @@ export enum ReferendumBallot {
 
 export interface UserInfo {
     id: Snowflake;
-    name: string;
-};
-
-export interface GuildInfo {
-    id: Snowflake,
-    name: string
+    username: string;
+    displayname?: string;
 };
 
 export interface IReferendum extends Document {
     title: string;
+    description: string;
+    startTime: number;
+    endTime: number;
+    stage: ActivityStage;
+    createdBy: UserInfo;
+    entitled: [Snowflake],
+    users: [Snowflake];
+    message: {
+        channelId: Snowflake;
+        messageId: Snowflake;
+    };
     proposals: [{
         title: string;
         description: string;
-        reason: string;
-        proposer: string;
+        purpose: string;
+        proposer: UserInfo;
         uploader: UserInfo;
         advocates: number;
         opponents: number;
-        spoiled: number;
     }];
-    guilds: [{
-        guildId: string,
-        channelId: string,
-        messageId: string
-    }];
-    users: Snowflake;
-    description: string;
-    startTime: number;
-    // createdAt: number;
-    createdBy: UserInfo;
-    createdIn: string;
-    duration: number;
-    global: boolean;
-    lastVoted: number;
-    stage: ActivityStage;
 };
 
 export class Referendum {
-    document: IReferendum;
+    private _document: IReferendum;
+    private _checkList: Item[] = CheckList.map(name => ({ name: name, check: false }));
 
-    constructor(doc: IReferendum) { this.document = doc; };
+    constructor(doc: IReferendum) { this._document = doc; };
 
     get author(): string { return 'SmallBot Referendum alpha'; };
 
-    get title(): string { return this.document.title; };
+    get title(): string { return this._document.title; };
 
-    get description(): string { return this.document.description; };
+    get description(): string { return this._document.description; };
 
     get fields(): APIEmbedField[] {
-        return this.document.proposals.map((proposal, index) => ({
+        return this._document.proposals.map((proposal, index) => ({
             name: ordinal(index),
             value: `> **${proposal.title} proposal**` +
                 `\n> Description: ${proposal.description}` +
                 `\n> Proposer: ${proposal.proposer}` +
-                `\n> Uploader: ${proposal.uploader.name} (${atUser(proposal.uploader.id)})`,
+                `\n> Uploader: ${proposal.uploader.username} (${atUser(proposal.uploader.id)})`,
             inline: true
         }));
     };
 
     get footer(): APIEmbedFooter {
         return {
-            text: `Started at: ${timestamp(this.document.startTime)}`
+            text: `Started at: ${timestamp(this._document.startTime)}`
         };
     };
-
 
     static get creationModal(): ModalComponentData {
         return {
@@ -90,13 +95,13 @@ export class Referendum {
             title: 'Create a Referendum',
             components: [
                 new TextInputRow({
-                    label: 'Title', customId: ReferendumModalFieldsCustomID.title,
+                    label: 'Title', customId: ReferendumModalFieldsCustomID.TITLE,
                     required: true, maxLength: 80,
                     style: TextInputStyle.Short,
                     placeholder: 'The main idea:'
                 }),
                 new TextInputRow({
-                    label: 'Description', customId: ReferendumModalFieldsCustomID.description,
+                    label: 'Description', customId: ReferendumModalFieldsCustomID.DESCRIPTION,
                     required: true, maxLength: 500,
                     style: TextInputStyle.Paragraph,
                     placeholder: 'Write about this referendum:'

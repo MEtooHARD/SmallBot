@@ -5,8 +5,10 @@ export interface Activity {
     duration: number;
     global: boolean;
     closed: boolean;
-}
+};
+
 export enum ActivityStage {
+    BASICSETTING = 'BASICSETTING',
     PREPARING = 'PREPARING',
     WAITING = 'WAITING',
     ACTIVE = 'ACTIVE',

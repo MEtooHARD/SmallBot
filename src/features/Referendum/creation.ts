@@ -1,6 +1,7 @@
-import { ModalSubmitInteraction } from "discord.js";
+import { ModalSubmitInteraction, Snowflake } from "discord.js";
 import { ReferendumModel } from "../../models/ReferendumModel";
-import { ReferendumModalFieldsCustomID } from "../../classes/Referendum";
+import { ReferendumModalFieldsCustomID, UserInfo } from "../../classes/Referendum";
+import { ActivityStage } from "../../classes/Activity";
 
 const creation = async (interaction: ModalSubmitInteraction<'cached'>, svcInfo: string[]) => {
     const reply = await interaction.reply({
@@ -8,17 +9,26 @@ const creation = async (interaction: ModalSubmitInteraction<'cached'>, svcInfo: 
         embeds: [{ description: 'Recieved.' }]
     });
 
-    const referendumModel = new ReferendumModel({
-        title: interaction.fields.getTextInputValue(ReferendumModalFieldsCustomID.title),
-        proposals: [],
-        guilds: [],
-        users: [],
-        description: interaction.fields.getTextInputValue(ReferendumModalFieldsCustomID.description),
-        startTime: Date.now(),
-        createdBy: interaction.user.id,
-        createdIn: interaction.guild.id,
-        // global:
-    });
-}
+    let title = interaction.fields.getTextInputValue(ReferendumModalFieldsCustomID.TITLE);
+    let description = interaction.fields.getTextInputValue(ReferendumModalFieldsCustomID.DESCRIPTION);
+    let startTime: number;
+    let endTime: number;
+    let stage: ActivityStage;
+    const createdBy: UserInfo = { id: interaction.user.id, username: interaction.user.username, displayname: interaction.user.displayName };
+    let entitled: Snowflake[] = [];
+
+
+
+    // const referendumModel = new ReferendumModel({
+    //     title: ,
+    //     proposals: [],
+    //     guilds: [],
+    //     users: [],
+    //     description: ,
+    //     startTime: 4,
+    //     createdBy: interaction.user.id,
+    //     createdIn: interaction.guild.id,
+    // });
+};
 
 export = creation;

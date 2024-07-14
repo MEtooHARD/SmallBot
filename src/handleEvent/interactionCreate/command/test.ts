@@ -1,7 +1,8 @@
-import { ButtonStyle, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, UserSelectMenuBuilder, SlashCommandBuilder } from "discord.js";
 import { Command } from "../../../classes/Command";
-import { Dialog, Question } from "../../../classes/Dialog";
 import { delaySec } from "../../../functions/general/delay";
+import ButtonRow from "../../../classes/ActionRow/ButtonRow";
+import { MessageDialog } from "../../../classes/MessageDialog";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
@@ -10,52 +11,23 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         .setDMPermission(false);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-        const q: Question = {
-            ephemeral: true,
+        const dialog = new MessageDialog({ interaction: interaction });
+        const response = await dialog.awaitResponse({
             header: {
-                title: 'test',
-                description: 'lslaldals'
+                description: 'please mention someone'
             },
-            options: [
-                {
-                    customId: 'test',
-                    style: ButtonStyle.Primary,
-                    label: 'teststs'
-                },
-                {
-                    customId: 'testt',
-                    style: ButtonStyle.Success,
-                    label: 'testestes'
-                }
-            ]
-        };
+            UID: interaction.user.id,
+            ephemeral: false
+        });
 
-        await interaction.deferReply();
-        await delaySec(1);
-        console.log(interaction.deferred);
-        interaction.followUp('rp');
-
-        const f = async () => {
-            try {
-                const g = await new Dialog({
-                    interaction: interaction,
-                    idle: 6 * 1000
-                }).awaitResponse(q);
-
-                interaction.channel?.send('got ' + g.customId);
-            } catch (e) {
-                await f();
-            }
-        };
-
-        // await f();
-
-        // await interaction.reply('rp');
-        // await delaySec(3);
-        // await interaction.followUp({ content: 'fu', ephemeral: true });
-        // await delaySec(3);
-        // await interaction.followUp('fu2');
+        interaction.channel?.send('mentioned member:' +
+            response.mentions.members?.map(member => member.displayName));
     };
+
+
+
+
+
 
     filter(interaction: ChatInputCommandInteraction): true | string {
         return true;

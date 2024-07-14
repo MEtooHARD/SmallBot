@@ -2,30 +2,33 @@ import mongoose, { Schema } from "mongoose";
 import { IReferendum } from "../classes/Referendum";
 import { ActivityStage } from "../classes/Activity";
 
+const StringRequired = { type: String, required: true };
+
+const UserInfo = { id: StringRequired, username: StringRequired, displayname: { type: String, default: '' } };
+
+const NumberDefault = { type: Number, default: 0 };
+
 const ReferendumSchema: Schema<IReferendum> = new Schema({
-    title: { type: String, required: true },
-    proposals: [{
-        title: { type: String, required: true },
-        description: { type: String, required: true },
-        proponents: { type: Number, default: 0 },
-        opponents: { type: Number, default: 0 },
-        spoiled: { type: Number, default: 0 }
-    }],
-    guilds: [{
-        guildId: { type: String, required: true },
-        channelId: { type: String, required: true },
-        messageId: { type: String, required: true }
-    }],
-    users: [{ type: String, required: true }],
+    title: StringRequired,
     description: { type: String, default: '', index: true },
+    stage: { type: String, default: ActivityStage.BASICSETTING },
     startTime: { type: Number, required: true, index: true },
-    // createdAt: { type: Number, default: Date.now },
-    createdBy: { type: String, required: true }, // Snowflake (user)
-    createdIn: { type: String, required: true, index: true }, // Snowflake (guild)
-    duration: { type: Number, default: 0 },  // milliseconds
-    global: { type: Boolean, default: false, index: true },
-    lastVoted: { type: Number, default: 0 },
-    stage: { type: String, default: ActivityStage.PREPARING },
+    endTime: NumberDefault,
+    createdBy: StringRequired,
+    users: [StringRequired],
+    message: {
+        channelId: StringRequired,
+        messageId: StringRequired
+    },
+    proposals: [{
+        title: StringRequired,
+        description: StringRequired,
+        purpose: StringRequired,
+        proposer: UserInfo,
+        proponents: NumberDefault,
+        opponents: NumberDefault,
+        uploader: UserInfo,
+    }]
 }, {
     collection: 'ReferendumSchema'
 });
