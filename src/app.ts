@@ -1,4 +1,5 @@
 import { Client, ClientEvents, IntentsBitField } from "discord.js";
+import { VoteManager } from "./classes/Vote";
 
 const client = new Client(
     {
@@ -31,3 +32,5 @@ export enum Session {
 export const session: Session = Session.main;
 
 export const mongoDB: boolean = false;
+
+export const ReferendumManager = new VoteManager();

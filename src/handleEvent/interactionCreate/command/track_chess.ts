@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, User } from "discord.js";
 import { Command } from "../../../classes/Command";
-import { Piece, TrackChess } from "../../../classes/TrackChess";
+import { Piece, TrackChess } from "../../../classes/games/TrackChess";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()

@@ -1,8 +1,8 @@
 import { APIEmbed, ButtonStyle, Colors, InteractionReplyOptions, InteractionUpdateOptions, MessageEditOptions, Snowflake, User } from "discord.js";
-import ButtonRow from "./ActionRow/ButtonRow";
-import { Button } from "./ActionRow/Button";
-import { Position } from "./GeneralTypes";
-import { atUser } from "../functions/discord/mention";
+import ButtonRow from "../ActionRow/ButtonRow";
+import { Button } from "../ActionRow/Button";
+import { Position } from "../GeneralTypes";
+import { atUser } from "../../functions/discord/mention";
 
 enum PieceMark { Null = '▪', White = '⚪', Red = '🔴' }
 

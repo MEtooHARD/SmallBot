@@ -1,9 +1,9 @@
 import { APIEmbed, ButtonInteraction, ButtonStyle, Message, User } from "discord.js";
-import { Button, EmptyButton } from "./ActionRow/Button";
-import { randomPick } from "../functions/general/array";
-import { atUser } from "../functions/discord/mention";
-import { byChance, range } from "../functions/general/number";
-import ButtonRow from "./ActionRow/ButtonRow";
+import { Button, EmptyButton } from "../ActionRow/Button";
+import { randomPick } from "../../functions/general/array";
+import { atUser } from "../../functions/discord/mention";
+import { byChance, range } from "../../functions/general/number";
+import ButtonRow from "../ActionRow/ButtonRow";
 
 type XY = {
     x: number
