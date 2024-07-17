@@ -1,1 +1,5 @@
-console.log(Array.from([1, 2, 3]));
+
+const a = [1];
+
+a.push([2])
+console.log(a)

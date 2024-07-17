@@ -7,6 +7,12 @@ export = new class t extends MessageCommand {
     };
 
     exe = async (message: Message<boolean>, param: string[]): Promise<void> => {
+        console.log(message.mentions.members);
+
+
+
+        message.mentions.members
+
         message.channel.send(
             'mentioned' +
             '\nmembers: ' + message.mentions.members?.map(member => member.displayName)

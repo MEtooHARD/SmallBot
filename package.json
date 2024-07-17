@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "tsc",
     "start": "tsc && node dist/index.js",
-    "cp": "tsc"
+    "test": "tsc"
   },
   "repository": {
     "type": "git",

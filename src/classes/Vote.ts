@@ -1,6 +1,6 @@
 import { APIEmbedAuthor, APIEmbedField, APIEmbedFooter, ModalComponentData, Snowflake, TextInputStyle } from 'discord.js';
 import { Document } from 'mongoose';
-import { ActivityStage } from './Activity';
+// import { ActivityStage } from './Activity';
 import { TextInputRow } from './ActionRow/Modal';
 import { EventEmitter } from 'node:events';
 
@@ -64,7 +64,7 @@ export interface IVote extends Document {
     duration: number;  // milliseconds
     global: boolean;
     lastVoted: number;
-    stage: ActivityStage;
+    // stage: ActivityStage;
     guilds: [{
         guildId: Snowflake,
         channelId: Snowflake,
@@ -97,7 +97,7 @@ export class Vote {
 
     get footer(): APIEmbedFooter {
         return {
-            text: this.document.stage,
+            text: 'this.document.stage',
         };
     };
 

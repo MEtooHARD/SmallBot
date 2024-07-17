@@ -31,6 +31,6 @@ export enum Session {
 
 export const session: Session = Session['dev'];
 
-export const mongoDB: boolean = false;
+export const mongoDB: boolean = true;
 
 export const ReferendumManager = new VoteManager();

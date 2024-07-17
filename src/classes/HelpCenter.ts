@@ -26,7 +26,7 @@ class HelpCenter extends Doc {
         return {
             embeds: this.embeds,
             components: [this.optionMenu],
-            ephemeral: true
+            ephemeral: true,
         }
     }
     /**

@@ -1,36 +1,39 @@
 import mongoose, { Schema } from "mongoose";
-import { IReferendum } from "../classes/Referendum";
-import { ActivityStage } from "../classes/Activity";
+import { IReferendum, Referendum } from "../classes/Referendum";
 
 const StringRequired = { type: String, required: true };
 
-const UserInfo = { id: StringRequired, username: StringRequired, displayname: { type: String, default: '' } };
+// const UserInfo = { id: StringRequired, username: StringRequired, displayname: { type: String, default: '' } };
 
 const NumberDefault = { type: Number, default: 0 };
 
 const ReferendumSchema: Schema<IReferendum> = new Schema({
     title: StringRequired,
     description: { type: String, default: '', index: true },
-    stage: { type: String, default: ActivityStage.BASICSETTING },
-    startTime: { type: Number, required: true, index: true },
-    endTime: NumberDefault,
+    startedAt: NumberDefault,
+    closedAt: NumberDefault,
+    stage: { type: String, default: Referendum.Stage.PREPARING },
     createdBy: StringRequired,
-    users: [StringRequired],
+    users: { type: [StringRequired], default: [] },
     message: {
         channelId: StringRequired,
         messageId: StringRequired
     },
-    proposals: [{
-        title: StringRequired,
-        description: StringRequired,
-        purpose: StringRequired,
-        proposer: UserInfo,
-        proponents: NumberDefault,
-        opponents: NumberDefault,
-        uploader: UserInfo,
-    }]
+    entitled: [{ type: String }],
+    proposals: {
+        type: [{
+            title: StringRequired,
+            description: StringRequired,
+            purpose: StringRequired,
+            proposer: StringRequired,
+            proponents: NumberDefault,
+            opponents: NumberDefault,
+            uploader: StringRequired,
+        }],
+        default: []
+    }
 }, {
-    collection: 'ReferendumSchema'
+    collection: 'Referendum'
 });
 
 export const ReferendumModel = mongoose.model('ReferendumModel', ReferendumSchema);

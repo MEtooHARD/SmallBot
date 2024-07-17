@@ -1,6 +1,6 @@
 import { APIEmbed, ButtonInteraction, ButtonStyle, CacheType, ComponentType, InteractionCollector, InteractionReplyOptions, InteractionUpdateOptions, Message } from "discord.js";
 import ButtonRow from "./ActionRow/ButtonRow"
-import { timestamp } from "../functions/discord/mention";
+import { TimeStamp } from "../functions/discord/mention";
 
 enum Operations {
     inc = 'inc',
@@ -11,102 +11,106 @@ enum Operations {
 };
 
 export class TimeSelector {
-    time: Date;
-    index: number = 0;
-    description: string = '';
-    idle: number = 60 * 1000;
-    confirm: boolean = false;
-    collector: InteractionCollector<ButtonInteraction<CacheType>> | null = null;
+    private _time: Date;
+    private _index: number = 0;
+    private _description: string = '';
+    private _idle: number = 60 * 1000;
+    private _confirm: boolean = false;
+    private _collector: InteractionCollector<ButtonInteraction<CacheType>> | null = null;
 
     constructor() {
-        this.time = new Date()
-        this.time.setMilliseconds(0);
-        this.time.setSeconds(0);
+        this._time = new Date()
+        this._time.setMilliseconds(0);
+        this._time.setSeconds(0);
     };
 
-    stop(): void { if (this.collector) this.collector.stop(); };
+    stop(): void { if (this._collector) this._collector.stop(); };
 
-    async select(message: Message, callback: (time: number) => void): Promise<void> {
-        this.collector = message.createMessageComponentCollector<ComponentType.Button>({ idle: this.idle });
+    awaitSelect(message: Message, idle?: number): Promise<number> {
+        if (idle) this._idle = idle;
+        return new Promise((resolve, reject) => {
+            this._collector = message.createMessageComponentCollector<ComponentType.Button>({ idle: this._idle });
+            this._collector.on('collect', async (interaction: ButtonInteraction) => {
+                switch (interaction.customId) {
+                    case Operations.inc:
+                        this.inc();
+                        break;
+                    case Operations.dec:
+                        this.dec();
+                        break;
+                    case Operations.switchL:
+                        this.switchL();
+                        break;
+                    case Operations.switchR:
+                        this.switchR();
+                        break;
+                    case Operations.confirm:
+                        resolve(this._time.getTime());
+                        this._confirm = true;
+                        try {
+                            await interaction.update({
+                                embeds: [this.confirmed()],
+                                components: []
+                            });
+                        } catch (e) { };
+                        this.stop();
+                        break;
+                }
 
-        this.collector.on('collect', async (interaction: ButtonInteraction) => {
-            switch (interaction.customId) {
-                case Operations.inc:
-                    this.inc();
-                    break;
-                case Operations.dec:
-                    this.dec();
-                    break;
-                case Operations.switchL:
-                    this.switchL();
-                    break;
-                case Operations.switchR:
-                    this.switchR();
-                    break;
-                case Operations.confirm:
-                    callback(this.time.getTime());
-                    this.confirm = true;
+                if (interaction.customId !== Operations.confirm)
                     try {
-                        await interaction.update({
-                            embeds: [this.confirmed()],
+                        message = await interaction.update({
+                            embeds: [this.embed()],
+                            fetchReply: true
+                        });
+                    } catch (e) { };
+            });
+
+            this._collector.on('end', async (collected: ButtonInteraction<CacheType>) => {
+                if (!this._confirm) {
+                    reject('idle');
+                    try {
+                        await message.edit({
+                            embeds: [this.timedout()],
                             components: []
                         });
                     } catch (e) { };
-                    this.stop();
-                    break;
-            }
-
-            if (interaction.customId !== Operations.confirm)
-                try {
-                    message = await interaction.update({
-                        embeds: [this.embed()],
-                        fetchReply: true
-                    });
-                } catch (e) { };
-        });
-
-        this.collector.on('end', async (collected: ButtonInteraction<CacheType>) => {
-            if (!this.confirm)
-                try {
-                    await message.edit({
-                        embeds: [this.timedout()],
-                        components: []
-                    });
-                } catch (e) { };
+                }
+            });
         });
     };
 
-    adjustTimeBy(diff: number): void {
-        switch (this.index) {
+    private adjustTimeBy(diff: number): void {
+        switch (this._index) {
             case 0:
-                this.time.setFullYear(this.time.getFullYear() + diff);
+                this._time.setFullYear(this._time.getFullYear() + diff);
                 break;
             case 1:
-                this.time.setMonth(this.time.getMonth() + diff);
+                this._time.setMonth(this._time.getMonth() + diff);
                 break;
             case 2:
-                this.time.setDate(this.time.getDate() + diff);
+                this._time.setDate(this._time.getDate() + diff);
                 break;
             case 3:
-                this.time.setHours(this.time.getHours() + diff);
+                this._time.setHours(this._time.getHours() + diff);
                 break;
             case 4:
-                this.time.setMinutes(this.time.getMinutes() + diff);
+                this._time.setMinutes(this._time.getMinutes() + diff);
                 break;
         }
     };
 
-    inc(): void { this.adjustTimeBy(1); };
+    private inc(): void { this.adjustTimeBy(1); };
 
-    dec(): void { this.adjustTimeBy(-1); };
+    private dec(): void { this.adjustTimeBy(-1); };
 
-    setIndex(diff: number): void { this.index = ((this.index + diff) % 5 + 5) % 5; };
+    private setIndex(diff: number): void { this._index = ((this._index + diff) % 5 + 5) % 5; };
 
-    switchL(): void { this.setIndex(-1); };
+    private switchL(): void { this.setIndex(-1); };
 
-    switchR(): void { this.setIndex(1); };
+    private switchR(): void { this.setIndex(1); };
 
-    selectorMsg(): InteractionReplyOptions {
+    private selectorMsg(): InteractionReplyOptions {
         return {
             embeds: [this.embed()],
             components: TimeSelector.panel(),
@@ -115,28 +119,28 @@ export class TimeSelector {
         };
     };
 
-    embed(): APIEmbed {
+    private embed(): APIEmbed {
         return {
             author: { name: TimeSelector.author },
-            description: this.description +
+            description: this._description +
                 `\nActive: ` +
                 TimeSelector.TimeFields
-                    .map((f, i) => i === this.index ? `*\`${f}\`*` : f).join(', '),
+                    .map((f, i) => i === this._index ? `*\`${f}\`*` : f).join(', '),
             fields: [{
                 name: 'Local Time:',
-                value: `<t:${this.time.getTime().toString().slice(0, -3)}>`
+                value: `<t:${this._time.getTime().toString().slice(0, -3)}>`
             }],
             footer: { text: 'idle: 1 min' }
         }
     };
 
-    setDescription(desc: string): TimeSelector {
-        this.description = desc;
+    private setDescription(desc: string): TimeSelector {
+        this._description = desc;
         return this;
     };
 
-    setIdle(duration: number): TimeSelector {
-        this.idle = duration;
+    private setIdle(duration: number): TimeSelector {
+        this._idle = duration;
         return this;
     };
 
@@ -161,15 +165,15 @@ export class TimeSelector {
         ];
     };
 
-    confirmed(): APIEmbed {
+    private confirmed(): APIEmbed {
         return {
             author: { name: TimeSelector.author },
-            description: `Result in your local time:\n${timestamp(this.time.getTime())}`,
+            description: `Result in your local time:\n${TimeStamp.gen(this._time.getTime())}`,
             footer: { text: 'dismiss this message to exit.' }
         };
     };
 
-    timedout(): APIEmbed {
+    private timedout(): APIEmbed {
         return {
             author: { name: TimeSelector.author },
             description: 'Timed out.',
@@ -177,7 +181,7 @@ export class TimeSelector {
         };
     };
 
-    static TimeFields: string[] = [
+    private static TimeFields: string[] = [
         'Year',
         'Month',
         'Date',
@@ -185,5 +189,5 @@ export class TimeSelector {
         'Minutes'
     ];
 
-    static author = 'Time Selector alpha';
+    private static author = 'Time Selector alpha';
 };

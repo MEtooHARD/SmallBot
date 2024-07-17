@@ -1,8 +1,9 @@
-import { ActionRowBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, UserSelectMenuBuilder, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, UserSelectMenuBuilder, SlashCommandBuilder, StringSelectMenuBuilder, SelectMenuOptionBuilder, StringSelectMenuOptionBuilder, GuildMember } from "discord.js";
 import { Command } from "../../../classes/Command";
 import { delaySec } from "../../../functions/general/delay";
 import ButtonRow from "../../../classes/ActionRow/ButtonRow";
 import { MessageDialog } from "../../../classes/MessageDialog";
+import { addElements, removeElements } from "../../../functions/general/array";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
@@ -11,23 +12,11 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         .setDMPermission(false);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-        const dialog = new MessageDialog({ interaction: interaction });
-        const response = await dialog.awaitResponse({
-            header: {
-                description: 'please mention someone'
-            },
-            UID: interaction.user.id,
-            ephemeral: false
-        });
-
-        interaction.channel?.send('mentioned member:' +
-            response.mentions.members?.map(member => member.displayName));
+        const a = [1, 2, 3, 4];
+        const b = [3, 2, 5, 7];
+        removeElements(a, b);
+        console.log(a);
     };
-
-
-
-
-
 
     filter(interaction: ChatInputCommandInteraction): true | string {
         return true;
