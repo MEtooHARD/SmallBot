@@ -12,24 +12,30 @@ const SubmitProposal = async (interaction: ModalSubmitInteraction, svcInfo: stri
         const newDescription = interaction.fields.getTextInputValue(Referendum.ProposalFields.DESCRIPTION);
         const newPurpose = interaction.fields.getTextInputValue(Referendum.ProposalFields.PURPOSE);
         const newProposer = interaction.fields.getTextInputValue(Referendum.ProposalFields.PROPOSER);
+        let nonEmpty = newTitle || newDescription || newPurpose || newProposer;
+
         if (svcInfo[2] === '+') {
-            document.proposals.push({
-                title: newTitle,
-                description: newDescription,
-                purpose: newPurpose,
-                proposer: newProposer,
-                uploader: interaction.user.id,
-                advocates: 0,
-                opponents: 0
-            });
+            if (nonEmpty)
+                document.proposals.push({
+                    title: newTitle,
+                    description: newDescription,
+                    purpose: newPurpose,
+                    proposer: newProposer,
+                    uploader: interaction.user.id,
+                    advocates: 0,
+                    opponents: 0
+                });
         } else {
-            if (document.proposals.length <= Number(svcInfo[2])) {
+            const index = Number(svcInfo[2]);
+            if (document.proposals.length <= index) {
                 await interaction.followUp({ ephemeral: true, content: 'something went wrong. try again' });
+            } else if (nonEmpty) {
+                document.proposals[index].title = newTitle;
+                document.proposals[index].description = newDescription;
+                document.proposals[index].purpose = newPurpose;
+                document.proposals[index].proposer = newProposer;
             } else {
-                document.proposals[Number(svcInfo[2])].title = newTitle;
-                document.proposals[Number(svcInfo[2])].description = newDescription;
-                document.proposals[Number(svcInfo[2])].purpose = newPurpose;
-                document.proposals[Number(svcInfo[2])].proposer = newProposer;
+                document.proposals.splice(index, 1);
             }
         }
         document.markModified('proposals');

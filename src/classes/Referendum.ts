@@ -1,10 +1,12 @@
-import { APIEmbed, APIEmbedAuthor, APIEmbedField, APIEmbedFooter, Colors, GuildMember, Message, MessageCreateOptions, MessageEditOptions, ModalComponentData, Snowflake, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputStyle, User } from "discord.js";
+import { APIEmbed, APIEmbedAuthor, APIEmbedField, APIEmbedFooter, ButtonStyle, Colors, GuildMember, Message, MessageCreateOptions, MessageEditOptions, ModalComponentData, Snowflake, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputStyle, User } from "discord.js";
 import { Document, Types } from "mongoose";
 import { TextInputRow } from "./ActionRow/Modal";
 import { ordinal } from "../functions/general/number";
 import { TimeStamp, atUser } from "../functions/discord/mention";
 import { ActionRowBuilder } from "@discordjs/builders";
 import { overlap } from "../functions/general/array";
+import { Button } from "./ActionRow/Button";
+import ButtonRow from "./ActionRow/ButtonRow";
 
 export interface UserInfo {
     id: Snowflake;
@@ -24,9 +26,9 @@ export interface IReferendum extends Document {
         channelId: Snowflake;
         messageId: Snowflake;
     };
-    entitled: [Snowflake];
-    users: [Snowflake];
-    proposals: [{
+    entitled: Snowflake[];
+    users: Snowflake[];
+    proposals: {
         title: string;
         description: string;
         purpose: string;
@@ -34,7 +36,7 @@ export interface IReferendum extends Document {
         uploader: Snowflake;
         advocates: number;
         opponents: number;
-    }];
+    }[];
 };
 
 export class Referendum {
@@ -56,8 +58,10 @@ export class Referendum {
         if (this._document.stage === Referendum.Stage.PREPARING) embeds.push(this.getEntitledEmbed());
 
         const components = [];
-        if (this._document.stage === Referendum.Stage.PREPARING) components.push(this.getCheckListRow());
+        if (this._document.stage === Referendum.Stage.PREPARING)
+            components.push(this.getCheckListRow());
         components.push(this.getProposalsRow());
+        components.push(new ButtonRow([this.getStartButton()]));
 
         return {
             embeds: embeds,
@@ -101,10 +105,10 @@ export class Referendum {
         return this._document.proposals.map((proposal, index) => ({
             name: `**${ordinal(index + 1)} proposal**`,
             value: `> Title: ${proposal.title}` +
-                `\n> Description: ${proposal.description}` +
-                `\n> Purpose: ${proposal.purpose}` +
-                `\n> Proposer: ${proposal.proposer}` +
-                `\n> Uploader: ${atUser(proposal.uploader)}`,
+                `\n\n- Description: ${proposal.description}` +
+                `\n- Purpose: ${proposal.purpose}` +
+                `\n- Proposer: ${proposal.proposer}` +
+                `\n- Uploader: ${atUser(proposal.uploader)}`,
             inline: true
         }));
     };
@@ -170,6 +174,15 @@ export class Referendum {
                     .setPlaceholder('Select to add, modify or remove')
                     .setOptions(...options)
             ]);
+    };
+
+    private getStartButton(): Button {
+        return new Button({
+            customId: this.assembleId(false, [Referendum.CustomId.Start]),
+            style: ButtonStyle.Primary,
+            label: 'Start',
+            disabled: this._document.proposals.length === 0
+        })
     };
 
     static getCreationModal(): ModalComponentData {
@@ -253,7 +266,7 @@ export class Referendum {
                     label: 'Title',
                     maxLength: 75,
                     placeholder: '⚠️ QUIT to CANCEL | LEAVE BLANK to DELETE ⚠️',
-                    required: true,
+                    required: false,
                     style: TextInputStyle.Short,
                     value: action !== '+' ? (this._document.proposals[index]?.title || '') : ''
                 }),
@@ -262,7 +275,7 @@ export class Referendum {
                     label: 'Description',
                     maxLength: 400,
                     placeholder: 'The detail of this proposal.',
-                    required: true,
+                    required: false,
                     style: TextInputStyle.Paragraph,
                     value: action !== '+' ? (this._document.proposals[index]?.description || '') : ''
                 }),
@@ -271,7 +284,7 @@ export class Referendum {
                     label: 'Purpose',
                     maxLength: 200,
                     placeholder: 'Why you made such a proposal?',
-                    required: true,
+                    required: false,
                     style: TextInputStyle.Paragraph,
                     value: action !== '+' ? (this._document.proposals[index]?.purpose || '') : ''
                 }),
@@ -280,7 +293,7 @@ export class Referendum {
                     label: 'Proposer',
                     maxLength: 25,
                     placeholder: 'Who purposed this.',
-                    required: true,
+                    required: false,
                     style: TextInputStyle.Short,
                     value: action !== '+' ? (this._document.proposals[index]?.proposer || '') : ''
                 }),
@@ -319,7 +332,8 @@ export namespace Referendum {
         Proposals = 'Proposals',
         Settings = 'Settings',
         SubmitModification = 'SubmitModification',
-        SubmitProposal = 'SubmitProposal'
+        SubmitProposal = 'SubmitProposal',
+        Start = 'Start'
     };
 
     export enum Stage {

@@ -12,10 +12,13 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         .setDMPermission(false);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-        const a = [1, 2, 3, 4];
-        const b = [3, 2, 5, 7];
-        removeElements(a, b);
-        console.log(a);
+        interaction.reply({
+            embeds: [
+                {
+                    footer: { text: '**test**' }
+                }
+            ]
+        });
     };
 
     filter(interaction: ChatInputCommandInteraction): true | string {
