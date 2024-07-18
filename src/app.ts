@@ -29,7 +29,7 @@ export enum Session {
     main = 'main'
 }
 
-export const session: Session = Session['dev'];
+export const session: Session = Session.dev;
 
 export const mongoDB: boolean = true;
 

@@ -1,7 +1,6 @@
 import { Colors, ModalSubmitInteraction, TextChannel } from "discord.js";
 import { Referendum } from "../../classes/Referendum";
 import { ReferendumModel } from "../../models/ReferendumModel";
-import { ButtonDialog } from "../../classes/ButtonDialog";
 import { connectionStatus } from "../../mongoose";
 import { ConnectionStates } from "mongoose";
 
@@ -26,17 +25,11 @@ const creation = async (interaction: ModalSubmitInteraction<'cached'>, svcInfo: 
         proposals: [],
     });
 
-    console.log(document.users);
-    console.log(document.entitled);
-    console.log(document.proposals);
-
     const referendum = new Referendum(document);
 
     const message = await (interaction.channel as TextChannel).send(referendum.getMessage());
 
     referendum.setMessage(message);
-
-    const confirmor = new ButtonDialog({ interaction: interaction });
 
     try {
         /* await confirmor.awaitResponse({
