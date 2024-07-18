@@ -1,5 +1,10 @@
 
-const a = [1];
+const b = [];
 
-a.push([2])
+const a = {
+    b: b
+}
+
+b.push(3);
+
 console.log(a)

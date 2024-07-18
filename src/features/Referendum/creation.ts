@@ -1,23 +1,16 @@
 import { Colors, ModalSubmitInteraction, TextChannel } from "discord.js";
 import { Referendum } from "../../classes/Referendum";
 import { ReferendumModel } from "../../models/ReferendumModel";
-import { connectionStatus } from "../../mongoose";
-import { ConnectionStates } from "mongoose";
 
 const creation = async (interaction: ModalSubmitInteraction<'cached'>, svcInfo: string[]) => {
-    if (connectionStatus.connectionState !== ConnectionStates.connected) {
-        await interaction.reply('database not ready.');
-        return;
-    }
-
     await interaction.reply({
         ephemeral: true,
         embeds: [{ color: Colors.Green, description: 'Recieved.' }]
     });
 
     const document = new ReferendumModel({
-        title: interaction.fields.getTextInputValue(Referendum.ModalFields.TITLE),
-        description: interaction.fields.getTextInputValue(Referendum.ModalFields.DESCRIPTION),
+        title: interaction.fields.getTextInputValue(Referendum.OverviewFields.TITLE),
+        description: interaction.fields.getTextInputValue(Referendum.OverviewFields.DESCRIPTION),
         stage: Referendum.Stage.PREPARING,
         createdBy: interaction.user.id,
         users: [],

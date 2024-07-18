@@ -1,18 +1,9 @@
 import { ModalSubmitInteraction, TextChannel } from "discord.js";
 import { ReferendumModel } from "../../models/ReferendumModel";
-import { connectionStatus } from "../../mongoose";
-import { ConnectionStates } from "mongoose";
 import { Referendum } from "../../classes/Referendum";
 
 const SubmitModification = async (interaction: ModalSubmitInteraction, svcInfo: string[]) => {
     try {
-        if (connectionStatus.connectionState !== ConnectionStates.connected) {
-            await interaction.reply({
-                ephemeral: true,
-                content: 'database nopt ready'
-            });
-            return;
-        }
         await interaction.reply({ ephemeral: true, content: 'recieved.' });
 
         const document = await ReferendumModel.findById(svcInfo[2]);
@@ -21,8 +12,8 @@ const SubmitModification = async (interaction: ModalSubmitInteraction, svcInfo: 
             const message = await (interaction.channel as TextChannel).messages
                 .fetch(document.message.messageId);
 
-            document.title = interaction.fields.getTextInputValue(Referendum.ModalFields.TITLE);
-            document.description = interaction.fields.getTextInputValue(Referendum.ModalFields.DESCRIPTION);
+            document.title = interaction.fields.getTextInputValue(Referendum.OverviewFields.TITLE);
+            document.description = interaction.fields.getTextInputValue(Referendum.OverviewFields.DESCRIPTION);
             await document.save();
             await message.edit(new Referendum(document).getMessage());
         } else

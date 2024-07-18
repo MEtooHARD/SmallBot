@@ -1,18 +1,11 @@
 import { ButtonStyle, Collection, Colors, GuildMember, StringSelectMenuInteraction } from "discord.js";
 import { ReferendumModel } from "../../models/ReferendumModel";
 import { Referendum } from "../../classes/Referendum";
-import { connectionStatus } from "../../mongoose";
-import { ConnectionStates } from "mongoose";
 import { ButtonDialog } from "../../classes/ButtonDialog";
 import { MessageDialog } from "../../classes/MessageDialog";
 import { addElements, removeElements } from "../../functions/general/array";
 
 const settings = async (interaction: StringSelectMenuInteraction, svcInfo: string[]) => {
-    // check connection
-    if (connectionStatus.connectionState !== ConnectionStates.connected) {
-        await interaction.reply('database not ready.');
-        return;
-    }
     // fetch doc
     const document = await ReferendumModel
         .findById(svcInfo[2], { title: 1, description: 1, entitled: 1, createdBy: 1, proposals: 1, stage: 1 });
@@ -23,7 +16,7 @@ const settings = async (interaction: StringSelectMenuInteraction, svcInfo: strin
         if (referendum.entitled(interaction.member as GuildMember)) {
             switch (interaction.values[0]) {
                 case Referendum.CheckList.Title_Description:
-                    await interaction.showModal(referendum.getModifyModal());
+                    await interaction.showModal(referendum.getModifyOverviewModal());
                     break;
                 case Referendum.CheckList.Entitled:
                     const btnDialog = new ButtonDialog({ interaction: interaction });

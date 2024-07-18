@@ -1,5 +1,5 @@
 import { APIEmbed, APIEmbedAuthor, APIEmbedField, APIEmbedFooter, Colors, GuildMember, Message, MessageCreateOptions, MessageEditOptions, ModalComponentData, Snowflake, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputStyle, User } from "discord.js";
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 import { TextInputRow } from "./ActionRow/Modal";
 import { ordinal } from "../functions/general/number";
 import { TimeStamp, atUser } from "../functions/discord/mention";
@@ -13,6 +13,7 @@ export interface UserInfo {
 };
 
 export interface IReferendum extends Document {
+    _id: Types.ObjectId,
     title: string;
     description: string;
     startedAt: number;
@@ -42,7 +43,7 @@ export class Referendum {
         Object.keys(Referendum.CheckList)
             .map(key => [Referendum.CheckList[key as keyof typeof Referendum.CheckList], false])
     );
-    static _idle: number = 30 * 60 * 1000;
+    static _proposalAmount: number = 6;
 
     constructor(doc: IReferendum) {
         this._document = doc;
@@ -98,11 +99,12 @@ export class Referendum {
 
     private getFields(): APIEmbedField[] {
         return this._document.proposals.map((proposal, index) => ({
-            name: ordinal(index),
-            value: `> **${proposal.title} proposal**` +
+            name: `**${ordinal(index + 1)} proposal**`,
+            value: `> Title: ${proposal.title}` +
                 `\n> Description: ${proposal.description}` +
-                `\n> Proposer: ${atUser(proposal.proposer)}` +
-                `\n> Uploader: ${atUser(proposal.uploader)})`,
+                `\n> Purpose: ${proposal.purpose}` +
+                `\n> Proposer: ${proposal.proposer}` +
+                `\n> Uploader: ${atUser(proposal.uploader)}`,
             inline: true
         }));
     };
@@ -154,7 +156,7 @@ export class Referendum {
             .map((p, i) => new StringSelectMenuOptionBuilder()
                 .setLabel(p.title)
                 .setValue(i.toString()));
-        if (this._document.proposals.length < 25)
+        if (this._document.proposals.length < Referendum._proposalAmount)
             options.push(new StringSelectMenuOptionBuilder()
                 .setLabel('Add New Proposal')
                 .setValue('+')
@@ -176,14 +178,14 @@ export class Referendum {
             title: `Create a Referendum`,
             components: [
                 new TextInputRow({
-                    label: 'Title', customId: Referendum.ModalFields.TITLE,
-                    required: true, maxLength: 80,
+                    label: 'Title', customId: Referendum.OverviewFields.TITLE,
+                    required: true, maxLength: 60,
                     style: TextInputStyle.Short,
                     placeholder: 'The main idea:'
                 }),
                 new TextInputRow({
-                    label: 'Description', customId: Referendum.ModalFields.DESCRIPTION,
-                    required: false, maxLength: 1000,
+                    label: 'Description', customId: Referendum.OverviewFields.DESCRIPTION,
+                    required: false, maxLength: 600,
                     style: TextInputStyle.Paragraph,
                     placeholder: 'Write about this referendum:'
                 })
@@ -207,7 +209,7 @@ export class Referendum {
 
     private assembleId = (ignore: boolean, terms: string[]) => {
         terms.unshift(Referendum.CustomId.Referendum);
-        terms.push((this._document._id as string));
+        terms.push(this._document._id.toString());
         return (ignore ? '$' : '') + terms.map(term => `[${term}]`).join('');
     };
 
@@ -216,20 +218,20 @@ export class Referendum {
         this._document.message.messageId = message.id;
     };
 
-    getModifyModal(): ModalComponentData {
+    getModifyOverviewModal(): ModalComponentData {
         return {
             title: 'Modify the Title & Description',
             customId: this.assembleId(false, [Referendum.CustomId.SubmitModification]),
             components: [
                 new TextInputRow({
-                    label: 'Title', customId: Referendum.ModalFields.TITLE,
+                    label: 'Title', customId: Referendum.OverviewFields.TITLE,
                     required: true, maxLength: 80,
                     style: TextInputStyle.Short,
                     placeholder: 'The main idea:',
                     value: this._document.title
                 }),
                 new TextInputRow({
-                    label: 'Description', customId: Referendum.ModalFields.DESCRIPTION,
+                    label: 'Description', customId: Referendum.OverviewFields.DESCRIPTION,
                     required: false, maxLength: 1000,
                     style: TextInputStyle.Paragraph,
                     placeholder: 'Write about this referendum:',
@@ -237,12 +239,67 @@ export class Referendum {
                 })],
         };
     };
+
+    getModifyProposalModal(action: string): ModalComponentData {
+        let index = Number(action);
+        if (action !== '+' && (index < 0 || index > Referendum._proposalAmount))
+            throw new Error('Bad Proposal Code');
+        return {
+            customId: this.assembleId(false, [Referendum.CustomId.SubmitProposal, action]),
+            title: `${action === '+' ? 'Create a' : 'Modify'} proposal`,
+            components: [
+                new TextInputRow({
+                    customId: Referendum.ProposalFields.TITLE,
+                    label: 'Title',
+                    maxLength: 75,
+                    placeholder: '⚠️ QUIT to CANCEL | LEAVE BLANK to DELETE ⚠️',
+                    required: true,
+                    style: TextInputStyle.Short,
+                    value: action !== '+' ? (this._document.proposals[index]?.title || '') : ''
+                }),
+                new TextInputRow({
+                    customId: Referendum.ProposalFields.DESCRIPTION,
+                    label: 'Description',
+                    maxLength: 400,
+                    placeholder: 'The detail of this proposal.',
+                    required: true,
+                    style: TextInputStyle.Paragraph,
+                    value: action !== '+' ? (this._document.proposals[index]?.description || '') : ''
+                }),
+                new TextInputRow({
+                    customId: Referendum.ProposalFields.PURPOSE,
+                    label: 'Purpose',
+                    maxLength: 200,
+                    placeholder: 'Why you made such a proposal?',
+                    required: true,
+                    style: TextInputStyle.Paragraph,
+                    value: action !== '+' ? (this._document.proposals[index]?.purpose || '') : ''
+                }),
+                new TextInputRow({
+                    customId: Referendum.ProposalFields.PROPOSER,
+                    label: 'Proposer',
+                    maxLength: 25,
+                    placeholder: 'Who purposed this.',
+                    required: true,
+                    style: TextInputStyle.Short,
+                    value: action !== '+' ? (this._document.proposals[index]?.proposer || '') : ''
+                }),
+            ]
+        };
+    };
 };
 
 export namespace Referendum {
-    export enum ModalFields {
+    export enum OverviewFields {
         TITLE = 'title',
         DESCRIPTION = 'desc'
+    };
+
+    export enum ProposalFields {
+        TITLE = 'TITLE',
+        DESCRIPTION = 'DESCRIPTION',
+        PURPOSE = 'PURPOSE',
+        PROPOSER = 'PROPOSER'
     };
 
     export enum BallotType {
@@ -253,24 +310,20 @@ export namespace Referendum {
 
     export enum CheckList {
         Title_Description = 'Title_Description',
-        // Description = 'Description',
-        // StartTime = 'Start Time',
-        // EndTime = 'End Time',
         Entitled = 'Entitle',
     };
 
     export enum CustomId {
         Referendum = 'Referendum',
         Creation = 'Creation',
-        // Modal = 'Modal',
         Proposals = 'Proposals',
         Settings = 'Settings',
-        SubmitModification = 'SubmitModification'
+        SubmitModification = 'SubmitModification',
+        SubmitProposal = 'SubmitProposal'
     };
 
     export enum Stage {
         PREPARING = 'PREPARING',
-        // WAITING = 'WAITING',
         ACTIVE = 'ACTIVE',
         CLOSED = 'CLOSED'
     };
