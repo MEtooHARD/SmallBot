@@ -48,7 +48,9 @@ export class ButtonDialog {
         if (question.idle) this.setIdle(question.idle);
         return new Promise(async (resolve, reject) => {
             this._message = await this.post(question);
-            this._collector = this._message.createMessageComponentCollector<ComponentType.Button>({ max: 1, idle: this._idle });
+            this._collector = this._message.createMessageComponentCollector<ComponentType.Button>({
+                max: 1, idle: this._idle, filter: interaction => interaction.message.id === this._message?.id
+            });
 
             this._collector.on('collect', async (interaction: ButtonInteraction) => {
                 try { await interaction.update(ButtonDialog.RecievedMessage); }

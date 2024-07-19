@@ -4,7 +4,7 @@ import { ConnectionStates } from "mongoose";
 
 const OrderList = async (interaction: ButtonInteraction | ModalSubmitInteraction | AnySelectMenuInteraction, svcInfo: string[]) => {
     if (connectionStatus.connectionState !== ConnectionStates.connected) {
-        await interaction.reply('database not ready.');
+        await interaction.reply('Service currently unavailable.');
         return;
     }
     await require(`./Referendum/${svcInfo[1]}`)(interaction, svcInfo);

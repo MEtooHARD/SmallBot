@@ -1,9 +1,9 @@
 import { ButtonBuilder, ButtonStyle } from "discord.js";
 
 export interface ButtonOptions {
-    customId: string,
+    customId?: string,
     label?: string,
-    style: ButtonStyle,
+    style?: ButtonStyle,
     url?: string,
     disabled?: boolean,
     emoji?: string

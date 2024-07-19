@@ -1,1 +1,3 @@
-console.log(Boolean('0' || ''))
+let a = 'aaa'
+a += 'bbb';
+console.log(a);

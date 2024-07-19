@@ -17,10 +17,10 @@ const SubmitProposal = async (interaction: ModalSubmitInteraction, svcInfo: stri
         if (svcInfo[2] === '+') {
             if (nonEmpty)
                 document.proposals.push({
-                    title: newTitle,
-                    description: newDescription,
-                    purpose: newPurpose,
-                    proposer: newProposer,
+                    title: newTitle || '--',
+                    description: newDescription || '--',
+                    purpose: newPurpose || '--',
+                    proposer: newProposer || '--',
                     uploader: interaction.user.id,
                     advocates: 0,
                     opponents: 0
@@ -30,10 +30,10 @@ const SubmitProposal = async (interaction: ModalSubmitInteraction, svcInfo: stri
             if (document.proposals.length <= index) {
                 await interaction.followUp({ ephemeral: true, content: 'something went wrong. try again' });
             } else if (nonEmpty) {
-                document.proposals[index].title = newTitle;
-                document.proposals[index].description = newDescription;
-                document.proposals[index].purpose = newPurpose;
-                document.proposals[index].proposer = newProposer;
+                document.proposals[index].title = newTitle || '';
+                document.proposals[index].description = newDescription || '--';
+                document.proposals[index].purpose = newPurpose || '--';
+                document.proposals[index].proposer = newProposer || '--';
             } else {
                 document.proposals.splice(index, 1);
             }

@@ -25,21 +25,7 @@ const creation = async (interaction: ModalSubmitInteraction<'cached'>, svcInfo: 
     referendum.setMessage(message);
 
     try {
-        /* await confirmor.awaitResponse({
-            header: {
-                color: Colors.Yellow,
-                description: 'Click confirm to save this referendum to the db. Or it\'ll lost forever after 10 min.'
-            },
-            options: [{
-                customId: '$confirm',
-                style: ButtonStyle.Success,
-                label: 'Confirm'
-            }],
-            ephemeral: true,
-            idle: 10 * 60 * 1000
-        }); */
-
-        await referendum.save();
+        await document.save();
 
         await interaction.followUp({
             ephemeral: true,
@@ -47,7 +33,6 @@ const creation = async (interaction: ModalSubmitInteraction<'cached'>, svcInfo: 
         });
     } catch (e) {
         console.log(e);
-        // try { await message.delete(); } catch (e) { };
     };
 };
 
