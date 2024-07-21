@@ -2,7 +2,7 @@ import { AnySelectMenuInteraction, ButtonInteraction, ModalSubmitInteraction } f
 import { connectionStatus } from "../mongoose";
 import { ConnectionStates } from "mongoose";
 
-const OrderList = async (interaction: ButtonInteraction | ModalSubmitInteraction | AnySelectMenuInteraction, svcInfo: string[]) => {
+const Referendum = async (interaction: ButtonInteraction | ModalSubmitInteraction | AnySelectMenuInteraction, svcInfo: string[]) => {
     if (connectionStatus.connectionState !== ConnectionStates.connected) {
         await interaction.reply('Service currently unavailable.');
         return;
@@ -10,4 +10,4 @@ const OrderList = async (interaction: ButtonInteraction | ModalSubmitInteraction
     await require(`./Referendum/${svcInfo[1]}`)(interaction, svcInfo);
 };
 
-export = OrderList;
+export = Referendum;

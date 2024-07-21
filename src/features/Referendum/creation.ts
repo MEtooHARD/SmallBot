@@ -14,6 +14,7 @@ const creation = async (interaction: ModalSubmitInteraction<'cached'>, svcInfo: 
         stage: Referendum.Stage.PREPARING,
         createdBy: interaction.user.id,
         users: [],
+        voting: [],
         entitled: [],
         proposals: [],
     });

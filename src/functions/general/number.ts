@@ -5,19 +5,19 @@
  * @param number 
  * @returns corresponding ordinal number
  */
-const ordinal = (number: number): string => {
+export const ordinal = (number: number): string => {
     const suffixes = ["th", "st", "nd", "rd"];
     const v = number % 100;
     return number + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 }
 
-const range = (start = 0, end = 0): Array<number> => {
+export const range = (start = 0, end = 0): Array<number> => {
     if (start < end) return Array.from(Array(end - start + 1).keys()).map(x => x + start);
     if (start === end) return [];
     return Array.from(Array(start - end + 1).keys()).reverse().map(x => x + end);
 }
 
-const restrictRange = (num: number, lowLimit: number, highLimit: number) => {
+export const restrictRange = (num: number, lowLimit: number, highLimit: number) => {
     return ((num < lowLimit) ? lowLimit : ((num > highLimit) ? highLimit : num));
 }
 
@@ -27,7 +27,7 @@ const restrictRange = (num: number, lowLimit: number, highLimit: number) => {
  * @param high the higher limit
  * @returns a float number that [low, high).
  */
-const randomNumberRange = (low: number, high: number): number => {
+export const randomNumberRange = (low: number, high: number): number => {
     if (low > high) {
         [low, high] = [high, low]
         console.log('warning: low is higher than high');
@@ -41,7 +41,7 @@ const randomNumberRange = (low: number, high: number): number => {
  * @param high the higher limit
  * @returns an interger number.
  */
-const randomInt = (low: number, high: number): number => {
+export const randomInt = (low: number, high: number): number => {
     if (!Number.isInteger(low) || !Number.isInteger(high)) throw new Error('must use integers');
     return Math.round(randomNumberRange(low, high));
 }
@@ -51,16 +51,18 @@ const randomInt = (low: number, high: number): number => {
  * @param percentage 
  * @returns 
  */
-const byChance = (percentage: number): boolean => {
+export const byChance = (percentage: number): boolean => {
     return (randomNumberRange(0, 100) < percentage);
 }
 
+export const a_b_percent = (a: number, b: number, precision: number = 2) => {
+    const factor = Math.pow(10, precision), sum = a + b;
+    a = Math.round(a / sum * 100 * factor) / factor;
+    b = Math.round(b / sum * 100 * factor) / factor;
 
-export {
-    ordinal,
-    range,
-    randomInt,
-    randomNumberRange,
-    restrictRange,
-    byChance
+    let discrepancy = 100 - (a + b);
+
+    let B = b + discrepancy;
+
+    return [a.toFixed(precision), B.toFixed(precision)];
 };

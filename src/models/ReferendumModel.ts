@@ -14,21 +14,23 @@ const ReferendumSchema: Schema<IReferendum> = new Schema({
     closedAt: NumberDefault,
     stage: { type: String, default: Referendum.Stage.PREPARING },
     createdBy: StringRequired,
-    users: { type: [StringRequired], default: [] },
+    guildId: StringRequired,
     message: {
         channelId: StringRequired,
         messageId: StringRequired
     },
     entitled: [{ type: String }],
+    users: { type: [StringRequired], default: [] },
+    sessions: { type: Map, of: String },
     proposals: {
         type: [{
             title: StringRequired,
             description: StringRequired,
             purpose: StringRequired,
             proposer: StringRequired,
-            proponents: NumberDefault,
-            opponents: NumberDefault,
             uploader: StringRequired,
+            advocates: NumberDefault,
+            opponents: NumberDefault,
         }],
         default: []
     }

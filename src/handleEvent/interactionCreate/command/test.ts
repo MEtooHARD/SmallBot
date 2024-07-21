@@ -4,6 +4,7 @@ import { delaySec } from "../../../functions/general/delay";
 import ButtonRow from "../../../classes/ActionRow/ButtonRow";
 import { MessageDialog } from "../../../classes/MessageDialog";
 import { addElements, removeElements } from "../../../functions/general/array";
+import { a_b_percent } from "../../../functions/general/number";
 
 export = new class explode implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
@@ -12,10 +13,7 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         .setDMPermission(false);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-        await interaction.reply({ ephemeral: true, content: 'gg' });
-        const rp = await (interaction.channel as TextChannel).send('test');
-        await delaySec(5);
-        await rp.edit('@everyone');
+        console.log(a_b_percent(120, 30, 1));
     };
 
     filter(interaction: ChatInputCommandInteraction): true | string {

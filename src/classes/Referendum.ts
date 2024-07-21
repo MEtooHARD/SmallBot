@@ -1,17 +1,13 @@
-import { APIEmbed, APIEmbedAuthor, APIEmbedField, APIEmbedFooter, ButtonStyle, Colors, GuildMember, InteractionUpdateOptions, Message, MessageCreateOptions, MessageEditOptions, MessageReplyOptions, ModalComponentData, Snowflake, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputStyle } from "discord.js";
+import { APIEmbed, APIEmbedAuthor, APIEmbedField, APIEmbedFooter, ActionRow, ButtonStyle, Colors, ComponentType, GuildMember, InteractionReplyOptions, InteractionUpdateOptions, Message, MessageCreateOptions, MessageEditOptions, ModalComponentData, Snowflake, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputStyle } from "discord.js";
 import { Document, Types } from "mongoose";
 import { TextInputRow } from "./ActionRow/Modal";
-import { ordinal } from "../functions/general/number";
+import { a_b_percent, ordinal } from "../functions/general/number";
 import { TimeStamp, atUser } from "../functions/discord/mention";
-import { ActionRowBuilder } from "@discordjs/builders";
+import { ActionRowBuilder, ButtonBuilder, RoleSelectMenuBuilder } from "@discordjs/builders";
 import { overlap } from "../functions/general/array";
 import ButtonRow from "./ActionRow/ButtonRow";
-
-export interface UserInfo {
-    id: Snowflake;
-    username: string;
-    displayname?: string;
-};
+import { v4 as uuidv4 } from 'uuid';
+import { x_min_y_sec } from "../functions/general/string";
 
 export interface IReferendum extends Document {
     _id: Types.ObjectId,
@@ -21,22 +17,15 @@ export interface IReferendum extends Document {
     closedAt: number;
     stage: Referendum.Stage;
     createdBy: Snowflake;
+    guildId: Snowflake;
     message: {
-        guildId: Snowflake;
         channelId: Snowflake;
         messageId: Snowflake;
     };
     entitled: Snowflake[];
     users: Snowflake[];
-    proposals: {
-        title: string;
-        description: string;
-        purpose: string;
-        proposer: string;
-        uploader: Snowflake;
-        advocates: number;
-        opponents: number;
-    }[];
+    sessions: Map<Snowflake, string>;
+    proposals: Referendum.Proposal[];
 };
 
 export class Referendum {
@@ -45,7 +34,7 @@ export class Referendum {
         Object.keys(Referendum.CheckList)
             .map(key => [Referendum.CheckList[key as keyof typeof Referendum.CheckList], false])
     );
-    static _proposalAmount: number = 6;
+    static _proposalMaxAmount: number = 6;
 
     constructor(doc: IReferendum) {
         this._document = doc;
@@ -116,7 +105,8 @@ export class Referendum {
         let info: string = `\u200b • Stage: \`${this._document.stage}\` \u200b \u200b • Votes: **\`${this._document.users.length}\`**`;
         if (this._document.stage === Referendum.Stage.ACTIVE)
             info += `\n\u200b • Started at ${TimeStamp.gen(this._document.startedAt)} - ${TimeStamp.gen(this._document.startedAt, TimeStamp.Flags.R)}`;
-
+        if (this._document.stage === Referendum.Stage.CLOSED)
+            info += `\n\u200b • From ${TimeStamp.gen(this._document.startedAt)} to ${TimeStamp.gen(this._document.closedAt)}`;
         info += `\n\u200b • Created by ${atUser(this._document.createdBy)}`;
 
         fields.push({
@@ -124,6 +114,19 @@ export class Referendum {
             value: info,
             inline: false
         });
+
+        if (this._document.stage === Referendum.Stage.CLOSED) {
+            const value = this._document.proposals.map((p, i) => {
+                const adv = p.advocates, opo = p.opponents;/* , total = adv + opo */
+                const [aP, oP] = a_b_percent(adv, opo, 1);
+                return `\u200b • ${p.title}:\n${adv > opo ? '🇵 🅰️ 🇸 🇸' : '🇷 🇪 🇯 🇪 🇨 🇹'}\nAgree \`${adv}\` (${aP}%) -- (${oP}%) \`${opo}\` Disagree`;
+            }).join('\n');
+            fields.push({
+                name: 'Outcome',
+                value: value,
+                inline: false,
+            })
+        }
 
         fields.push(...this._document.proposals.map((proposal, index) => ({
             name: `**${ordinal(index + 1)} proposal**`,
@@ -149,7 +152,7 @@ export class Referendum {
                 };
             case Referendum.Stage.CLOSED:
                 return {
-                    text: `Closed at ${TimeStamp.gen(this._document.closedAt)}`
+                    text: ''
                 };
         }
     };
@@ -184,7 +187,7 @@ export class Referendum {
             .map((p, i) => new StringSelectMenuOptionBuilder()
                 .setLabel(p.title)
                 .setValue(i.toString()));
-        if (this._document.proposals.length < Referendum._proposalAmount)
+        if (this._document.proposals.length < Referendum._proposalMaxAmount)
             options.push(new StringSelectMenuOptionBuilder()
                 .setLabel('Add New Proposal')
                 .setValue('+')
@@ -288,7 +291,7 @@ export class Referendum {
     };
 
     setMessage(message: Message): void {
-        this._document.message.guildId = message.guildId as string;
+        this._document.guildId = message.guildId as string;
         this._document.message.channelId = message.channelId;
         this._document.message.messageId = message.id;
     };
@@ -317,7 +320,7 @@ export class Referendum {
 
     getModifyProposalModal(action: string): ModalComponentData {
         let index = Number(action);
-        if (action !== '+' && (index < 0 || index > Referendum._proposalAmount))
+        if (action !== '+' && (index < 0 || index > Referendum._proposalMaxAmount))
             throw new Error('Bad Proposal Code');
         return {
             customId: this.assembleId([Referendum.CustomId.SubmitProposal, action]),
@@ -364,16 +367,114 @@ export class Referendum {
     };
 
     static Voter = class {
-        private _doc: IReferendum;
-        constructor(document: IReferendum) {
-            this._doc = document;
+        private _id: string;
+        static time: number = 6 * 60 * 1000;
+        static idle: number = 2 * 60 * 1000;
+        submit: boolean = false;
+        proposals: {
+            title: string,
+            choice: Referendum.Ballot
+        }[];
+        selected: number = -1;
+        uuid: string;
+
+        constructor(id: string, proposals: Referendum.Proposal[]) {
+            this._id = id;
+            this.uuid = uuidv4();
+            this.proposals = proposals.map(proposal => ({
+                title: proposal.title,
+                choice: Referendum.Ballot.NUETRAL
+            }));
         };
 
-        getMessage(): MessageReplyOptions & InteractionUpdateOptions {
+        getMessage(): InteractionReplyOptions & InteractionUpdateOptions {
             return {
-
+                ephemeral: true,
+                embeds: [this.getMainEmbed()],
+                components: this.getPanel()
             };
         };
+
+        private getMainEmbed(): APIEmbed {
+            return {
+                color: this.submit ? Colors.DarkGold : Colors.DarkPurple,
+                title: this.submit ? 'Confirm submission' : '',
+                author: { name: 'Referendum Voter (alpha)' },
+                fields: this.proposals.map(proposal => ({
+                    name: proposal.title,
+                    value: proposal.choice,
+                    inline: true
+                })),
+                footer: { text: `time limit: ${x_min_y_sec(Referendum.Voter.time)} ● idle: ${x_min_y_sec(Referendum.Voter.idle)}` }
+            };
+        };
+
+        private getPanel(): ActionRowBuilder<StringSelectMenuBuilder | ButtonBuilder>[] {
+            return this.submit ? [this.getConfirmBtn()] : [this.getSelector(), this.getBallotBtn(), this.getSubmitBtn()];
+        };
+
+        private getSelector(): ActionRowBuilder<StringSelectMenuBuilder> {
+            return new ActionRowBuilder<StringSelectMenuBuilder>()
+                .setComponents(new StringSelectMenuBuilder()
+                    .setCustomId('$select')
+                    .setPlaceholder('Select to make your choice')
+                    .setOptions(...this.proposals
+                        .map((p, i) => new StringSelectMenuOptionBuilder()
+                            .setLabel(p.title)
+                            .setValue(i.toString())
+                            .setDefault(i === this.selected))));
+        };
+
+        private getBallotBtn(): ActionRowBuilder<ButtonBuilder> {
+            return new ButtonRow([{
+                customId: '$A',
+                label: 'AGREE',
+                style: ButtonStyle.Success,
+                disabled: !(this.selected > -1 &&
+                    this.proposals[this.selected].choice !== Referendum.Ballot.AGREE)
+            }, {
+                customId: '$N',
+                label: 'NEUTRAL',
+                style: ButtonStyle.Primary,
+                disabled: !(this.selected > -1 &&
+                    this.proposals[this.selected].choice !== Referendum.Ballot.NUETRAL)
+            }, {
+                customId: '$D',
+                label: 'DISAGREE',
+                style: ButtonStyle.Danger,
+                disabled: !(this.selected > -1 &&
+                    this.proposals[this.selected].choice !== Referendum.Ballot.DISAGREE)
+            }]);
+        };
+
+        private getSubmitBtn(): ButtonRow {
+            return new ButtonRow([{
+                customId: '$S',
+                label: 'Submit',
+                style: ButtonStyle.Secondary
+            }]);
+        };
+
+        private getConfirmBtn(): ButtonRow {
+            return new ButtonRow([{
+                customId: '$X',
+                label: 'Cancel',
+                style: ButtonStyle.Secondary
+            }, {
+                customId: '$O',
+                label: 'Confirm',
+                style: ButtonStyle.Primary
+            }]);
+        };
+
+        genIncObj(): { [key: string]: number } {
+            const obj: { [key: string]: number } = {};
+            this.proposals.forEach((p, i) => {
+                if (p.choice !== Referendum.Ballot.NUETRAL)
+                    obj[`proposals.${i}.${p.choice === Referendum.Ballot.AGREE ? 'advocates' : 'opponents'}`] = 1;
+            })
+            return obj;
+        }
     };
 };
 
@@ -390,9 +491,9 @@ export namespace Referendum {
         PROPOSER = 'PROPOSER'
     };
 
-    export enum BallotType {
-        ADVOCATE = 'ADVOCATE',
-        OPPONENT = 'OPPONENT',
+    export enum Ballot {
+        AGREE = 'AGREE',
+        DISAGREE = 'DISAGREE',
         NUETRAL = 'NUETRAL'
     };
 
@@ -418,4 +519,14 @@ export namespace Referendum {
         ACTIVE = 'ACTIVE',
         CLOSED = 'CLOSED'
     };
+
+    export interface Proposal {
+        title: string;
+        description: string;
+        purpose: string;
+        proposer: string;
+        uploader: Snowflake;
+        advocates: number;
+        opponents: number;
+    }
 };

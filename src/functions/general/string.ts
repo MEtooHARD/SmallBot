@@ -22,6 +22,8 @@ export const x_min_y_sec = (milli: number): string => {
     const min = Math.floor(seconds / 60);
     const sec = seconds % 60;
 
-    if (min > 0) return `${min} min ${sec} sec`;
+    if (min > 0)
+        if (sec > 0) return `${min} min ${sec} sec`;
+        else return `${min} min`;
     return `${sec} sec`;
 };
