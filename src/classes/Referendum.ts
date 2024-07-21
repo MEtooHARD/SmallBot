@@ -108,12 +108,7 @@ export class Referendum {
         if (this._document.stage === Referendum.Stage.CLOSED)
             info += `\n\u200b • From ${TimeStamp.gen(this._document.startedAt)} to ${TimeStamp.gen(this._document.closedAt)}`;
         info += `\n\u200b • Created by ${atUser(this._document.createdBy)}`;
-
-        fields.push({
-            name: 'Information',
-            value: info,
-            inline: false
-        });
+        fields.push({ name: 'Information', value: info, inline: false });
 
         if (this._document.stage === Referendum.Stage.CLOSED) {
             const value = this._document.proposals.map((p, i) => {
@@ -121,11 +116,7 @@ export class Referendum {
                 const [aP, oP] = a_b_percent(adv, opo, 1);
                 return `\u200b • ${p.title}:\n${adv > opo ? '🇵 🅰️ 🇸 🇸' : '🇷 🇪 🇯 🇪 🇨 🇹'}\nAgree \`${adv}\` (${aP}%) -- (${oP}%) \`${opo}\` Disagree`;
             }).join('\n');
-            fields.push({
-                name: 'Outcome',
-                value: value,
-                inline: false,
-            })
+            fields.push({ name: 'Outcome', value: value, inline: false, })
         }
 
         fields.push(...this._document.proposals.map((proposal, index) => ({
@@ -143,17 +134,11 @@ export class Referendum {
     private getFooter(): APIEmbedFooter {
         switch (this._document.stage) {
             case Referendum.Stage.PREPARING:
-                return {
-                    text: `Use the menus to configure. use /help for more details.`
-                };
+                return { text: `Use the menus to configure. use /help for more details.` };
             case Referendum.Stage.ACTIVE:
-                return {
-                    text: '' /* `Started at ${TimeStamp.gen(this._document.startedAt)} • ${TimeStamp.gen(this._document.startedAt, TimeStamp.Flags.R)}` */
-                };
+                return { text: '' };
             case Referendum.Stage.CLOSED:
-                return {
-                    text: ''
-                };
+                return { text: '' };
         }
     };
 
@@ -328,37 +313,29 @@ export class Referendum {
             components: [
                 new TextInputRow({
                     customId: Referendum.ProposalFields.TITLE,
-                    label: 'Title',
-                    maxLength: 50,
-                    placeholder: '⚠️ QUIT to CANCEL | LEAVE BLANK to DELETE ⚠️',
-                    required: false,
+                    label: 'Title', placeholder: '⚠️ QUIT to CANCEL | LEAVE BLANK to DELETE ⚠️',
+                    maxLength: 50, required: false,
                     style: TextInputStyle.Short,
                     value: action !== '+' ? (this._document.proposals[index]?.title || '') : ''
                 }),
                 new TextInputRow({
                     customId: Referendum.ProposalFields.DESCRIPTION,
-                    label: 'Description',
-                    maxLength: 300,
-                    placeholder: 'The detail of this proposal.',
-                    required: false,
+                    label: 'Description', placeholder: 'The detail of this proposal.',
+                    maxLength: 300, required: false,
                     style: TextInputStyle.Paragraph,
                     value: action !== '+' ? (this._document.proposals[index]?.description || '') : ''
                 }),
                 new TextInputRow({
                     customId: Referendum.ProposalFields.PURPOSE,
-                    label: 'Purpose',
-                    maxLength: 300,
-                    placeholder: 'Why you made such a proposal?',
-                    required: false,
+                    label: 'Purpose', placeholder: 'Why you made such a proposal?',
+                    maxLength: 300, required: false,
                     style: TextInputStyle.Paragraph,
                     value: action !== '+' ? (this._document.proposals[index]?.purpose || '') : ''
                 }),
                 new TextInputRow({
                     customId: Referendum.ProposalFields.PROPOSER,
-                    label: 'Proposer',
-                    maxLength: 25,
-                    placeholder: 'Who purposed this.',
-                    required: false,
+                    label: 'Proposer', placeholder: 'Who purposed this.',
+                    maxLength: 25, required: false,
                     style: TextInputStyle.Short,
                     value: action !== '+' ? (this._document.proposals[index]?.proposer || '') : ''
                 }),
@@ -427,20 +404,17 @@ export class Referendum {
 
         private getBallotBtn(): ActionRowBuilder<ButtonBuilder> {
             return new ButtonRow([{
-                customId: '$A',
-                label: 'AGREE',
+                customId: '$A', label: 'AGREE',
                 style: ButtonStyle.Success,
                 disabled: !(this.selected > -1 &&
                     this.proposals[this.selected].choice !== Referendum.Ballot.AGREE)
             }, {
-                customId: '$N',
-                label: 'NEUTRAL',
+                customId: '$N', label: 'NEUTRAL',
                 style: ButtonStyle.Primary,
                 disabled: !(this.selected > -1 &&
                     this.proposals[this.selected].choice !== Referendum.Ballot.NUETRAL)
             }, {
-                customId: '$D',
-                label: 'DISAGREE',
+                customId: '$D', label: 'DISAGREE',
                 style: ButtonStyle.Danger,
                 disabled: !(this.selected > -1 &&
                     this.proposals[this.selected].choice !== Referendum.Ballot.DISAGREE)
@@ -449,20 +423,17 @@ export class Referendum {
 
         private getSubmitBtn(): ButtonRow {
             return new ButtonRow([{
-                customId: '$S',
-                label: 'Submit',
+                customId: '$S', label: 'Submit',
                 style: ButtonStyle.Secondary
             }]);
         };
 
         private getConfirmBtn(): ButtonRow {
             return new ButtonRow([{
-                customId: '$X',
-                label: 'Cancel',
+                customId: '$X', label: 'Cancel',
                 style: ButtonStyle.Secondary
             }, {
-                customId: '$O',
-                label: 'Confirm',
+                customId: '$O', label: 'Confirm',
                 style: ButtonStyle.Primary
             }]);
         };
