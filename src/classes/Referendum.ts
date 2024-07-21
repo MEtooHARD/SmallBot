@@ -1,9 +1,9 @@
-import { APIEmbed, APIEmbedAuthor, APIEmbedField, APIEmbedFooter, ActionRow, ButtonStyle, Colors, ComponentType, GuildMember, InteractionReplyOptions, InteractionUpdateOptions, Message, MessageCreateOptions, MessageEditOptions, ModalComponentData, Snowflake, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputStyle } from "discord.js";
+import { APIEmbed, APIEmbedAuthor, APIEmbedField, APIEmbedFooter, ButtonStyle, Colors, GuildMember, InteractionReplyOptions, InteractionUpdateOptions, Message, MessageCreateOptions, MessageEditOptions, ModalComponentData, Snowflake, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputStyle } from "discord.js";
 import { Document, Types } from "mongoose";
 import { TextInputRow } from "./ActionRow/Modal";
 import { a_b_percent, ordinal } from "../functions/general/number";
 import { TimeStamp, atUser } from "../functions/discord/mention";
-import { ActionRowBuilder, ButtonBuilder, RoleSelectMenuBuilder } from "@discordjs/builders";
+import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
 import { overlap } from "../functions/general/array";
 import ButtonRow from "./ActionRow/ButtonRow";
 import { v4 as uuidv4 } from 'uuid';
