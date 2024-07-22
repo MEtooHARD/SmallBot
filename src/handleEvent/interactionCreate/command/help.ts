@@ -33,11 +33,12 @@ export = new class help implements Command<CommandInteraction> {
             }
         });
 
-        collector.on('end', () => {
+        collector.on('end', async () => {
             try {
-                interaction.followUp({
+                await interaction.followUp({
                     content: 'Timed out.',
-                    components: []
+                    components: [],
+                    ephemeral: true
                 });
             } catch (e) { }
         });
