@@ -321,14 +321,14 @@ export class Referendum {
                 new TextInputRow({
                     customId: Referendum.ProposalFields.DESCRIPTION,
                     label: 'Description', placeholder: 'The detail of this proposal.',
-                    maxLength: 300, required: false,
+                    maxLength: 500, required: false,
                     style: TextInputStyle.Paragraph,
                     value: action !== '+' ? (this._document.proposals[index]?.description || '') : ''
                 }),
                 new TextInputRow({
                     customId: Referendum.ProposalFields.PURPOSE,
                     label: 'Purpose', placeholder: 'Why you made such a proposal?',
-                    maxLength: 300, required: false,
+                    maxLength: 250, required: false,
                     style: TextInputStyle.Paragraph,
                     value: action !== '+' ? (this._document.proposals[index]?.purpose || '') : ''
                 }),
