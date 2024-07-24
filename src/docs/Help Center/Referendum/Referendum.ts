@@ -4,7 +4,7 @@ const Referendum = (): EmbedData => {
     return {
         color: Colors.DarkPurple,
         title: 'Referendum',
-        description: 'Referendum, the process of decisions to proposals, laws and policies that directly made by guild(server) members, is considered a symbol of democratic society. Here, a referendum is mainly composed of one or several proposals.',
+        description: 'A referendum, the process by which decisions, on proposals, laws, and policies, are made directly by the people, is considered a symbol of a democratic society and reflects people\'s trust in management power.',
         fields: [{
             name: 'Proposals',
             value: 'A proposal is composed of title, description and purpose. And additional information like proposer and uploader(uploader is automatically recorded by the system and is shown in mentions).',

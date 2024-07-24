@@ -8,6 +8,14 @@ export = new class referendum implements Command<ChatInputCommandInteraction> {
     data = new SlashCommandBuilder()
         .setName('referendum')
         .setDescription('Create a Referendum.')
+        .addStringOption(option => option
+            .setName('action')
+            .setDescription('Select an action')
+            .setRequired(true)
+            .setChoices({
+                name: 'Create',
+                value: 'create'
+            }))
         .setDMPermission(false)
         .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator);
 
