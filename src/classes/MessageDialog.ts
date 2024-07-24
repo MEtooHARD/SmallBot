@@ -1,7 +1,4 @@
-import { APIEmbed, APIEmbedAuthor, ButtonInteraction, Colors, ComponentType, InteractionCollector, InteractionReplyOptions, InteractionUpdateOptions, Message, MessageCollector, Snowflake } from "discord.js";
-import { ButtonOptions } from "./ActionRow/Button";
-import { splitArray } from "../functions/general/array";
-import ButtonRow from "./ActionRow/ButtonRow";
+import { APIEmbed, APIEmbedAuthor, Colors, InteractionReplyOptions, InteractionUpdateOptions, Message, MessageCollector, Snowflake } from "discord.js";
 import { x_min_y_sec } from "../functions/general/string";
 import { randomColor } from "../functions/discord/RandomColor";
 import { restrictRange } from "../functions/general/number";
@@ -11,6 +8,7 @@ export interface Question {
     header: APIEmbed;
     ephemeral?: boolean;
     UID: Snowflake;
+    idle?: number;
 };
 
 /**
@@ -21,52 +19,53 @@ export class MessageDialog {
     private _idle: number = 60 * 1000;
     private _message: Message | null = null;
     private _question: Question = {
-        header: MessageDialog.DefultHeader,
+        header: MessageDialog.DefaultHeader,
         UID: ''
     };
     private _collector: MessageCollector | null = null;
     private _poster: (i: InteractionReplyOptions) => Promise<Message>;
-    private _followUp: (i: InteractionReplyOptions) => Promise<Message>;
+    // private _followUp: (i: InteractionReplyOptions) => Promise<Message>;
 
     constructor(data: DialogOptions) {
-        if (data.idle) this.idle = data.idle;
-        this._followUp = i => data.interaction.followUp({ ...i, fetchReply: true });
+        // this._followUp = i => data.interaction.followUp({ ...i, fetchReply: true });
 
         if (!data.interaction.replied && !data.interaction.deferred)
             this._poster = i => data.interaction.reply({ ...i, fetchReply: true });
-        else
+        else if (!data.interaction.deferred)
             this._poster = i => data.interaction.followUp({ ...i, fetchReply: true });
+        else
+            this._poster = i => data.interaction.editReply(i);
     };
 
     awaitResponse(question: Question): Promise<Message> {
+        if (question.idle) this.setIdle(question.idle);
         return new Promise(async (resolve, reject) => {
-            this._message = await this.post(question);
-            this._collector = this._message.channel
-                .createMessageCollector({ idle: this._idle, filter: (message) => message.author.id === question.UID });
+            try {
+                this._message = await this.post(question);
+                this._collector = this._message.channel
+                    .createMessageCollector({
+                        max: 1,
+                        idle: this._idle,
+                        filter: (message) => message.author.id === question.UID
+                    });
 
-            this._collector.on('collect', async (message: Message) => {
-                resolve(message);
-                this._followUp(MessageDialog.RecievedMessage);
-            });
+                this._collector.on('collect', async (message: Message) => {
+                    resolve(message);
+                });
 
-            this._collector.on('end', async (collected, reason) => {
-                if (reason === 'idle') {
-                    reject(reason);
-                    try {
-                        await this._message?.edit(MessageDialog.FailedMessage);
-                    } catch (e) {
-                        await this._followUp({ embeds: [MessageDialog.TimedOutHeader], ephemeral: true });
-                    }
-                } else {
-                    console.log(reason);
-                }
-            });
+                this._collector.on('end', async (collected, reason) => {
+                    if (reason === 'idle')
+                        reject(reason);
+                    else
+                        if (reason !== 'limit') console.log(reason);
+                });
+            } catch (e) { console.log(e); }
         });
     };
 
-    private async post(question: Question): Promise<Message> {
+    private post(question: Question): Promise<Message> {
         this.question = question;
-        return await this._poster({
+        return this._poster({
             embeds: [this.banner, this.header],
             // components: this.panel,
             ephemeral: this._question.ephemeral
@@ -84,28 +83,22 @@ export class MessageDialog {
     private get banner(): APIEmbed {
         return {
             author: MessageDialog.AUTHOR,
-            footer: { text: `idle: ${x_min_y_sec(this._idle)}` }
+            description: 'your next message in this channel will be adopted.',
+            footer: { text: `idle: ${x_min_y_sec(this._idle)}` },
         };
     };
 
     private get header(): APIEmbed { return this._question.header; };
 
-    private set idle(milliseconds: number) { this._idle = restrictRange(milliseconds, 5 * 1000, 5 * 60 * 1000); };
+    private setIdle(milliseconds: number) { this._idle = restrictRange(milliseconds, 5 * 1000, 5 * 60 * 1000); };
 
     private static AUTHOR: APIEmbedAuthor = { name: 'MessageDialog (beta)' };
 
-    private static DefultHeader: APIEmbed = {
+    private static DefaultHeader: APIEmbed = {
         author: MessageDialog.AUTHOR,
         description: 'someone suck and didn\'t provide any content :poop:',
-        footer: { text: 'your next message in this channel will be adopted.' },
         color: Colors.Yellow
     };
-
-    // private static SucceedHeader: APIEmbed = {
-    //     author: MessageDialog.AUTHOR,
-    //     description: 'Response returned.',
-    //     color: Colors.Green,
-    // };
 
     private static RecievedMessage: InteractionReplyOptions = {
         embeds: [{

@@ -28,3 +28,56 @@ export const randomPick = <T>(source: T[], count: number = 1, cut: boolean = fal
 export const splitArray = <T>(arr: T[], size: number): T[][] => Array.from(
     { length: Math.ceil(arr.length / size) },
     (_, i) => arr.slice(i * size, i * size + size));
+
+
+export const overlap = <T>(arr1: T[], arr2: T[]) => arr1.some(item => arr2.includes(item));
+
+/**
+ * Removes `element` from `arr` if it presents.
+ * @param arr 
+ * @param element 
+ * @returns `true` if removed, `false` if not removed.
+ */
+export const removeElement = <T>(arr: T[], element: T): boolean => {
+    let i = arr.indexOf(element);
+    if (i !== -1) {
+        arr.splice(i, 1);
+        return true;
+    }
+    return false
+};
+/**
+ * Removes `elements` from `arr` according to each single state of presenting.
+ * @param arr 
+ * @param elements 
+ * @returns Amount Removed.
+ */
+export const removeElements = <T>(arr: T[], elements: T[]): number => {
+    if (elements.length)
+        return Number(removeElement(arr, elements.splice(0, 1)[0])) + removeElements(arr, elements);
+    return 0;
+};
+
+/**
+ * Adds `element` to `arr` if not duplicated.
+ * @param arr 
+ * @param element 
+ * @returns `true` if added, `false` if not added.
+ */
+export const addElement = <T>(arr: T[], element: T): boolean => {
+    if (arr.includes(element))
+        return false;
+    arr.push(element);
+    return true;
+};
+/**
+ * Adds `elements` to `arr` according to each single state of presenting.
+ * @param arr 
+ * @param elements 
+ * @returns The amount added.
+ */
+export const addElements = <T>(arr: T[], elements: T[]): number => {
+    if (elements.length)
+        return Number(addElement(arr, elements.splice(0, 1)[0])) + addElements(arr, elements);
+    return 0;
+};

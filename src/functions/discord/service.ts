@@ -3,7 +3,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 
 const getSvcInfo = (str: string): string[] => {
-    const result = str.match(RegExp(/\[\w+\]/, 'g'));
+    const result = str.match(RegExp(/\[(?:\w|[+])+\]/g));
     return result ? result.map(s => trimString(s, ['[', ']'])) : [];
 }
 

@@ -5,7 +5,7 @@ import ButtonRow from "./ActionRow/ButtonRow";
 import { splitArray } from "../functions/general/array";
 
 interface Answer {
-    customId: string;
+    customId?: string;
     label?: string;
     emoji?: string;
 };

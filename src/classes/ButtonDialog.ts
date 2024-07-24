@@ -1,4 +1,4 @@
-import { APIEmbed, APIEmbedAuthor, AnySelectMenuInteraction, ButtonInteraction, Collector, Colors, CommandInteraction, ComponentType, InteractionCollector, InteractionReplyOptions, InteractionUpdateOptions, Message } from "discord.js";
+import { APIEmbed, APIEmbedAuthor, AnySelectMenuInteraction, ButtonInteraction, Collector, Colors, CommandInteraction, ComponentType, InteractionCollector, InteractionReplyOptions, InteractionUpdateOptions, Message, ModalSubmitInteraction } from "discord.js";
 import { ButtonOptions } from "./ActionRow/Button";
 import { splitArray } from "../functions/general/array";
 import ButtonRow from "./ActionRow/ButtonRow";
@@ -10,11 +10,12 @@ interface Question {
     header: APIEmbed;
     options: ButtonOptions[];
     ephemeral?: boolean;
+    idle?: number;
+    minimize?: boolean;
 };
 
 export interface DialogOptions {
-    interaction: ButtonInteraction | CommandInteraction | AnySelectMenuInteraction;
-    idle?: number;
+    interaction: ButtonInteraction | CommandInteraction | AnySelectMenuInteraction | ModalSubmitInteraction;
 };
 
 /**
@@ -30,40 +31,43 @@ export class ButtonDialog {
     };
     private _collector: InteractionCollector<ButtonInteraction> | null = null;
     private _poster: (i: InteractionReplyOptions) => Promise<Message>;
-    private _followUp: (i: InteractionReplyOptions) => Promise<Message>;
+    // private _followUp: (i: InteractionReplyOptions) => Promise<Message>;
 
     constructor(data: DialogOptions) {
-        if (data.idle) this.idle = data.idle;
-        this._followUp = i => data.interaction.followUp({ ...i, fetchReply: true });
+        // this._followUp = i => data.interaction.followUp({ ...i, fetchReply: true });
 
         if (!data.interaction.replied && !data.interaction.deferred)
             this._poster = i => data.interaction.reply({ ...i, fetchReply: true });
-        else
+        else if (!data.interaction.deferred)
             this._poster = i => data.interaction.followUp({ ...i, fetchReply: true });
+        else
+            this._poster = i => data.interaction.editReply(i);
     };
 
     awaitResponse(question: Question): Promise<ButtonInteraction> {
+        if (question.idle) this.setIdle(question.idle);
         return new Promise(async (resolve, reject) => {
             this._message = await this.post(question);
-            this._collector = this._message.createMessageComponentCollector<ComponentType.Button>({ max: 1, idle: this._idle });
+            this._collector = this._message.createMessageComponentCollector<ComponentType.Button>({
+                max: 1, idle: this._idle, filter: interaction => interaction.message.id === this._message?.id
+            });
 
             this._collector.on('collect', async (interaction: ButtonInteraction) => {
-                resolve(interaction);
                 try { await interaction.update(ButtonDialog.RecievedMessage); }
                 catch (e) { };
+                resolve(interaction);
             });
 
             this._collector.on('end', async (collected, reason) => {
-                if (reason === 'idle') {
+                if (reason === 'idle')
                     reject(reason);
-                    try {
-                        await this._message?.edit(ButtonDialog.FailedMessage);
-                    } catch (e) {
-                        await this._followUp({ embeds: [ButtonDialog.TimedOutHeader], ephemeral: true });
-                    }
-                } else {
-                    console.log(reason);
-                }
+                // try {
+                //     await this._message?.edit(ButtonDialog.FailedMessage);
+                // } catch (e) {
+                //     await this._followUp({ embeds: [ButtonDialog.TimedOutHeader], ephemeral: true });
+                // }
+                else
+                    if (reason !== 'limit') console.log(reason);
             });
         });
     };
@@ -99,7 +103,7 @@ export class ButtonDialog {
             .map(options => new ButtonRow(options));
     };
 
-    private set idle(milliseconds: number) { this._idle = restrictRange(milliseconds, 5 * 1000, 5 * 60 * 1000); };
+    private setIdle(milliseconds: number) { this._idle = restrictRange(milliseconds, 5 * 1000, 5 * 60 * 1000); };
 
     private static AUTHOR: APIEmbedAuthor = { name: 'ButtonDialog (beta)' };
 

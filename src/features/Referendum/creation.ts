@@ -1,34 +1,40 @@
-import { ModalSubmitInteraction, Snowflake } from "discord.js";
+import { Colors, ModalSubmitInteraction, TextChannel } from "discord.js";
+import { Referendum } from "../../classes/Referendum";
 import { ReferendumModel } from "../../models/ReferendumModel";
-import { ReferendumModalFieldsCustomID, UserInfo } from "../../classes/Referendum";
-import { ActivityStage } from "../../classes/Activity";
 
 const creation = async (interaction: ModalSubmitInteraction<'cached'>, svcInfo: string[]) => {
-    const reply = await interaction.reply({
+    await interaction.reply({
         ephemeral: true,
-        embeds: [{ description: 'Recieved.' }]
+        embeds: [{ color: Colors.Green, description: 'Recieved.' }]
     });
 
-    let title = interaction.fields.getTextInputValue(ReferendumModalFieldsCustomID.TITLE);
-    let description = interaction.fields.getTextInputValue(ReferendumModalFieldsCustomID.DESCRIPTION);
-    let startTime: number;
-    let endTime: number;
-    let stage: ActivityStage;
-    const createdBy: UserInfo = { id: interaction.user.id, username: interaction.user.username, displayname: interaction.user.displayName };
-    let entitled: Snowflake[] = [];
+    const document = new ReferendumModel({
+        title: interaction.fields.getTextInputValue(Referendum.OverviewFields.TITLE),
+        description: interaction.fields.getTextInputValue(Referendum.OverviewFields.DESCRIPTION),
+        stage: Referendum.Stage.PREPARING,
+        createdBy: interaction.user.id,
+        users: [],
+        voting: [],
+        entitled: [],
+        proposals: [],
+    });
 
+    const referendum = new Referendum(document);
 
+    const message = await (interaction.channel as TextChannel).send(referendum.getMessage());
 
-    // const referendumModel = new ReferendumModel({
-    //     title: ,
-    //     proposals: [],
-    //     guilds: [],
-    //     users: [],
-    //     description: ,
-    //     startTime: 4,
-    //     createdBy: interaction.user.id,
-    //     createdIn: interaction.guild.id,
-    // });
+    referendum.setMessage(message);
+
+    try {
+        await document.save();
+
+        await interaction.followUp({
+            ephemeral: true,
+            content: 'Data saved.'
+        });
+    } catch (e) {
+        console.log(e);
+    };
 };
 
 export = creation;

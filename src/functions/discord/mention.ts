@@ -1,5 +1,4 @@
 import { GuildMember, Snowflake, StageChannel, User, VoiceChannel } from "discord.js";
-import t from "../../handleEvent/messageCreate/commands/t";
 
 export const atUser = (user: Snowflake | User | GuildMember) => {
     if (user instanceof User || user instanceof GuildMember)
@@ -13,4 +12,19 @@ export const atVoiceChannel = (ID: Snowflake | VoiceChannel | StageChannel) => {
     return `<#${ID}>`;
 };
 
-export const timestamp = (time: number) => `<t:${time.toString().slice(0, -3)}>`;
+export namespace TimeStamp {
+    export enum Flags {
+        NON = '',
+        t = ':t', T = ':T',
+        d = ':d', D = ':D',
+        f = ':f', F = ':F',
+        R = ':R'
+    };
+
+    export const gen = (time: number, flag: TimeStamp.Flags = TimeStamp.Flags.NON): string => {
+        let str = time.toString();
+        if (str.length > 10) str = str.slice(0, -3);
+        return `<t:${str}${flag}>`;
+    };
+};
+
