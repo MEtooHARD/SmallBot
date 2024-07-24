@@ -52,11 +52,11 @@ export class Referendum {
                     this.getStartButtonRow());
                 break;
             case Referendum.Stage.ACTIVE:
-                components.push(this.getActiveButtonRow(),
-                    this.getTestButtonRow());
+                components.push(this.getActiveButtonRow()/* ,
+                    this.getTestButtonRow() */);
                 break;
             case Referendum.Stage.CLOSED:
-                components.push(this.getTestButtonRow());
+                // components.push(this.getTestButtonRow());
                 break;
         }
 
