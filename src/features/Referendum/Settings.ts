@@ -8,7 +8,7 @@ import { addElements, removeElements } from "../../functions/general/array";
 const settings = async (interaction: StringSelectMenuInteraction, svcInfo: string[]) => {
     // fetch doc
     const document = await ReferendumModel
-        .findById(svcInfo[2], { title: 1, description: 1, entitled: 1, createdBy: 1, proposals: 1, stage: 1 });
+        .findById(svcInfo[2], { title: 1, description: 1, entitled: 1, createdBy: 1, proposals: 1, stage: 1, users: 1 });
     // check doc
     if (document) {
         const referendum = new Referendum(document);
