@@ -1,7 +1,7 @@
 import { ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, StringSelectMenuOptionBuilder } from "discord.js";
 import path from 'node:path';
 import fs from 'node:fs';
-import { shouldLogDoc, shouldLogIgnoredCustomID } from "../app";
+import { shouldLogDoc } from "../app";
 import chalk from "chalk";
 
 export class Docor {
@@ -70,6 +70,20 @@ export class Docor {
     };
 };
 
+/* 
+A Doc is a directory with a `fileName` file. And can contain other Docs
+e.g. suppose `fileName` is 'doc.js'
+
+\Help Center
+  doc.js
+  \Slash Commands
+    doc.js
+  \Message Commands
+    doc.js
+
+is a Doc (Help Center) with two Docs (Slash Commands & Message Commands)
+*/
+
 export namespace Docor {
     export type Doc = InstanceType<ReturnType<typeof Docor.Doc<EmbedBuilder>>>;
 
@@ -85,14 +99,14 @@ export namespace Docor {
             private _children: Map<string, Doc> = new Map<string, Doc>();
             private _name: string;
             private _level: number;
-            private _embedF: () => T;
+            private _docF: () => T;
 
             constructor(name: string, r?: Doc, l?: number) {
                 this._root = r || null;
                 this._level = l || 0;
                 this._name = name;
                 const entry = path.join(this.getDir(), this._name);
-                this._embedF = require(path.join(entry, fileName));
+                this._docF = require(path.join(entry, fileName));
                 // ch
                 if (shouldLogDoc) console.log(`[Doc]create: ${this.getRoute().join(' > ')}`);
                 if (fs.existsSync(entry) && fs.statSync(entry).isDirectory())
@@ -114,7 +128,7 @@ export namespace Docor {
             get level(): number { return this._level; };
             get rootName(): string { return this._root === null ? this._name : this._root.rootName; }
 
-            private getEmbed(): T { return this._embedF(); };
+            private getEmbed(): T { return this._docF(); };
 
             getEmbeds(): T[] {
                 return this._root === null
