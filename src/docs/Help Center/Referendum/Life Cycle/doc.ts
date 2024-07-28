@@ -1,7 +1,7 @@
-import { Colors, EmbedData } from "discord.js";
+import { Colors, EmbedBuilder } from "discord.js";
 
-const LifeCycle = (): EmbedData => {
-    return {
+const LifeCycle = (): EmbedBuilder => {
+    return new EmbedBuilder({
         color: Colors.DarkPurple,
         title: 'Life Cycle',
         description: 'A referendum will go through three stages: Prepare, Vote and Close.',
@@ -19,7 +19,7 @@ const LifeCycle = (): EmbedData => {
             inline: true
         }],
         footer: { text: 'last edited: 2024-07-22' }
-    }
+    })
 }
 
 export = LifeCycle;

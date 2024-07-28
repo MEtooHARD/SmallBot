@@ -22,14 +22,16 @@ export const login = async (token: string) => { client.login(token) };
 
 export const [prefix, divider] = ['s', '!'];
 
+export const shouldLogDoc = false;
 export const shouldDeployCommand = false;
+export const shouldLogIgnoredCustomID = false;
 
 export enum Session {
     dev = 'dev',
     main = 'main'
 }
 
-export const session: Session = Session.main;
+export const session: Session = Session.dev;
 
 export const mongoDB: boolean = true;
 

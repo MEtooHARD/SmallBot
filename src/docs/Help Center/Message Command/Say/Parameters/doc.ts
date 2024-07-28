@@ -1,8 +1,7 @@
-import { Colors, EmbedData } from "discord.js";
-import { HelpCenter } from "../../../../../classes/HelpCenter";
+import { Colors, EmbedBuilder } from "discord.js";
 
-const Say = (): EmbedData => {
-    return {
+const Say = (): EmbedBuilder => {
+    return new EmbedBuilder({
         // author: { name: HelpCenter.DisplayName },
         color: Colors.DarkGreen,
         // title: 'delay & content',
@@ -21,7 +20,7 @@ const Say = (): EmbedData => {
             }
         ],
         footer: { text: 'last edited: 2024-01-18' }
-    }
+    })
 }
 
 export = Say;

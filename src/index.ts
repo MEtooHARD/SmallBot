@@ -4,8 +4,11 @@ import { getDirectories } from "./functions/general/path";
 import config from './config.json';
 import { join } from 'node:path';
 import { connectMongoDB } from "./mongoose";
+import { HelpCenter } from "./HelpCenter";
 
 (async () => {
+    /* Help center */
+    HelpCenter;
     /* discord js */
     if (shouldDeployCommand) await deployCommand();
 

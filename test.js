@@ -1,2 +1,3 @@
 // import fs from 'node:fs';
-console.log('123456789009876543211234567890'.slice(-20));
+const a = [1];
+console.log(a.slice(0, a.length > 1 ? -1 : 1));

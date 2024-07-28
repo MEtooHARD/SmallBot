@@ -1,8 +1,7 @@
-import { Colors, EmbedData } from "discord.js";
-import { HelpCenter } from "../../../../classes/HelpCenter";
+import { Colors, EmbedBuilder } from "discord.js";
 
-const SlashCommands = (): EmbedData => {
-    return {
+const SlashCommands = (): EmbedBuilder => {
+    return new EmbedBuilder({
         // author: { name: HelpCenter.DisplayName },
         color: Colors.DarkGreen,
         title: 'Bomb',
@@ -26,7 +25,7 @@ const SlashCommands = (): EmbedData => {
             }
         ],
         footer: { text: 'last edited: 2024-01-19' }
-    }
+    })
 }
 
 export = SlashCommands;

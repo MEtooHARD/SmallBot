@@ -8,6 +8,7 @@ import { getSvcInfo } from '../functions/discord/service';
 import rootPath from 'get-root-path';
 import path from 'node:path';
 import fs from 'node:fs';
+import { shouldLogIgnoredCustomID } from '../app';
 
 const create = async (interaction: Interaction): Promise<void> => {
     if (interaction.isCommand())
@@ -31,7 +32,7 @@ const create = async (interaction: Interaction): Promise<void> => {
                 else if (interaction.isAnySelectMenu()) await menu(interaction);
             }
         } else {
-
+            if (shouldLogIgnoredCustomID) console.log(interaction.customId);
         }
     }
 };

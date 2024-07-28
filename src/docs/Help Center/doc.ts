@@ -1,8 +1,8 @@
-import { Colors, EmbedData } from "discord.js";
-import { HelpCenter } from "../../classes/HelpCenter";
+import { Colors, EmbedBuilder, EmbedData } from "discord.js";
+import { HelpCenter } from "../../HelpCenter";
 
-const doc = (): EmbedData => {
-    return {
+const doc = (): EmbedBuilder => {
+    return new EmbedBuilder({
         author: { name: HelpCenter.DisplayName },
         color: Colors.DarkGreen,
         title: 'Help Center',
@@ -10,7 +10,7 @@ const doc = (): EmbedData => {
             'Welcome to the Help Center.\n' +
             'Here you can learn how to use this bot\'s functions and prob something interesting.',
         footer: { text: 'last edited: 2024-01-18' }
-    }
+    })
 }
 
 export = doc;

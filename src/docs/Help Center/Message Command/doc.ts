@@ -1,8 +1,7 @@
-import { Colors, EmbedData } from "discord.js";
-import { HelpCenter } from "../../../classes/HelpCenter";
+import { Colors, EmbedBuilder } from "discord.js";
 
-const MessageCommand = (): EmbedData => {
-    return {
+const doc = (): EmbedBuilder => {
+    return new EmbedBuilder({
         // author: { name: HelpCenter.DisplayName },
         color: Colors.DarkGreen,
         title: 'Message Command',
@@ -11,7 +10,7 @@ const MessageCommand = (): EmbedData => {
             'The formats are like `s!command <param1> <param2> ...`\n' +
             'The contents between `<` and `>` are what you can customize. And please ignore the `<` & `>`.',
         footer: { text: 'last edited: 2024-01-18' }
-    }
+    })
 }
 
-export = MessageCommand;
+export = doc;

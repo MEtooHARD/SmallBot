@@ -1,7 +1,7 @@
-import { Colors, EmbedData } from "discord.js";
+import { Colors, EmbedBuilder, EmbedData } from "discord.js";
 
-const Referendum = (): EmbedData => {
-    return {
+const doc = (): EmbedBuilder => {
+    return new EmbedBuilder({
         color: Colors.DarkPurple,
         title: 'Referendum',
         description: 'A referendum, the process by which decisions, on proposals, laws, and policies, are made directly by the people, is considered a symbol of a democratic society and reflects people\'s trust in management power.',
@@ -11,7 +11,7 @@ const Referendum = (): EmbedData => {
             inline: true
         }],
         footer: { text: 'last edited: 2024-07-22' }
-    }
+    })
 }
 
-export = Referendum;
+export = doc;
