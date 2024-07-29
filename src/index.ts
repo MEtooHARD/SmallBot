@@ -5,15 +5,18 @@ import config from './config.json';
 import { join } from 'node:path';
 import { connectMongoDB } from "./mongoose";
 import { HelpCenter } from "./HelpCenter";
+import unknownError from "./events/other/unknowError";
 
 (async () => {
     /* Help center */
     HelpCenter;
+    console.log('Help Center established')
     /* discord js */
-    if (shouldDeployCommand)
-        await deployCommand();
+    if (shouldDeployCommand) await deployCommand();
 
-    getDirectories(join(__dirname, 'events'), true)
+    unknownError();
+
+    getDirectories(join(__dirname, 'events', 'discord'), true)
         .forEach(dir => { require(dir)(); });
 
     await login(config.bot[session].token);

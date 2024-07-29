@@ -27,3 +27,12 @@ export const x_min_y_sec = (milli: number): string => {
         else return `${min} min`;
     return `${sec} sec`;
 };
+
+export const sections = (length: number, str: string): string[] => {
+    const result: string[] = [];
+    do {
+        result.push(str.slice(0, length));
+        str = str.slice(length);
+    } while (str);
+    return result;
+};

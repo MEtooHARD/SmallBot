@@ -13,7 +13,7 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
         .setDMPermission(false);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-        console.log(a_b_percent(120, 30, 1));
+        throw new Error('test');
     };
 
     filter(interaction: ChatInputCommandInteraction): true | string {

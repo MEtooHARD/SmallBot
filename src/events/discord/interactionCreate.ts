@@ -1,5 +1,5 @@
-import create from "../handleEvent/interactionCreate";
-import { on } from "../app";
+import create from "../../handleEvent/interactionCreate";
+import { on } from "../../app";
 import { Interaction, Events } from "discord.js";
 
 const interactionCreate = () => {

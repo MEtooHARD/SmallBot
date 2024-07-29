@@ -1,7 +1,7 @@
 import { Client, ClientEvents, IntentsBitField } from "discord.js";
 import { VoteManager } from "./classes/Vote";
 
-const client = new Client(
+export const client = new Client(
     {
         intents: [
             IntentsBitField.Flags.Guilds,
@@ -20,7 +20,7 @@ export const on = (event: keyof ClientEvents, callback = (...inputs: any) => { }
 
 export const login = async (token: string) => { client.login(token) };
 
-export const [prefix, divider] = ['s', '!'];
+export const [prefix, dividor] = ['s', '!'];
 
 export const shouldLogDoc = false;
 export const shouldDeployCommand = false;
