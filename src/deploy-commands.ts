@@ -1,7 +1,8 @@
 const { REST, Routes } = require('discord.js');
 import { session } from './app';
 import config from './config.json';
-const fs = require('node:fs');
+import { data } from './handleEvent/interactionCreate/contextMenuCommand/rickroll';
+import fs from 'node:fs';
 const path = require('node:path');
 
 const deployCommand = async () => {
@@ -12,7 +13,7 @@ const deployCommand = async () => {
 
 	// Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 	const commands = commandFiles.map((file: string) => require('./handleEvent/interactionCreate/command/' + file).data)
-
+	commands.push(data)
 	// Construct and prepare an instance of the REST module
 	const rest = new REST({ version: '10' }).setToken(config.bot[session].token);
 

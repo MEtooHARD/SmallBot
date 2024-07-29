@@ -1,4 +1,4 @@
-import { Interaction } from 'discord.js';
+import { BaseInteraction } from 'discord.js';
 import menu from './interactionCreate/menu';
 import modal from './interactionCreate/modal';
 import button from './interactionCreate/button';
@@ -9,13 +9,16 @@ import rootPath from 'get-root-path';
 import path from 'node:path';
 import fs from 'node:fs';
 import { shouldLogIgnoredCustomID } from '../app';
+import { contextMenu } from './interactionCreate/contextmenu';
 
-const create = async (interaction: Interaction): Promise<void> => {
-    if (interaction.isCommand())
-        command(interaction);
+const create = async (interaction: BaseInteraction): Promise<void> => {
+    if (interaction.isChatInputCommand())
+        /* await */ command(interaction);
+    else if (interaction.isUserContextMenuCommand() || interaction.isMessageContextMenuCommand())
+        await contextMenu(interaction);
     else if (interaction.isAutocomplete())
         autocomplete(interaction);
-    else {
+    else if (interaction.isMessageComponent() || interaction.isModalSubmit()) {
         if (!interaction.customId.startsWith('$')) {
             console.log(interaction.customId);
             const svcInfo = getSvcInfo(interaction.customId);

@@ -10,7 +10,8 @@ import { HelpCenter } from "./HelpCenter";
     /* Help center */
     HelpCenter;
     /* discord js */
-    if (shouldDeployCommand) await deployCommand();
+    if (shouldDeployCommand)
+        await deployCommand();
 
     getDirectories(join(__dirname, 'events'), true)
         .forEach(dir => { require(dir)(); });
