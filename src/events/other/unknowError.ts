@@ -2,16 +2,16 @@ import { client } from "../../app"
 import { atUser } from "../../functions/discord/mention"
 import { sections } from "../../functions/general/string"
 
-const unknownError = () => {
+export const unknownError = () => {
     process.on('uncaughtException', (err, origin) => sendDebugMessage(err, origin))
     process.on('unhandledRejection', (err, origin) => sendDebugMessage(err, origin))
 }
 
-const sendDebugMessage = async (err: Error | unknown, origin: NodeJS.UncaughtExceptionOrigin | Promise<unknown>) => {
+export const sendDebugMessage = async (err: Error | unknown, origin: NodeJS.UncaughtExceptionOrigin | Promise<unknown>) => {
     try {
         const reportChannel = client.guilds.cache.get('1213341621542719548')?.channels.cache.get('1267489062135009290');
         if (reportChannel && reportChannel.isTextBased()) {
-            const msg = atUser('635416670831247363') + ' please debug:\n'
+            const msg = atUser('732128546407055452') + ' please debug:\n'
                 + `Caught exception: ${err}\n`
                 + `Exception origin: ${origin}`;
             for (const section of sections(6000, msg))
@@ -19,5 +19,3 @@ const sendDebugMessage = async (err: Error | unknown, origin: NodeJS.UncaughtExc
         }
     } catch (error) { console.error(err); };
 };
-
-export = unknownError;

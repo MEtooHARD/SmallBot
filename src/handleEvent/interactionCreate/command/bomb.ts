@@ -1,12 +1,12 @@
 import { ChatInputCommandInteraction, GuildMember, MessageComponentInteraction, SlashCommandBuilder } from "discord.js";
-import { Command } from "../../../classes/Command";
 import { doAfterSec } from "../../../functions/general/delay";
 import ButtonRow from "../../../classes/ActionRow/ButtonRow";
 import { atUser } from "../../../functions/discord/mention";
 import Bomber from "../../../classes/Bomber";
+import { SlashCommand } from "../../../classes/Command";
 
-export = new class Explode implements Command<ChatInputCommandInteraction> {
-    data = new SlashCommandBuilder()
+export = new SlashCommand({
+    data: new SlashCommandBuilder()
         .setName('bomb')
         .setDescription('Bomb someone')
         .setDMPermission(false)
@@ -25,7 +25,7 @@ export = new class Explode implements Command<ChatInputCommandInteraction> {
             .setDescription('The period of each bomb.')
             .setMinValue(2)
             .setMaxValue(15))
-
+    ,
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         const target = interaction.options.getMember('target');
         const count = Number(interaction.options.getNumber('count'));
@@ -89,8 +89,4 @@ export = new class Explode implements Command<ChatInputCommandInteraction> {
             bomb.bomb();
         }
     }
-
-    filter(interaction: ChatInputCommandInteraction): true | string {
-        return true;
-    }
-}
+});

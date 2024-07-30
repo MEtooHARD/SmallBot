@@ -1,5 +1,5 @@
 import { Colors, EmbedBuilder, EmbedData } from "discord.js";
-import { HelpCenter } from "../../HelpCenter";
+import { HelpCenter } from "../../data";
 
 const doc = (): EmbedBuilder => {
     return new EmbedBuilder({

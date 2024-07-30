@@ -1,9 +1,9 @@
 import { ChatInputCommandInteraction, ComponentType, Message, SlashCommandBuilder } from "discord.js";
-import { Command } from "../../../classes/Command";
 import T0FE from "../../../classes/games/T0FE";
+import { SlashCommand } from "../../../classes/Command";
 
-export = new class explode implements Command<ChatInputCommandInteraction> {
-    data = new SlashCommandBuilder()
+export = new SlashCommand({
+    data: new SlashCommandBuilder()
         .setName('t0fe')
         .setDescription('2048')
         .addIntegerOption(option => option
@@ -27,7 +27,7 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
                 }
             }))))
         .setDMPermission(false)
-
+    ,
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         const [rowSize, colSize] = [interaction.options.getInteger('row_size'), interaction.options.getInteger('col_size')];
         const t0fe = new T0FE(interaction.user, rowSize || 5, colSize || 5);
@@ -52,8 +52,4 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
             t0fe.gameover();
         })
     }
-
-    filter(interaction: ChatInputCommandInteraction): true | string {
-        return true;
-    }
-}
+});

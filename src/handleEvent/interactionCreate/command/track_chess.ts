@@ -1,9 +1,10 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, User } from "discord.js";
-import { Command } from "../../../classes/Command";
+import { Command } from "../../../classes/_Command";
 import { Piece, TrackChess } from "../../../classes/games/TrackChess";
+import { SlashCommand } from "../../../classes/Command";
 
-export = new class explode implements Command<ChatInputCommandInteraction> {
-    data = new SlashCommandBuilder()
+export = new SlashCommand({
+    data: new SlashCommandBuilder()
         .setName('track_chess')
         .setDescription('Start a Track Chess.')
         .setDMPermission(false)
@@ -11,7 +12,7 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
             .setName('opponent')
             .setDescription('Choose your opponent.')
             .setRequired(true))
-
+    ,
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         const p1 = interaction.user;
         const p2 = (interaction.options.getUser('opponent') as User);
@@ -53,6 +54,4 @@ export = new class explode implements Command<ChatInputCommandInteraction> {
             if (reason === 'time') reply.edit(TrackChess.inviteExpired(p1));
         });
     }
-
-    filter(interaction: ChatInputCommandInteraction): true | string { return true; }
-}
+});

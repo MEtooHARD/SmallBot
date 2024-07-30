@@ -23,7 +23,7 @@ export const login = async (token: string) => { client.login(token) };
 export const [prefix, dividor] = ['s', '!'];
 
 export const shouldLogDoc = false;
-export const shouldDeployCommand = false;
+export const shouldDeployCommand = true;
 export const shouldLogIgnoredCustomID = false;
 
 export enum Session {
@@ -33,6 +33,6 @@ export enum Session {
 
 export const session: Session = Session.dev;
 
-export const mongoDB: boolean = true;
+export const mongoDB: boolean = false;
 
 export const ReferendumManager = new VoteManager();

@@ -1,19 +1,15 @@
-import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import OrderList from '../../../classes/OrderList';
-import { Command } from '../../../classes/Command';
+import { Command } from '../../../classes/_Command';
+import { SlashCommand } from '../../../classes/Command';
 
-
-export = new class order_list implements Command<CommandInteraction> {
-    data = new SlashCommandBuilder()
+export = new SlashCommand({
+    data: new SlashCommandBuilder()
         .setName('order_list')
         .setDescription('Start an order list.')
         .setDMPermission(false)
-
-    execute = async (interaction: CommandInteraction) => {
+    ,
+    async execute(interaction: ChatInputCommandInteraction) {
         interaction.showModal(OrderList.creationModal());
     }
-
-    filter(interaction: CommandInteraction): true | string {
-        return true;
-    }
-}
+});

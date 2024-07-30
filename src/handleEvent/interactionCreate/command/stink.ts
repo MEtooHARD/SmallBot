@@ -1,14 +1,15 @@
-import { Command } from '../../../classes/Command';
-import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { Command } from '../../../classes/_Command';
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import fs from 'node:fs';
 import { picPath } from '../../../functions/general/path';
+import { SlashCommand } from '../../../classes/Command';
 
 const items: string[] = [
     'God\'s Hands'
 ];
 
-export = new class stink implements Command<CommandInteraction> {
-    data = new SlashCommandBuilder()
+export = new SlashCommand({
+    data: new SlashCommandBuilder()
         .setName('stink')
         .setDescription('1145141919810')
         .addStringOption(option => option
@@ -17,8 +18,8 @@ export = new class stink implements Command<CommandInteraction> {
             .setChoices(...items.map(x => { return { name: x, value: x, } }))
             .setRequired(true))
         .setDMPermission(false)
-
-    execute = async (interaction: CommandInteraction) => {
+    ,
+    async execute(interaction: ChatInputCommandInteraction) {
         interaction.reply({
             files: [
                 {
@@ -27,8 +28,4 @@ export = new class stink implements Command<CommandInteraction> {
             ]
         });
     }
-
-    filter = (interaction: CommandInteraction): true | string => {
-        return true;
-    }
-}
+});

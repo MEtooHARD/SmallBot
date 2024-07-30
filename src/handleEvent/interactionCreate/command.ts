@@ -1,22 +1,11 @@
-import { CommandInteraction } from 'discord.js';
-import { logCommand } from '../../functions/general/log';
-import { Command } from '../../classes/Command';
-import path from 'node:path';
-import fs from 'node:fs';
+import { ChatInputCommandInteraction } from 'discord.js';
+import { SCM } from '../../data';
 
-export default (interaction: CommandInteraction) => {
-    fs.readdirSync(path.join(__dirname, 'command'))
-        .filter(file => file.endsWith('.js')).forEach(name => {
-            if (name === interaction.commandName.concat('.js')) {
-                const command: Command<CommandInteraction> = require('./command/' + name);
-                if (command.filter(interaction)) {
-                    logCommand(interaction);
-                    command.execute(interaction);
-                } else
-                    interaction.reply({
-                        ephemeral: true,
-                        content: 'You are not allowed to use this command.'
-                    });
-            }
-        });
-}
+export = async (interaction: ChatInputCommandInteraction) => {
+    const exe = SCM.getCommand(interaction.commandName)?.execute;
+    if (exe) {
+        exe(interaction);
+    } else {
+        await interaction.reply({ ephemeral: true, content: 'service not found' });
+    }
+};

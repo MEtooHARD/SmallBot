@@ -1,20 +1,13 @@
-import { deployCommand } from "./functions/config/doDeployment";
-import { login, mongoDB, session, shouldDeployCommand } from "./app";
+import { login, mongoDB, session } from "./app";
 import { getDirectories } from "./functions/general/path";
 import config from './config.json';
 import { join } from 'node:path';
 import { connectMongoDB } from "./mongoose";
-import { HelpCenter } from "./HelpCenter";
-import unknownError from "./events/other/unknowError";
+import setup from "./setup";
 
 (async () => {
-    /* Help center */
-    HelpCenter;
-    console.log('Help Center established')
     /* discord js */
-    if (shouldDeployCommand) await deployCommand();
-
-    unknownError();
+    setup();
 
     getDirectories(join(__dirname, 'events', 'discord'), true)
         .forEach(dir => { require(dir)(); });
@@ -24,10 +17,7 @@ import unknownError from "./events/other/unknowError";
     /* mongodb */
     if (mongoDB) {
         getDirectories(join(__dirname, 'events', 'mongoose'), true)
-            .forEach(dir => {
-                // console.log(dir);
-                require(dir)();
-            });
+            .forEach(dir => { require(dir)(); });
 
         await connectMongoDB(config.mongodb[session].username, config.mongodb[session].password, config.mongodb[session].serial);
     }

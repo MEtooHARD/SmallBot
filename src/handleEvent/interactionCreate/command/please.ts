@@ -1,11 +1,10 @@
-import { ChatInputCommandInteraction, CommandInteraction, SlashCommandBuilder, User } from 'discord.js';
-import OrderList from '../../../classes/OrderList';
-import { Command } from '../../../classes/Command';
+import { ChatInputCommandInteraction, SlashCommandBuilder, User } from 'discord.js';
 import { atUser } from '../../../functions/discord/mention';
+import { SlashCommand } from '../../../classes/Command';
 
 
-export = new class order_list implements Command<ChatInputCommandInteraction> {
-    data = new SlashCommandBuilder()
+export = new SlashCommand({
+    data: new SlashCommandBuilder()
         .setName('please')
         .setDescription('Please a person.')
         .addUserOption(option => option
@@ -13,13 +12,9 @@ export = new class order_list implements Command<ChatInputCommandInteraction> {
             .setDescription("The person you wonna please.")
             .setRequired(true))
         .setDMPermission(false)
-
-    execute = async (interaction: ChatInputCommandInteraction) => {
+    ,
+    async execute(interaction: ChatInputCommandInteraction) {
         const target = (interaction.options.getUser('target') as User);
         interaction.reply(atUser(target) + "\n# 🟢 Accepted");
     }
-
-    filter(interaction: ChatInputCommandInteraction): true | string {
-        return true;
-    }
-}
+});

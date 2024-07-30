@@ -1,15 +1,16 @@
-import { CommandInteraction, ComponentType, SlashCommandBuilder } from 'discord.js';
-import { Command } from '../../../classes/Command';
-import { HelpCenter } from '../../../HelpCenter';
+import { ChatInputCommandInteraction, ComponentType, SlashCommandBuilder } from 'discord.js';
+import { Command } from '../../../classes/_Command';
 import { Docor } from '../../../classes/Docor';
+import { HelpCenter } from '../../../data';
+import { SlashCommand } from '../../../classes/Command';
 
 
-export = new class help implements Command<CommandInteraction> {
-    data = new SlashCommandBuilder()
+export = new SlashCommand({
+    data: new SlashCommandBuilder()
         .setName('help')
         .setDescription('Get some help from here.')
-
-    execute = async (interaction: CommandInteraction) => {
+    ,
+    async execute(interaction: ChatInputCommandInteraction) {
         const doc = HelpCenter.getDoc(['Help Center']);
         const rp = await interaction.reply({
             fetchReply: true,
@@ -29,8 +30,4 @@ export = new class help implements Command<CommandInteraction> {
             await HelpCenter.handleInteraction(i);
         });
     }
-
-    filter(interaction: CommandInteraction): true | string {
-        return true;
-    }
-}
+});

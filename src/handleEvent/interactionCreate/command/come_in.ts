@@ -1,14 +1,14 @@
 import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
-import { Command } from "../../../classes/Command";
 import { joinVoiceChannel } from "@discordjs/voice";
 import { atVoiceChannel } from "../../../functions/discord/mention";
+import { SlashCommand } from "../../../classes/Command";
 
-export = new class comein implements Command<ChatInputCommandInteraction> {
-    data = new SlashCommandBuilder()
+export = new SlashCommand({
+    data: new SlashCommandBuilder()
         .setName('come_in')
         .setDescription('Invite me to join a voice channel')
         .setDMPermission(false)
-
+    ,
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         if (interaction.member instanceof GuildMember)
             if (interaction.member.voice.channel && interaction.guild) {
@@ -35,8 +35,4 @@ export = new class comein implements Command<ChatInputCommandInteraction> {
                 });
             }
     }
-
-    filter(interaction: ChatInputCommandInteraction): true | string {
-        return true;
-    }
-}
+});
