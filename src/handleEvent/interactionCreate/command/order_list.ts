@@ -1,6 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import OrderList from '../../../classes/OrderList';
-import { Command } from '../../../classes/_Command';
 import { SlashCommand } from '../../../classes/Command';
 
 export = new SlashCommand({

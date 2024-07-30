@@ -1,5 +1,4 @@
 import { ActionRowBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, UserSelectMenuBuilder, SlashCommandBuilder, StringSelectMenuBuilder, SelectMenuOptionBuilder, StringSelectMenuOptionBuilder, GuildMember, TextChannel } from "discord.js";
-import { Command } from "../../../classes/_Command";
 import { delaySec } from "../../../functions/general/delay";
 import ButtonRow from "../../../classes/ActionRow/ButtonRow";
 import { MessageDialog } from "../../../classes/MessageDialog";

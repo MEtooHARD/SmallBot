@@ -1,5 +1,4 @@
 import { ChatInputCommandInteraction, PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder } from "discord.js";
-import { Command } from "../../../classes/_Command";
 import { Referendum } from "../../../classes/Referendum";
 import { connectionStatus } from "../../../mongoose";
 import { ConnectionStates } from "mongoose";

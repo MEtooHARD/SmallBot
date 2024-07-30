@@ -1,5 +1,4 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, User } from "discord.js";
-import { Command } from "../../../classes/_Command";
 import { Piece, TrackChess } from "../../../classes/games/TrackChess";
 import { SlashCommand } from "../../../classes/Command";
 

@@ -1,4 +1,3 @@
-import { Command } from '../../../classes/_Command';
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import fs from 'node:fs';
 import { picPath } from '../../../functions/general/path';
