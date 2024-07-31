@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, GuildMember, MessageComponentInteraction, SlashCommandBuilder } from "discord.js";
+import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember, MessageComponentInteraction, SlashCommandBuilder } from "discord.js";
 import { doAfterSec } from "../../../functions/general/delay";
 import ButtonRow from "../../../classes/ActionRow/ButtonRow";
 import { atUser } from "../../../functions/discord/mention";
 import Bomber from "../../../classes/Bomber";
-import { SlashCommand } from "../../../classes/Command";
+import { Command } from "../../../classes/Command";
 
-export = new SlashCommand({
+export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()
         .setName('bomb')
         .setDescription('Bomb someone')
@@ -26,7 +26,7 @@ export = new SlashCommand({
             .setMinValue(2)
             .setMaxValue(15))
     ,
-    async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+    async executor(interaction: ChatInputCommandInteraction): Promise<void> {
         const target = interaction.options.getMember('target');
         const count = Number(interaction.options.getNumber('count'));
         const period = Number(interaction.options.getNumber('period')) || 5;

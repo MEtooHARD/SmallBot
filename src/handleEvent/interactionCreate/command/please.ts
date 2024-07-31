@@ -1,9 +1,9 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, User } from 'discord.js';
+import { ApplicationCommandType, ChatInputCommandInteraction, SlashCommandBuilder, User } from 'discord.js';
 import { atUser } from '../../../functions/discord/mention';
-import { SlashCommand } from '../../../classes/Command';
+import { Command } from '../../../classes/Command';
 
 
-export = new SlashCommand({
+export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()
         .setName('please')
         .setDescription('Please a person.')
@@ -13,7 +13,7 @@ export = new SlashCommand({
             .setRequired(true))
         .setDMPermission(false)
     ,
-    async execute(interaction: ChatInputCommandInteraction) {
+    async executor(interaction: ChatInputCommandInteraction) {
         const target = (interaction.options.getUser('target') as User);
         interaction.reply(atUser(target) + "\n# 🟢 Accepted");
     }

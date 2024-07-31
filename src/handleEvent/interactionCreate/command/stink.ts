@@ -1,13 +1,13 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ApplicationCommandType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import fs from 'node:fs';
 import { picPath } from '../../../functions/general/path';
-import { SlashCommand } from '../../../classes/Command';
+import { Command } from '../../../classes/Command';
 
 const items: string[] = [
     'God\'s Hands'
 ];
 
-export = new SlashCommand({
+export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()
         .setName('stink')
         .setDescription('1145141919810')
@@ -18,7 +18,7 @@ export = new SlashCommand({
             .setRequired(true))
         .setDMPermission(false)
     ,
-    async execute(interaction: ChatInputCommandInteraction) {
+    async executor(interaction: ChatInputCommandInteraction) {
         interaction.reply({
             files: [
                 {

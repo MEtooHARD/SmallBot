@@ -1,15 +1,15 @@
-import { ChatInputCommandInteraction, ComponentType, SlashCommandBuilder } from 'discord.js';
+import { ApplicationCommandType, ChatInputCommandInteraction, ComponentType, SlashCommandBuilder } from 'discord.js';
 import { Docor } from '../../../classes/Docor';
 import { HelpCenter } from '../../../data';
-import { SlashCommand } from '../../../classes/Command';
+import { Command } from '../../../classes/Command';
 
 
-export = new SlashCommand({
+export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()
         .setName('help')
         .setDescription('Get some help from here.')
     ,
-    async execute(interaction: ChatInputCommandInteraction) {
+    async executor(interaction: ChatInputCommandInteraction) {
         const doc = HelpCenter.getDoc(['Help Center']);
         const rp = await interaction.reply({
             fetchReply: true,

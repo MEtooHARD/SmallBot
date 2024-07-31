@@ -1,4 +1,4 @@
-import { Client, ClientEvents, IntentsBitField } from "discord.js";
+import { Client, ClientEvents, IntentsBitField, Partials } from "discord.js";
 import { VoteManager } from "./classes/Vote";
 
 export const client = new Client(
@@ -8,7 +8,11 @@ export const client = new Client(
             IntentsBitField.Flags.GuildMessages,
             IntentsBitField.Flags.GuildMembers,
             IntentsBitField.Flags.MessageContent,
-            IntentsBitField.Flags.GuildVoiceStates
+            IntentsBitField.Flags.GuildVoiceStates,
+            IntentsBitField.Flags.DirectMessages,
+        ],
+        partials: [
+            Partials.Channel
         ]
     }
 );
@@ -23,7 +27,7 @@ export const login = async (token: string) => { client.login(token) };
 export const [prefix, dividor] = ['s', '!'];
 
 export const shouldLogDoc = false;
-export const shouldDeployCommand = true;
+export const shouldDeployCommand = false;
 export const shouldLogIgnoredCustomID = false;
 
 export enum Session {
@@ -33,6 +37,6 @@ export enum Session {
 
 export const session: Session = Session.dev;
 
-export const mongoDB: boolean = false;
+export const mongoDB: boolean = true;
 
 export const ReferendumManager = new VoteManager();

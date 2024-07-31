@@ -8,7 +8,7 @@ export = new class reloadSC extends MessageCommand {
     };
 
     exe = async (message: Message<boolean>, param: string[]): Promise<void> => {
-        loadSlashCommand(true);
+        // loadSlashCommand(true);
         try {
             await SCM.registerAllCommands();
             await message.reply(SCM.getCommandNames().join('\n'));

@@ -1,8 +1,8 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, User } from "discord.js";
+import { ApplicationCommandType, ChatInputCommandInteraction, SlashCommandBuilder, User } from "discord.js";
 import { Piece, TrackChess } from "../../../classes/games/TrackChess";
-import { SlashCommand } from "../../../classes/Command";
+import { Command } from "../../../classes/Command";
 
-export = new SlashCommand({
+export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()
         .setName('track_chess')
         .setDescription('Start a Track Chess.')
@@ -12,7 +12,7 @@ export = new SlashCommand({
             .setDescription('Choose your opponent.')
             .setRequired(true))
     ,
-    async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+    async executor(interaction: ChatInputCommandInteraction): Promise<void> {
         const p1 = interaction.user;
         const p2 = (interaction.options.getUser('opponent') as User);
         const reply = await interaction.reply(TrackChess.inviteCheck(p1, p2));
