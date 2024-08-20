@@ -5,14 +5,15 @@ import { MessageDialog } from "../../../classes/MessageDialog";
 import { addElements, removeElements } from "../../../functions/general/array";
 import { a_b_percent } from "../../../functions/general/number";
 import { Command } from "../../../classes/Command";
+import { range } from "../../../functions/general/iteral";
 
 export = new Command<ApplicationCommandType.ChatInput>({
-    data: new SlashCommandBuilder()
-        .setName('test')
-        .setDescription('test')
-        .setDMPermission(false)
-    ,
-    async executor(interaction: ChatInputCommandInteraction): Promise<void> {
-        throw new Error('test');
-    }
+  data: new SlashCommandBuilder()
+    .setName('test')
+    .setDescription('test')
+    .setDMPermission(false)
+  ,
+  async executor(interaction: ChatInputCommandInteraction): Promise<void> {
+    await interaction.reply(Array.from(range(5)).map(n => n.toString()).join(', '));
+  }
 })

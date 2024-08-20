@@ -4,9 +4,9 @@ import handleMemberAdd from '../../handleEvent/guildMemberAdd';
 import handleGuildCreate from '../../handleEvent/guildCreate';
 
 const guildCreate = () => {
-    on(Events.GuildCreate, async (guild: Guild) => {
-        await handleGuildCreate(guild);
-    });
+  on(Events.GuildCreate, async (guild: Guild) => {
+    await handleGuildCreate(guild);
+  });
 }
 
 export = guildCreate;

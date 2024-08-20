@@ -8,18 +8,18 @@ import { Command, CommandManager } from "./classes/Command";
 export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help Center');
 
 export const loadHelpCenter = () => {
-    HelpCenter;
-    console.log('Help Center loaded');
+  HelpCenter;
+  console.log('Help Center loaded');
 };
 
 /* SCM */
-export const SCM = new CommandManager();
+export const CM = new CommandManager();
 
 export const loadSlashCommand = (refresh: boolean = false) => {
-    const dir = path.join(rootPath, 'dist', 'handleEvent', 'interactionCreate', 'command');
-    fs.readdirSync(dir, { withFileTypes: true })
-        .filter(o => o.isFile() && o.name.endsWith('.js'))
-        .map(f => require(path.join(dir, f.name)))
-        .filter(o => o instanceof Command)
-        .forEach(c => SCM.addCommand(c));
+  const dir = path.join(rootPath, 'dist', 'handleEvent', 'interactionCreate', 'command');
+  fs.readdirSync(dir, { withFileTypes: true })
+    .filter(o => o.isFile() && o.name.endsWith('.js'))
+    .map(f => require(path.join(dir, f.name)))
+    .filter(o => o instanceof Command)
+    .forEach(c => CM.addCommand(c));
 };

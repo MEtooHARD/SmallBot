@@ -1,8 +1,8 @@
 
 const deployCommand = async () => {
-    await require('../../deploy-commands')();
+  await require('../../deploy-commands')();
 }
 
 export {
-    deployCommand
+  deployCommand
 }

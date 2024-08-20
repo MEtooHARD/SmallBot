@@ -10,24 +10,24 @@ import { randomInt } from "./number";
  * @return An array containing the picked elements.
  */
 export const randomPick = <T>(source: T[], count: number = 1, cut: boolean = false): T[] => {
-    if (source.length == 0) {
-        console.log('warning: random pick encounterred empty array.')
-        return [];
-    }
-    if (count <= 0) return [];
-    const result: T[] = [];
-    let randomN: number;
-    for (let i = 0; i < count; i++) {
-        randomN = randomInt(0, source.length - 1);
-        result.push(source[randomN]);
-        if (cut) source.splice(randomN, 1);
-    }
-    return result;
+  if (source.length == 0) {
+    console.log('warning: random pick encounterred empty array.')
+    return [];
+  }
+  if (count <= 0) return [];
+  const result: T[] = [];
+  let randomN: number;
+  for (let i = 0; i < count; i++) {
+    randomN = randomInt(0, source.length - 1);
+    result.push(source[randomN]);
+    if (cut) source.splice(randomN, 1);
+  }
+  return result;
 }
 
 export const splitArray = <T>(arr: T[], size: number): T[][] => Array.from(
-    { length: Math.ceil(arr.length / size) },
-    (_, i) => arr.slice(i * size, i * size + size));
+  { length: Math.ceil(arr.length / size) },
+  (_, i) => arr.slice(i * size, i * size + size));
 
 
 export const overlap = <T>(arr1: T[], arr2: T[]) => arr1.some(item => arr2.includes(item));
@@ -39,12 +39,12 @@ export const overlap = <T>(arr1: T[], arr2: T[]) => arr1.some(item => arr2.inclu
  * @returns `true` if removed, `false` if not removed.
  */
 export const removeElement = <T>(arr: T[], element: T): boolean => {
-    let i = arr.indexOf(element);
-    if (i !== -1) {
-        arr.splice(i, 1);
-        return true;
-    }
-    return false
+  let i = arr.indexOf(element);
+  if (i !== -1) {
+    arr.splice(i, 1);
+    return true;
+  }
+  return false
 };
 /**
  * Removes `elements` from `arr` according to each single state of presenting.
@@ -53,9 +53,9 @@ export const removeElement = <T>(arr: T[], element: T): boolean => {
  * @returns Amount Removed.
  */
 export const removeElements = <T>(arr: T[], elements: T[]): number => {
-    if (elements.length)
-        return Number(removeElement(arr, elements.splice(0, 1)[0])) + removeElements(arr, elements);
-    return 0;
+  if (elements.length)
+    return Number(removeElement(arr, elements.splice(0, 1)[0])) + removeElements(arr, elements);
+  return 0;
 };
 
 /**
@@ -65,10 +65,10 @@ export const removeElements = <T>(arr: T[], elements: T[]): number => {
  * @returns `true` if added, `false` if not added.
  */
 export const addElement = <T>(arr: T[], element: T): boolean => {
-    if (arr.includes(element))
-        return false;
-    arr.push(element);
-    return true;
+  if (arr.includes(element))
+    return false;
+  arr.push(element);
+  return true;
 };
 /**
  * Adds `elements` to `arr` according to each single state of presenting.
@@ -77,29 +77,29 @@ export const addElement = <T>(arr: T[], element: T): boolean => {
  * @returns The amount added.
  */
 export const addElements = <T>(arr: T[], elements: T[]): number => {
-    if (elements.length)
-        return Number(addElement(arr, elements.splice(0, 1)[0])) + addElements(arr, elements);
-    return 0;
+  if (elements.length)
+    return Number(addElement(arr, elements.splice(0, 1)[0])) + addElements(arr, elements);
+  return 0;
 };
 
 export class PosRange implements Iterator<number> {
-    private _value: number;
-    private _range: number;
-    private _volume: number;
+  private _value: number;
+  private _range: number;
+  private _volume: number;
 
-    constructor(range: number, volume: number = 1, from: number = 0) {
-        this._value = from - volume;
-        this._range = range;
-        this._volume = volume;
+  constructor(range: number, volume: number = 1, from: number = 0) {
+    this._value = from - volume;
+    this._range = range;
+    this._volume = volume;
+  };
+
+  next(): IteratorResult<number> {
+    this._value += this._volume;
+    return {
+      value: this._value,
+      done: this._value > this._range
     };
+  };
 
-    next(): IteratorResult<number> {
-        this._value += this._volume;
-        return {
-            value: this._value,
-            done: this._value > this._range
-        };
-    };
-
-    [Symbol.iterator]() { return this; };
+  [Symbol.iterator]() { return this; };
 };
