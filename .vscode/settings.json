@@ -1,7 +1,7 @@
 {
-  "editor.fontSize": 16,
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "editor.tabSize": 2,
-  "editor.detectIndentation": false,
-  "editor.defaultFormatter": null
+    "editor.fontSize": 16,
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false,
+    "editor.defaultFormatter": null
 }
