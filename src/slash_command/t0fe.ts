@@ -1,6 +1,6 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, ComponentType, Message, SlashCommandBuilder } from "discord.js";
-import T0FE from "../../../classes/games/T0FE";
-import { Command } from "../../../classes/Command";
+import { Command } from "../classes/Command";
+import T0FE from "../classes/games/T0FE";
 
 export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()

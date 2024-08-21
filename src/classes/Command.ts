@@ -45,12 +45,12 @@ interface CommandGeneralContent<T extends ApplicationCommandType> {
 
 interface CommandContent<T extends ApplicationCommandType> extends CommandGeneralContent<T> {
     filter: CommandFilter<T>;
-    permissions: Readonly<CommandPermissions>;
+    permissions: CommandPermissions;
 }
 
 interface CommandCreateOptions<T extends ApplicationCommandType> extends CommandGeneralContent<T> {
     filter?: CommandFilter<T>;
-    permissions?: Readonly<CommandPermissions>;
+    permissions?: CommandPermissions;
 };
 
 export class Command<T extends ApplicationCommandType> implements CommandContent<T> {
@@ -58,7 +58,7 @@ export class Command<T extends ApplicationCommandType> implements CommandContent
     readonly data: CommandData<T>;
     readonly executor: CommandExecutor<T>;
     readonly filter: CommandFilter<T>;
-    readonly permissions: Readonly<CommandPermissions>;
+    readonly permissions: CommandPermissions;
 
     constructor({ data, executor, complete = undefined, filter, permissions }: CommandCreateOptions<T>) {
         this.complete = complete;
@@ -86,18 +86,18 @@ export class CommandManager<T extends ApplicationCommandType> {
 
     exists(name: string) { return this._commands.has(name); };
 
+    getSize(): number { return this._commands.size; };
+
     getCommandNames(): string[] { return Array.from(this._commands.keys()); };
 
     getCommand(name: string): Command<T> | undefined { return this._commands.get(name); };
 
     async registerAllCommands(): Promise<void> {
         const rest = new REST({ version: '10' }).setToken(config.bot[session].token);
-
         await rest.put(
             Routes.applicationCommands(config.bot[session].id),
             { body: this.getAllData() },
         );
-
-        console.log(`[Command Manager] deployed ${this._commands.size} commands:\n${this.getCommandNames().join(',\n')}`);
+        console.log(`[Command Manager] deployed ${this._commands.size} commands:\n${this.getCommandNames().join(', ')}`);
     };
 };

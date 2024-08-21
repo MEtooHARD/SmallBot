@@ -1,7 +1,6 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, SlashCommandBuilder, User } from 'discord.js';
-import { atUser } from '../../../functions/discord/mention';
-import { Command } from '../../../classes/Command';
-
+import { Command } from '../classes/Command';
+import { atUser } from '../functions/discord/mention';
 
 export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()

@@ -1,7 +1,7 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import fs from 'node:fs';
-import { picPath } from '../../../functions/general/path';
-import { Command } from '../../../classes/Command';
+import { Command } from '../classes/Command';
+import { picPath } from '../functions/general/path';
 
 const items: string[] = [
     'God\'s Hands'

@@ -1,6 +1,6 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import OrderList from '../../../classes/OrderList';
-import { Command } from '../../../classes/Command';
+import { Command } from '../classes/Command';
+import OrderList from '../classes/OrderList';
 
 export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()

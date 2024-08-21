@@ -1,9 +1,9 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember, MessageComponentInteraction, SlashCommandBuilder } from "discord.js";
-import { doAfterSec } from "../../../functions/general/delay";
-import ButtonRow from "../../../classes/ActionRow/ButtonRow";
-import { atUser } from "../../../functions/discord/mention";
-import Bomber from "../../../classes/Bomber";
-import { Command } from "../../../classes/Command";
+import { Command } from "../classes/Command";
+import { doAfterSec } from "../functions/general/delay";
+import { atUser } from "../functions/discord/mention";
+import Bomber from "../classes/Bomber";
+import ButtonRow from "../classes/ActionRow/ButtonRow";
 
 export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()

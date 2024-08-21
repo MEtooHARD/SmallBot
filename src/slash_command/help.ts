@@ -1,8 +1,7 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, ComponentType, SlashCommandBuilder } from 'discord.js';
-import { Docor } from '../../../classes/Docor';
-import { HelpCenter } from '../../../data';
-import { Command } from '../../../classes/Command';
-
+import { Command } from '../classes/Command';
+import { Docor } from '../classes/Docor';
+import { HelpCenter } from '../app';
 
 export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()

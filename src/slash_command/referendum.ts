@@ -1,8 +1,8 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder } from "discord.js";
-import { Referendum } from "../../../classes/Referendum";
-import { connectionStatus } from "../../../mongoose";
+import { Command } from "../classes/Command";
+import { connectionStatus } from "../mongoose";
+import { Referendum } from "../classes/Referendum";
 import { ConnectionStates } from "mongoose";
-import { Command } from "../../../classes/Command";
 
 export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()
