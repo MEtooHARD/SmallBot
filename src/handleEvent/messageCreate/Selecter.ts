@@ -12,6 +12,7 @@ export = new class Selecter extends MessageFeature {
     filter = (message: Message<boolean>): boolean => { return true; };
 
     exe = async (message: Message<boolean>): Promise<void> => {
+
         if (shouldRpMsg(message))
             if (message.content.startsWith(prefix)) {
                 const [command, ...param] = getCmdInfo(message.content);

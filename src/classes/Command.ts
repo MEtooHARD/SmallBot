@@ -94,10 +94,12 @@ export class CommandManager<T extends ApplicationCommandType> {
 
     async registerAllCommands(): Promise<void> {
         const rest = new REST({ version: '10' }).setToken(config.bot[session].token);
-        await rest.put(
-            Routes.applicationCommands(config.bot[session].id),
-            { body: this.getAllData() },
-        );
-        console.log(`[Command Manager] deployed ${this._commands.size} commands:\n${this.getCommandNames().join(', ')}`);
+        try {
+            await rest.put(
+                Routes.applicationCommands(config.bot[session].id),
+                { body: this.getAllData() },
+            );
+            console.log(`[Command Manager] deployed ${this._commands.size} commands:\n${this.getCommandNames().join(', ')}`);
+        } catch (e) { console.error(e); }
     };
 };

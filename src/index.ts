@@ -1,7 +1,7 @@
-import { login, mongoDB, session } from "./app";
-import config from './config.json';
+import { botConfig, login, mongoDB, mongodbConfig } from "./app";
 import { connectMongoDB } from "./mongoose";
 import setup from "./setup";
+import { supabase } from "./supabase";
 
 (async () => {
     /* discord js */
@@ -10,10 +10,13 @@ import setup from "./setup";
     /* mongodb */
     if (mongoDB)
         await connectMongoDB(
-            config.mongodb[session].username,
-            config.mongodb[session].password,
-            config.mongodb[session].serial
+            mongodbConfig.username,
+            mongodbConfig.password,
+            mongodbConfig.serial
         );
 
-    await login(config.bot[session].token);
+    /* supabase */
+    // supabase;
+
+    await login(botConfig.token);
 })();

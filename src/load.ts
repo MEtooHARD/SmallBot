@@ -2,7 +2,7 @@ import rootPath from "get-root-path";
 import path from 'node:path';
 import fs from 'node:fs';
 import { Command } from "./classes/Command";
-import { CM, HelpCenter, should_log_commands } from "./app";
+import { CM, HelpCenter, mongoDB, should_log_commands } from "./app";
 import { getDirectories } from "./functions/general/path";
 
 export const loadHelpCenter = () => {
@@ -27,6 +27,7 @@ export const onDiscordEvents = () => {
 }
 
 export const onMongoDBEvents = () => {
-    getDirectories(path.join(__dirname, 'events', 'mongoose'), true)
-        .forEach(dir => { require(dir)(); });
+    if (mongoDB)
+        getDirectories(path.join(__dirname, 'events', 'mongoose'), true)
+            .forEach(dir => { require(dir)(); });
 }
