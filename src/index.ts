@@ -1,11 +1,29 @@
-import { botConfig, login, mongoDB, mongodbConfig } from "./app";
+import rootPath from "get-root-path";
+import { botConfig, login, mongoDB, mongodbConfig, should_deploy_command } from "./app";
+import { CommandManager } from "./classes/Command";
+import { Docor } from "./classes/Docor";
+import { unknownError } from "./events/other/unknowError";
+import { loadHelpCenter, loadSlashCommand, onDiscordEvents, onMongoDBEvents } from "./load";
 import { connectMongoDB } from "./mongoose";
-import setup from "./setup";
 import { supabase } from "./supabase";
+import path from 'node:path';
+import { InmArchiveManager } from "./classes/InmArchive/InmArchive";
+
+/* Utility */
+export const CM = new CommandManager();
+export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help Center');
+export const InmArchive = new InmArchiveManager(supabase);
+/* Utility */
 
 (async () => {
-    /* discord js */
-    setup();
+    /* setup */
+    unknownError();
+    loadHelpCenter();
+    loadSlashCommand();
+    onDiscordEvents();
+    onMongoDBEvents();
+    supabase;
+    if (should_deploy_command) await CM.registerAllCommands();
 
     /* mongodb */
     if (mongoDB)
@@ -16,7 +34,7 @@ import { supabase } from "./supabase";
         );
 
     /* supabase */
-    // supabase;
+    // InmArchive;
 
     await login(botConfig.token);
 })();

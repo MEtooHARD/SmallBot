@@ -4,6 +4,8 @@ import { Docor } from "./classes/Docor";
 import config from './config.json';
 import rootPath from "get-root-path";
 import path from 'node:path';
+import { InmArchiveManager } from "./classes/InmArchive/InmArchive";
+import { supabase } from "./supabase";
 
 export const client = new Client(
     {
@@ -50,8 +52,4 @@ export const supabaseConfig = config.supabase[session];
 export const shouldLogIgnoredCustomID = false;
 /* Run Time Settings */
 
-/* Utility */
-export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help Center');
-export const CM = new CommandManager();
-// export const ReferendumManager = new VoteManager();
-/* Utility */
+

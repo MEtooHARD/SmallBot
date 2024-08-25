@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from 'discord.js';
-import { CM } from '../../app';
+import { CM } from '../..';
 
 export = async (interaction: ChatInputCommandInteraction) => {
     if (!interaction.channel || !interaction.guild?.members.me)

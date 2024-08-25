@@ -2,8 +2,9 @@ import rootPath from "get-root-path";
 import path from 'node:path';
 import fs from 'node:fs';
 import { Command } from "./classes/Command";
-import { CM, HelpCenter, mongoDB, should_log_commands } from "./app";
+import { mongoDB, should_log_commands } from "./app";
 import { getDirectories } from "./functions/general/path";
+import { CM, HelpCenter } from ".";
 
 export const loadHelpCenter = () => {
     HelpCenter;
