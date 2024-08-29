@@ -1,9 +1,4 @@
-class A {
-    b = 'abc';
-}
+const { a, b } = require("./test2");
 
-const a = {
-    c: new A()
-}
-
-console.log(JSON.parse(JSON.stringify(a)))
+a();
+console.log(b);

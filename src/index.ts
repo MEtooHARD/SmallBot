@@ -7,12 +7,12 @@ import { loadHelpCenter, loadSlashCommand, onDiscordEvents, onMongoDBEvents } fr
 import { connectMongoDB } from "./mongoose";
 import { supabase } from "./supabase";
 import path from 'node:path';
-import { InmArchiveManager } from "./classes/InmArchive/InmArchive";
+import { InmArchive } from "./classes/InmArchive/InmArchive";
 
 /* Utility */
 export const CM = new CommandManager();
 export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help Center');
-export const InmArchive = new InmArchiveManager(supabase);
+export const InmArc = new InmArchive(supabase);
 /* Utility */
 
 (async () => {

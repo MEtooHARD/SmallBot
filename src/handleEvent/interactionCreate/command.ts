@@ -15,13 +15,13 @@ export = async (interaction: ChatInputCommandInteraction) => {
     /* check permission */
     const permissions = interaction.channel
         .permissionsFor(interaction.guild.members.me);
-    if (!permissions.has(command.permissions)) {
+    if (!permissions.has(command.botPermissions)) {
         if (interaction.channel.isThread()
             ? permissions.has("SendMessagesInThreads")
             : permissions.has("SendMessages"))
             interaction.reply({
                 ephemeral: true,
-                content: `missing following permissions: ${permissions.missing(command.permissions).join(', ')}`
+                content: `missing following permissions: ${permissions.missing(command.botPermissions).join(', ')}`
             });
         return;
     }

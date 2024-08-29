@@ -5,6 +5,7 @@ import { Command } from "./classes/Command";
 import { mongoDB, should_log_commands } from "./app";
 import { getDirectories } from "./functions/general/path";
 import { CM, HelpCenter } from ".";
+import { InmArchive } from "./classes/InmArchive/InmArchive";
 
 export const loadHelpCenter = () => {
     HelpCenter;
@@ -32,3 +33,12 @@ export const onMongoDBEvents = () => {
         getDirectories(path.join(__dirname, 'events', 'mongoose'), true)
             .forEach(dir => { require(dir)(); });
 }
+
+export const onInmMaterialAdd = () => {
+    //@ts-ignore
+    InmArchive.material_add_ch
+        //@ts-ignore
+        .on('postgres_changes',
+            { event: "sync" },
+            () => { });
+};

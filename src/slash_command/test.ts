@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, ApplicationCommandType } from "discord.js";
 import { Command } from "../classes/Command";
+import { supabase } from "../supabase";
 
 export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()
@@ -12,10 +13,6 @@ export = new Command<ApplicationCommandType.ChatInput>({
         .setDMPermission(false)
     ,
     async executor(interaction: ChatInputCommandInteraction): Promise<void> {
-        // await interaction.reply(Array.from(range(5)).map(n => n.toString()).join(', '));
-        const attachment = interaction.options.getAttachment('image');
-        if (attachment) {
-            interaction.channel?.send(attachment.url);
-        }
+        console.log(supabase);
     }
 })

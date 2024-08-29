@@ -1,11 +1,5 @@
 import { Client, ClientEvents, IntentsBitField, Partials } from "discord.js";
-import { CommandManager } from "./classes/Command";
-import { Docor } from "./classes/Docor";
 import config from './config.json';
-import rootPath from "get-root-path";
-import path from 'node:path';
-import { InmArchiveManager } from "./classes/InmArchive/InmArchive";
-import { supabase } from "./supabase";
 
 export const client = new Client(
     {

@@ -3,22 +3,9 @@ import { Database } from "../../database.types";
 import { Snowflake } from "discord.js";
 import { supabase } from "../../supabase";
 
-export type MaterialIns = Database['public']['Tables']['material']['Insert'];
+export type Material = Database['public']['Tables']['material'];
 
-export const MIMETypes = [
-    // 'text/plain',
-    'image/gif',
-    'image/jpeg',
-    'image/webp',
-    'image/avif',
-    'image/apng',
-    'image/png',
-    'image/svg+xml'
-    // 'video/mpeg',
-    // 'video/mp4',
-];
-
-export class InmArchiveManager {
+export class InmArchive {
     database: SupabaseClient<Database>;
 
     constructor(spdb: SupabaseClient<Database>) {
@@ -42,7 +29,7 @@ export class InmArchiveManager {
         return !error;
     }
 
-    async upload(material: MaterialIns): Promise<boolean> {
+    async upload(material: Material['Insert']): Promise<boolean> {
         const { error } = await supabase
             .from('material')
             .insert({
@@ -54,4 +41,34 @@ export class InmArchiveManager {
         if (error) console.log(error);
         return !error;
     }
+
+    static isAllowedMIMEType(type: string) {
+        return InmArchive.MIMETypes.has(type);
+    }
+
+
+};
+
+
+export namespace InmArchive {
+    export const MIMETypes = new Set<string>([
+        'image/gif',
+        'image/jpeg',
+        'image/webp',
+        'image/avif',
+        'image/apng',
+        'image/png',
+        'image/svg+xml'
+    ]);
+
+    export enum MaterialStatus {
+        Pending = 0,
+        Approved = 1,
+        Rejected = 2
+    };
+
+    const MIMETypesString = [MIMETypes.values()].join(', ');
+    export const InvalidMIMETypeMessage = `Valid MIME types:\n${MIMETypesString}`
+
+    export const material_add_ch = supabase.channel('material_add')
 };

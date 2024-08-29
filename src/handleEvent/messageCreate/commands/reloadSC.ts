@@ -8,12 +8,11 @@ export = new class reloadSC extends MessageCommand {
     };
 
     exe = async (message: Message<boolean>, param: string[]): Promise<void> => {
-        // loadSlashCommand(true);
-        try {
-            await CM.registerAllCommands();
-            await message.reply(CM.getCommandNames().join('\n'));
-        } catch (e) {
-            await message.reply('failed');
-        }
+        const [commands, error] = await CM.registerAllCommands();
+
+        if (commands)
+            message.reply(CM.getCommandNames().join('\n'));
+        if (error)
+            message.reply('failed');
     };
 };
