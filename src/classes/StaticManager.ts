@@ -1,4 +1,4 @@
-export abstract class StaticManager<V extends any> {
+export class StaticManager<V extends any> {
     protected readonly items: Map<string, V>;
 
     constructor(items: [string, V][]) {

@@ -1,15 +1,24 @@
-import { BaseInteraction } from 'discord.js';
+import { BaseInteraction, MessageComponentInteraction } from 'discord.js';
 import menu from './interactionCreate/menu';
 import modal from './interactionCreate/modal';
 import button from './interactionCreate/button';
 import command from './interactionCreate/command';
 import autocomplete from './interactionCreate/autocomplete';
 import { getSvcInfo } from '../functions/discord/service';
-import rootPath from 'get-root-path';
-import path from 'node:path';
-import fs from 'node:fs';
 import { shouldLogIgnoredCustomID } from '../app';
 import { contextMenu } from './interactionCreate/contextmenu';
+import { StaticManager } from '../classes/StaticManager';
+
+import { InmArchive } from '../features/InmArchive'
+import { OrderList } from '../features/OrderList'
+import { Referendum } from '../features/Referendum'
+
+type FeatureHandler = (interaction: MessageComponentInteraction, svcInfo: string[]) => Promise<void>;
+const FeatureManager = new StaticManager<FeatureHandler>([
+    ['InmArchive', InmArchive],
+    ['OrderList', OrderList],
+    ['Referendum', Referendum],
+]);
 
 const create = async (interaction: BaseInteraction): Promise<void> => {
     if (interaction.isChatInputCommand())
@@ -23,8 +32,9 @@ const create = async (interaction: BaseInteraction): Promise<void> => {
             console.log(interaction.customId);
             const svcInfo = getSvcInfo(interaction.customId);
             if (svcInfo.length) {
-                if (fs.existsSync(path.join(rootPath, 'dist', 'features', svcInfo[0]) + '.js'))
-                    await require(path.join(rootPath, 'dist', 'features', svcInfo[0]))(interaction, svcInfo);
+                const feature = FeatureManager.get(svcInfo[0]);
+                if (feature)
+                    feature(interaction as MessageComponentInteraction, svcInfo)
                 else {
                     console.log('service failed: ' + interaction.customId);
                     await interaction.reply({ ephemeral: true, content: 'service not found' });
