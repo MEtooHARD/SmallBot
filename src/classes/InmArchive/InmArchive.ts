@@ -2,17 +2,20 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "../../database.types";
 import { Snowflake } from "discord.js";
 import { supabase } from "../../supabase";
+import { Material } from './Material';
 
-export type Material = Database['public']['Tables']['material'];
+export type MaterialSchema = Database['public']['Tables']['material'];
 
 export class InmArchive {
-    database: SupabaseClient<Database>;
+    static readonly Material = Material;
+
+    readonly database: SupabaseClient<Database>;
 
     constructor(spdb: SupabaseClient<Database>) {
         this.database = spdb;
     }
 
-    async existsUser(UID: Snowflake): Promise<boolean> {
+    async hasUser(UID: Snowflake): Promise<boolean> {
         const { data, error } = await this.database
             .from('user').select('*')
             .eq("snowflake", UID)
@@ -29,7 +32,7 @@ export class InmArchive {
         return !error;
     }
 
-    async upload(material: Material['Insert']): Promise<boolean> {
+    async upload(material: MaterialSchema['Insert']): Promise<boolean> {
         const { error } = await supabase
             .from('material')
             .insert({
@@ -41,14 +44,7 @@ export class InmArchive {
         if (error) console.log(error);
         return !error;
     }
-
-    static isAllowedMIMEType(type: string) {
-        return InmArchive.MIMETypes.has(type);
-    }
-
-
 };
-
 
 export namespace InmArchive {
     export const MIMETypes = new Set<string>([
@@ -61,14 +57,11 @@ export namespace InmArchive {
         'image/svg+xml'
     ]);
 
-    export enum MaterialStatus {
-        Pending = 0,
-        Approved = 1,
-        Rejected = 2
-    };
+    export const isListedMIMEType =
+        (type: string) => MIMETypes.has(type);
 
-    const MIMETypesString = [MIMETypes.values()].join(', ');
-    export const InvalidMIMETypeMessage = `Valid MIME types:\n${MIMETypesString}`
+    const MIMETypesStr = Array.from(MIMETypes.values()).join(', ');
+    export const InvalidMIMETypesString = `Valid MIME types:\n${MIMETypesStr}`
 
-    export const material_add_ch = supabase.channel('material_add')
+    export const DiscordMaterialAddCh = '1279438389506080872';
 };

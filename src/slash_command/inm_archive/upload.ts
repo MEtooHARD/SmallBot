@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { Material } from "../../classes/InmArchive/InmArchive";
+import { MaterialSchema } from "../../classes/InmArchive/InmArchive";
 
-export type Material_Content_Type = Pick<Material['Insert'], 'content' | 'type'>;;
+export type Material_Content_Type = Pick<MaterialSchema['Insert'], 'content' | 'type'>;;
 
 export function solveText(
     interaction: ChatInputCommandInteraction

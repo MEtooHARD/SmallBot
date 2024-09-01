@@ -26,6 +26,8 @@ export const on = (event: keyof ClientEvents, callback = (...args: any) => { }) 
 /* Define */
 export enum Session { dev = 'dev', main = 'main' };
 export const [prefix, dividor] = ['s', '!'];
+export const SupervisorGuildId = '1213341621542719548';
+export const BugReportingChannel = '1267489062135009290';
 /* Define */
 
 /* Start Up Settings */

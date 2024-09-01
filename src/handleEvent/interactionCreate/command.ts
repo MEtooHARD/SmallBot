@@ -5,7 +5,7 @@ export = async (interaction: ChatInputCommandInteraction) => {
     if (!interaction.channel || !interaction.guild?.members.me)
         return;
     /* get (slash) command */
-    const command = CM.getCommand(interaction.commandName);
+    const command = CM.get(interaction.commandName);
     if (!command) return;
     /* skip permission checking for DMChannel */
     if (interaction.channel.isDMBased()) {

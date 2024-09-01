@@ -5,6 +5,7 @@ import { Material_Content_Type, solveImage, solveText } from "./inm_archive/uplo
 import { handleRegister } from "./inm_archive/register";
 import { handleFeed } from "./inm_archive/feed";
 import { InmArc } from "..";
+import { InmArchive } from "../classes/InmArchive/InmArchive";
 
 export = new Command<ApplicationCommandType.ChatInput>({
     data: data,
@@ -16,25 +17,37 @@ export = new Command<ApplicationCommandType.ChatInput>({
 
         if (subgroup === 'upload') {
             const name = interaction.options.getString('name', true);
+
+
+
             let material: Material_Content_Type;
+
             if (subcommand === 'image')
-                material = solveText(interaction);
-            else
                 material = solveImage(interaction);
+            else
+                material = solveText(interaction);
 
             await interaction.editReply
                 (`name: ${name}\ntype: ${material.type}\ncontent: ${material.content}`);
 
-            const success = await InmArc.upload({
-                content: material.content,
-                name: name,
-                type: material.type,
-                uploader: interaction.user.id
-            })
-            interaction.followUp({
-                ephemeral: true,
-                content: `${success ? 'Succeed' : 'Failed'} to save material`
-            });
+            if (subcommand === 'image'
+                && !InmArchive.isListedMIMEType(material.type)) {
+                interaction.followUp({
+                    ephemeral: true,
+                    content: InmArchive.InvalidMIMETypesString
+                })
+            } else {
+                const success = await InmArc.upload({
+                    content: material.content,
+                    name: name,
+                    type: material.type,
+                    uploader: interaction.user.id
+                })
+                interaction.followUp({
+                    ephemeral: true,
+                    content: `${success ? 'Succeed' : 'Failed'} to save material`
+                });
+            }
         } else
             if (subcommand === 'register')
                 handleRegister(interaction);

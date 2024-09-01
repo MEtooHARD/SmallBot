@@ -23,7 +23,7 @@ const create = async (interaction: BaseInteraction): Promise<void> => {
             console.log(interaction.customId);
             const svcInfo = getSvcInfo(interaction.customId);
             if (svcInfo.length) {
-                if (fs.existsSync(path.join(rootPath, 'dist', 'features', svcInfo[0], svcInfo[1]) + '.js'))
+                if (fs.existsSync(path.join(rootPath, 'dist', 'features', svcInfo[0]) + '.js'))
                     await require(path.join(rootPath, 'dist', 'features', svcInfo[0]))(interaction, svcInfo);
                 else {
                     console.log('service failed: ' + interaction.customId);

@@ -4,7 +4,7 @@ import { InmArc } from "../..";
 export async function handleRegister(interaction: ChatInputCommandInteraction) {
     /// deferred;
     let message = '';
-    if (await InmArc.existsUser(interaction.user.id)) {
+    if (await InmArc.hasUser(interaction.user.id)) {
         message = 'You\'re already a user of Inm Archive.';
     } else {
         if (await InmArc.addUser(interaction.user.id))

@@ -12,6 +12,7 @@ import {
 import { REST, Routes } from 'discord.js';
 import { session } from "../app";
 import config from '../config.json';
+import { StaticManager } from "./StaticManager";
 
 type CommandAutoComplete<T extends ApplicationCommandType> =
     T extends ApplicationCommandType.ChatInput
@@ -69,35 +70,21 @@ export class Command<T extends ApplicationCommandType> implements CommandContent
     };
 };
 
-export class CommandManager<T extends ApplicationCommandType> {
+export class CommandManager<T extends ApplicationCommandType> extends StaticManager<Command<T>> {
     private readonly _commands = new Map<string, Command<T>>();
+
     private getAllData() { return Array.from(this._commands.values()).map(c => c.data) };
 
-    addCommand(command: Command<T>): void {
-        if (this._commands.has(command.data.name))
-            throw new Error(`[Command Manager] duplicate command: ${command.data.name}`);
-        else
-            this._commands.set(command.data.name, command);
-    };
-
-    // rmCommand(name: string): boolean { return this._commands.delete(name); };
-
-    exists(name: string) { return this._commands.has(name); };
-
-    getSize(): number { return this._commands.size; };
-
-    getCommandNames(): string[] { return Array.from(this._commands.keys()); };
-
-    getCommand(name: string): Command<T> | undefined { return this._commands.get(name); };
-
-    async registerAllCommands(): Promise<[string[] | null, unknown | null]> {
+    async registerCommands(): Promise<[boolean, any]> {
         const rest = new REST({ version: '10' }).setToken(config.bot[session].token);
         try {
             await rest.put(
                 Routes.applicationCommands(config.bot[session].id),
                 { body: this.getAllData() },
             );
-            return [this.getCommandNames(), null];
-        } catch (e) { return [null, e]; }
+            return [true, null];
+        } catch (e) {
+            return [false, e];
+        }
     };
 };

@@ -2,26 +2,26 @@ import rootPath from "get-root-path";
 import path from 'node:path';
 import fs from 'node:fs';
 import { Command } from "./classes/Command";
-import { mongoDB, should_log_commands } from "./app";
+import { should_log_commands } from "./app";
 import { getDirectories } from "./functions/general/path";
 import { CM, HelpCenter } from ".";
-import { InmArchive } from "./classes/InmArchive/InmArchive";
+import { InmArchive, MaterialSchema } from "./classes/InmArchive/InmArchive";
+import { REALTIME_LISTEN_TYPES } from "@supabase/supabase-js";
+import { ApplicationCommandType } from "discord.js";
 
 export const loadHelpCenter = () => {
     HelpCenter;
     console.log('[Help Center] loaded');
 };
 
-export const loadSlashCommand = (refresh: boolean = false) => {
+export const prepareSlashCommand = (): [string, Command<ApplicationCommandType>][] => {
     const dir = path.join(rootPath, 'dist', 'slash_command');
-    fs.readdirSync(dir, { withFileTypes: true })
+    return fs.readdirSync(dir, { withFileTypes: true })
         .filter(o => o.isFile() && o.name.endsWith('.js'))
-        .map(f => require(path.join(dir, f.name)))
+        .map(f => require(path.join(dir, f.name)) as Command<ApplicationCommandType>)
         .filter(o => o instanceof Command)
-        .forEach(c => CM.addCommand(c));
-
-    if (should_log_commands) console.log(`Commands: ${CM.getCommandNames().join(', ')}`);
-};
+        .map(c => [c.data.name, c]);
+}
 
 export const onDiscordEvents = () => {
     getDirectories(path.join(__dirname, 'events', 'discord'), true)
@@ -29,16 +29,15 @@ export const onDiscordEvents = () => {
 }
 
 export const onMongoDBEvents = () => {
-    if (mongoDB)
-        getDirectories(path.join(__dirname, 'events', 'mongoose'), true)
-            .forEach(dir => { require(dir)(); });
+    getDirectories(path.join(__dirname, 'events', 'mongoose'), true)
+        .forEach(dir => { require(dir)(); });
 }
 
-export const onInmMaterialAdd = () => {
-    //@ts-ignore
-    InmArchive.material_add_ch
-        //@ts-ignore
-        .on('postgres_changes',
-            { event: "sync" },
-            () => { });
+export const onInmMaterialInsert = () => {
+    InmArchive.Material.InsertRealtimeChannel
+        .on<MaterialSchema['Row']>(REALTIME_LISTEN_TYPES.POSTGRES_CHANGES,
+            { event: "INSERT", schema: 'public', table: 'material' },
+            InmArchive.Material.handleInsert
+        )
+        .subscribe();
 };

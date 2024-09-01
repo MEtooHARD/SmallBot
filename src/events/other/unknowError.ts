@@ -8,6 +8,7 @@ export const unknownError = () => {
 }
 
 export const sendDebugMessage = async (err: Error | unknown, origin: NodeJS.UncaughtExceptionOrigin | Promise<unknown>) => {
+    console.error(err);
     try {
         const reportChannel = client.guilds.cache.get('1213341621542719548')?.channels.cache.get('1267489062135009290');
         if (reportChannel && reportChannel.isTextBased()) {

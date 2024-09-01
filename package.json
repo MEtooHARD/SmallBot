@@ -1,38 +1,38 @@
 {
-  "name": "smallbot",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
-  "scripts": {
-    "postinstall": "tsc",
-    "start": "tsc && node dist/index.js",
-    "test": "tsc"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/594-666/SmallBot.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/594-666/SmallBot/issues"
-  },
-  "homepage": "https://github.com/594-666/SmallBot#readme",
-  "dependencies": {
-    "@discordjs/builders": "^1.8.2",
-    "@discordjs/voice": "^0.16.1",
-    "@supabase/supabase-js": "^2.45.2",
-    "chalk": "^4.1.2",
-    "discord.js": "^14.15.3",
-    "ffmpeg-static": "^5.2.0",
-    "get-root-path": "^2.0.2",
-    "libsodium-wrappers": "^0.7.13",
-    "mongoose": "^8.4.4",
-    "typescript": "^5.4.4",
-    "uuid": "^10.0.0"
-  },
-  "devDependencies": {
-    "@types/uuid": "^10.0.0"
-  }
+    "name": "smallbot",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "postinstall": "",
+        "start": "tsc && node dist/index.js",
+        "test": "tsc"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/594-666/SmallBot.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/594-666/SmallBot/issues"
+    },
+    "homepage": "https://github.com/594-666/SmallBot#readme",
+    "dependencies": {
+        "@discordjs/builders": "^1.8.2",
+        "@discordjs/voice": "^0.16.1",
+        "@supabase/supabase-js": "^2.45.2",
+        "chalk": "^4.1.2",
+        "discord.js": "^14.15.3",
+        "ffmpeg-static": "^5.2.0",
+        "get-root-path": "^2.0.2",
+        "libsodium-wrappers": "^0.7.13",
+        "mongoose": "^8.4.4",
+        "typescript": "^5.4.4",
+        "uuid": "^10.0.0"
+    },
+    "devDependencies": {
+        "@types/uuid": "^10.0.0"
+    }
 }
