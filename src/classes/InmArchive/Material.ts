@@ -1,8 +1,8 @@
-import { ButtonStyle, Colors, EmbedImageData, MessageCreateOptions } from "discord.js";
+import { ButtonStyle, Colors, EmbedImageData, InteractionUpdateOptions, MessageCreateOptions } from "discord.js";
 import ButtonRow from "../ActionRow/ButtonRow";
 import { InmArchive, MaterialSchema } from "./InmArchive";
 import { atUser } from "../../functions/discord/mention";
-import { RealtimePostgresInsertPayload } from "@supabase/supabase-js";
+import { PostgrestSingleResponse, RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 import { fetchChannel } from "../../functions/discord/fetch";
 import { SupervisorGuildId } from "../../app";
 import { supabase } from "../../supabase";
@@ -17,7 +17,38 @@ export class Material {
         this.props = payload;
     }
 
-    ReviewMessage(): MessageCreateOptions {
+    setStatus(status: Material.Status) { this.props.status = status; }
+
+    static async upload(material: MaterialSchema['Insert']): Promise<boolean> {
+        const { error } = await InmArchive.database
+            .from('material')
+            .insert({
+                name: material.name,
+                content: material.content,
+                type: material.type,
+                uploader: material.uploader
+            });
+        if (error) console.log(error);
+        return !error;
+    }
+
+    static async fetch(uuid: string): Promise<PostgrestSingleResponse<MaterialSchema['Row']>> {
+        return await InmArchive.database
+            .from('material')
+            .select('*')
+            .eq('id', uuid)
+            .limit(1)
+            .single();
+    }
+
+    async update(): Promise<PostgrestSingleResponse<null>> {
+        return await InmArchive.database
+            .from('material')
+            .update(this.props)
+            .eq('id', this.props.id);
+    };
+
+    ReviewMessage(): MessageCreateOptions & InteractionUpdateOptions {
         let description: string | undefined,
             image: EmbedImageData | undefined = undefined,
             color: number;

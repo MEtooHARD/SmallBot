@@ -9,14 +9,10 @@ export type MaterialSchema = Database['public']['Tables']['material'];
 export class InmArchive {
     static readonly Material = Material;
 
-    readonly database: SupabaseClient<Database>;
+    static readonly database: SupabaseClient<Database> = supabase;
 
-    constructor(spdb: SupabaseClient<Database>) {
-        this.database = spdb;
-    }
-
-    async hasUser(UID: Snowflake): Promise<boolean> {
-        const { data, error } = await this.database
+    static async hasUser(UID: Snowflake): Promise<boolean> {
+        const { data, error } = await InmArchive.database
             .from('user').select('*')
             .eq("snowflake", UID)
             .limit(1)
@@ -24,23 +20,10 @@ export class InmArchive {
         return Boolean(data?.length);
     }
 
-    async addUser(UID: string): Promise<boolean> {
+    static async addUser(UID: string): Promise<boolean> {
         const { error } = await supabase
             .from('user')
             .insert({ snowflake: UID });
-        if (error) console.log(error);
-        return !error;
-    }
-
-    async upload(material: MaterialSchema['Insert']): Promise<boolean> {
-        const { error } = await supabase
-            .from('material')
-            .insert({
-                name: material.name,
-                content: material.content,
-                type: material.type,
-                uploader: material.uploader
-            });
         if (error) console.log(error);
         return !error;
     }

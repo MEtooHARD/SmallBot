@@ -12,7 +12,7 @@ import { InmArchive } from "./classes/InmArchive/InmArchive";
 /* Utility */
 export const CM = new CommandManager(prepareSlashCommand());
 export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help Center');
-export const InmArc = new InmArchive(supabase);
+// export const InmArc = new InmArchive(supabase);
 /* Utility */
 
 (async () => {

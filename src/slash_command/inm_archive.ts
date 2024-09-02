@@ -4,7 +4,6 @@ import data from './inm_archive/data';
 import { Material_Content_Type, solveImage, solveText } from "./inm_archive/upload";
 import { handleRegister } from "./inm_archive/register";
 import { handleFeed } from "./inm_archive/feed";
-import { InmArc } from "..";
 import { InmArchive } from "../classes/InmArchive/InmArchive";
 
 export = new Command<ApplicationCommandType.ChatInput>({
@@ -17,8 +16,6 @@ export = new Command<ApplicationCommandType.ChatInput>({
 
         if (subgroup === 'upload') {
             const name = interaction.options.getString('name', true);
-
-
 
             let material: Material_Content_Type;
 
@@ -37,7 +34,7 @@ export = new Command<ApplicationCommandType.ChatInput>({
                     content: InmArchive.InvalidMIMETypesString
                 })
             } else {
-                const success = await InmArc.upload({
+                const success = await InmArchive.Material.upload({
                     content: material.content,
                     name: name,
                     type: material.type,
