@@ -1,0 +1,33 @@
+{
+    "bot": {
+        "main": {
+            "token": "",
+            "id": ""
+        },
+        "dev": {
+            "token": "",
+            "id": ""
+        }
+    },
+    "mongodb": {
+        "main": {
+            "username": "",
+            "password": "",
+            "serial": ""
+            (the database serial, so you can completely distinct the environments)
+            (but currently this is not really being used)
+        },
+        "dev": {
+            "username": "",
+            "password": "",
+            "serial": ""
+        }
+    },
+    "supabase": {
+        "dev": {
+            "project_url": "",
+            "AnonKey": "",
+            "ServiceKey": ""
+        }
+    }
+}
