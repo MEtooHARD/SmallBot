@@ -23,6 +23,36 @@ export interface DialogOptions {
  * DO NOT reply or defer the interaction once instantiated.
  */
 export class ButtonDialog {
+    private static AUTHOR: APIEmbedAuthor = { name: 'ButtonDialog (beta)' };
+
+    private static DefultHeader: APIEmbed = {
+        author: ButtonDialog.AUTHOR,
+        description: 'someone suck and didn\'t provide any content :poop:',
+        color: Colors.Yellow
+    };
+
+    private static SucceedHeader: APIEmbed = {
+        author: ButtonDialog.AUTHOR,
+        description: 'Response returned.',
+        color: Colors.Green,
+    };
+
+    private static RecievedMessage: InteractionUpdateOptions = {
+        embeds: [ButtonDialog.SucceedHeader],
+        components: []
+    };
+
+    // private static TimedOutHeader: APIEmbed = {
+    //     author: ButtonDialog.AUTHOR,
+    //     description: 'Timed out. Buttondialog failed.',
+    //     color: Colors.Red
+    // };
+
+    // private static FailedMessage: InteractionUpdateOptions = {
+    //     embeds: [ButtonDialog.TimedOutHeader],
+    //     components: []
+    // };
+
     private _idle: number = 60 * 1000;
     private _message: Message | null = null;
     private _question: Question = {
@@ -104,34 +134,4 @@ export class ButtonDialog {
     };
 
     private setIdle(milliseconds: number) { this._idle = restrictRange(milliseconds, 5 * 1000, 5 * 60 * 1000); };
-
-    private static AUTHOR: APIEmbedAuthor = { name: 'ButtonDialog (beta)' };
-
-    private static DefultHeader: APIEmbed = {
-        author: ButtonDialog.AUTHOR,
-        description: 'someone suck and didn\'t provide any content :poop:',
-        color: Colors.Yellow
-    };
-
-    private static SucceedHeader: APIEmbed = {
-        author: ButtonDialog.AUTHOR,
-        description: 'Response returned.',
-        color: Colors.Green,
-    };
-
-    private static RecievedMessage: InteractionUpdateOptions = {
-        embeds: [ButtonDialog.SucceedHeader],
-        components: []
-    };
-
-    private static TimedOutHeader: APIEmbed = {
-        author: ButtonDialog.AUTHOR,
-        description: 'Timed out. Buttondialog failed.',
-        color: Colors.Red
-    };
-
-    private static FailedMessage: InteractionUpdateOptions = {
-        embeds: [ButtonDialog.TimedOutHeader],
-        components: []
-    };
 };

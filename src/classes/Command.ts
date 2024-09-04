@@ -61,7 +61,7 @@ export class Command<T extends ApplicationCommandType> implements CommandContent
     readonly filter: CommandFilter<T>;
     readonly botPermissions: CommandPermissions;
 
-    constructor({ data, executor, complete = undefined, filter, botPermissions }: CommandCreateOptions<T>) {
+    constructor({ complete = undefined, data, executor, filter, botPermissions }: CommandCreateOptions<T>) {
         this.complete = complete;
         this.data = data;
         this.executor = executor;
