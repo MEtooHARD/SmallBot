@@ -14,13 +14,17 @@ export const loadHelpCenter = () => {
     console.log('[Help Center] loaded');
 };
 
+import inm_arch from './slash_command/inm_archive/_command_';
+
 export const prepareSlashCommand = (): [string, Command<ApplicationCommandType>][] => {
     const dir = path.join(rootPath, 'dist', 'slash_command');
-    return fs.readdirSync(dir, { withFileTypes: true })
+    const commands: [string, Command<ApplicationCommandType>][] = fs.readdirSync(dir, { withFileTypes: true })
         .filter(o => o.isFile() && o.name.endsWith('.js'))
         .map(f => require(path.join(dir, f.name)) as Command<ApplicationCommandType>)
         .filter(o => o instanceof Command)
         .map(c => [c.data.name, c]);
+    commands.push([inm_arch.data.name, inm_arch]);
+    return commands
 }
 
 export const onDiscordEvents = () => {

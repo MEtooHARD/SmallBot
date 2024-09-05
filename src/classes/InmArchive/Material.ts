@@ -102,7 +102,7 @@ export class Material {
             SupervisorGuildId,
             InmArchive.DiscordMaterialAddCh);
 
-        if (channel?.isTextBased())
+        if (channel && channel.isTextBased() && !channel.isDMBased())
             channel.send(new Material(payload.new).ReviewMessage());
     };
 };

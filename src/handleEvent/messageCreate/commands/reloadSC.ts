@@ -8,9 +8,9 @@ export = new class reloadSC extends MessageCommand {
     };
 
     exe = async (message: Message<boolean>, param: string[]): Promise<void> => {
-        const [commands, error] = await CM.registerCommands();
+        const [success, error] = await CM.registerCommands();
 
-        if (commands)
+        if (success)
             message.reply([...CM.keys()].join('\n'));
         if (error)
             message.reply('failed');

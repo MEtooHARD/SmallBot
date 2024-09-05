@@ -7,7 +7,8 @@ export = new class t extends MessageCommand {
     };
 
     exe = async (message: Message<boolean>, param: string[]): Promise<void> => {
-        message.channel.send(message.content);
+        if (!message.channel.isDMBased())
+            message.channel.send(message.content);
     };
 };
 

@@ -7,7 +7,6 @@ import { loadHelpCenter, prepareSlashCommand, onDiscordEvents, onInmMaterialInse
 import { connectMongoDB } from "./mongoose";
 import { supabase } from "./supabase";
 import path from 'node:path';
-import { InmArchive } from "./classes/InmArchive/InmArchive";
 
 /* Utility */
 export const CM = new CommandManager(prepareSlashCommand());
@@ -22,8 +21,11 @@ export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help C
     loadHelpCenter();
     onDiscordEvents();
     onInmMaterialInsert();
-    if (should_deploy_command) await CM.registerCommands();
-    console.log(`(/): ${[...CM.keys()].join(', ')}`);
+    if (should_deploy_command) {
+        const [success, error] = await CM.registerCommands();
+        if (success) console.log(`(/): ${[...CM.keys()].join(', ')}`);
+        else console.log(error)
+    }
 
     /* mongodb */
     if (mongoDB) {

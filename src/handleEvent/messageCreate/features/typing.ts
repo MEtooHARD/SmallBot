@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, PartialGroupDMChannel } from "discord.js";
 import { MessageFeature } from "../../../classes/MessageFeature";
 import { byChance, randomInt } from "../../../functions/general/number";
 import { delaySec } from "../../../functions/general/delay";
@@ -9,9 +9,10 @@ export = new class typing extends MessageFeature {
     };
 
     async exe(message: Message<boolean>, ...params: any): Promise<void> {
-        do {
-            try { message.channel.sendTyping(); } catch (e) { }
-            delaySec(randomInt(8, 15));
-        } while (byChance(10))
+        if (message.channel.isTextBased() && !(message.channel instanceof PartialGroupDMChannel))
+            do {
+                try { message.channel.sendTyping(); } catch (e) { }
+                delaySec(randomInt(8, 15));
+            } while (byChance(10))
     };
 };

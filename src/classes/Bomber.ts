@@ -1,4 +1,4 @@
-import { APIInteractionDataResolvedGuildMember, ButtonStyle, GuildMember, TextBasedChannel } from "discord.js";
+import { APIInteractionDataResolvedGuildMember, ButtonStyle, GuildMember, PartialGroupDMChannel, TextBasedChannel } from "discord.js";
 import { doAfterSec } from "../functions/general/delay";
 import { range } from "../functions/general/number";
 import { byChance, randomInt } from "../functions/general/number";
@@ -64,7 +64,7 @@ class Bomber {
         if (!isNaN(this.count))
             range(1, this.count).forEach(async x => {
                 await doAfterSec(async () => {
-                    if (this.bombing && this.target instanceof GuildMember)
+                    if (this.bombing && this.target instanceof GuildMember && !(this.channel instanceof PartialGroupDMChannel))
                         await this.channel?.send(`<@${this.target?.id}> ${byChance(75) ? this.additionalMessage() : ''}`);
                 }, x * this.period);
             })

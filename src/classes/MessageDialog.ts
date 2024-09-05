@@ -1,4 +1,4 @@
-import { APIEmbed, APIEmbedAuthor, Colors, InteractionReplyOptions, InteractionUpdateOptions, Message, MessageCollector, Snowflake } from "discord.js";
+import { APIEmbed, APIEmbedAuthor, Colors, InteractionReplyOptions, InteractionUpdateOptions, Message, MessageCollector, PartialGroupDMChannel, Snowflake } from "discord.js";
 import { x_min_y_sec } from "../functions/general/string";
 import { randomColor } from "../functions/discord/RandomColor";
 import { restrictRange } from "../functions/general/number";
@@ -71,23 +71,26 @@ export class MessageDialog {
         return new Promise(async (resolve, reject) => {
             try {
                 this._message = await this.post(question);
-                this._collector = this._message.channel
-                    .createMessageCollector({
-                        max: 1,
-                        idle: this._idle,
-                        filter: (message) => message.author.id === question.UID
+                if (this._message && !(this._message.channel instanceof PartialGroupDMChannel)) {
+
+                    this._collector = this._message.channel
+                        .createMessageCollector({
+                            max: 1,
+                            idle: this._idle,
+                            filter: (message: Message) => message.author.id === question.UID
+                        });
+
+                    this._collector.on('collect', async (message: Message) => {
+                        resolve(message);
                     });
 
-                this._collector.on('collect', async (message: Message) => {
-                    resolve(message);
-                });
-
-                this._collector.on('end', async (collected, reason) => {
-                    if (reason === 'idle')
-                        reject(reason);
-                    else
-                        if (reason !== 'limit') console.log(reason);
-                });
+                    this._collector.on('end', async (collected, reason) => {
+                        if (reason === 'idle')
+                            reject(reason);
+                        else
+                            if (reason !== 'limit') console.log(reason);
+                    });
+                }
             } catch (e) { console.log(e); }
         });
     };

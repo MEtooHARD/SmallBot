@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember, MessageComponentInteraction, SlashCommandBuilder } from "discord.js";
+import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember, MessageComponentInteraction, PartialGroupDMChannel, SlashCommandBuilder } from "discord.js";
 import { Command } from "../classes/Command";
 import { doAfterSec } from "../functions/general/delay";
 import { atUser } from "../functions/discord/mention";
@@ -39,7 +39,7 @@ export = new Command<ApplicationCommandType.ChatInput>({
             if (target.user.bot && interaction.member)
                 // target = interaction.member;
                 doAfterSec(() => {
-                    if (interaction.channel)
+                    if (interaction.channel && !(interaction.channel instanceof PartialGroupDMChannel))
                         interaction.channel.send(`${atUser(interaction.user)} 還想炸bot啊`);
                 }, 8);
 

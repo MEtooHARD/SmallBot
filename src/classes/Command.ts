@@ -71,12 +71,11 @@ export class Command<T extends ApplicationCommandType> implements CommandContent
 };
 
 export class CommandManager<T extends ApplicationCommandType> extends StaticManager<Command<T>> {
-    private readonly _commands = new Map<string, Command<T>>();
 
-    private getAllData() { return Array.from(this._commands.values()).map(c => c.data) };
+    private getAllData() { return Array.from(this.items.values()).map(c => c.data) };
 
     async registerCommands(): Promise<[boolean, any]> {
-        const rest = new REST({ version: '10' }).setToken(config.bot[session].token);
+        const rest = new REST().setToken(config.bot[session].token);
         try {
             await rest.put(
                 Routes.applicationCommands(config.bot[session].id),

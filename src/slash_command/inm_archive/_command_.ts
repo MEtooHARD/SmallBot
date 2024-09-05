@@ -1,13 +1,15 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, PermissionFlagsBits } from "discord.js";
-import { Command } from "../classes/Command";
-import data from './inm_archive/data';
-import { Material_Content_Type, solveImage, solveText } from "./inm_archive/upload";
-import { handleRegister } from "./inm_archive/register";
-import { handleFeed } from "./inm_archive/feed";
-import { InmArchive } from "../classes/InmArchive/InmArchive";
+import { Command } from "../../classes/Command";
+import data from './_data_';
+import { Material_Content_Type, solveImage, solveText } from "./upload";
+import { handleRegister } from "./register";
+import { handleFeed } from "./feed";
+import { InmArchive } from "../../classes/InmArchive/InmArchive";
+import { autocomplete } from "./_autocomplete_";
 
 export = new Command<ApplicationCommandType.ChatInput>({
     data: data,
+    complete: autocomplete,
 
     executor: async function (interaction: ChatInputCommandInteraction) {
         await interaction.deferReply({ ephemeral: true });
