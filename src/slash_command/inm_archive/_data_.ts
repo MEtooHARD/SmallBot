@@ -13,6 +13,11 @@ export = new SlashCommandBuilder()
             .setDescription('type and choose')
             .setRequired(true)
             .setAutocomplete(true))
+        .addStringOption(option => option
+            .setName('category')
+            .setDescription('test')
+            .setAutocomplete(true)
+        )
     )
     .addSubcommand(command => command
         .setName('taste')
