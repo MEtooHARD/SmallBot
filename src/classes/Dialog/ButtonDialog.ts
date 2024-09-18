@@ -1,10 +1,10 @@
 import { APIEmbed, APIEmbedAuthor, AnySelectMenuInteraction, ButtonInteraction, Collector, Colors, CommandInteraction, ComponentType, InteractionCollector, InteractionReplyOptions, InteractionUpdateOptions, Message, ModalSubmitInteraction } from "discord.js";
-import { ButtonOptions } from "./ActionRow/Button";
-import { splitArray } from "../functions/general/array";
-import ButtonRow from "./ActionRow/ButtonRow";
-import { x_min_y_sec } from "../functions/general/string";
-import { randomColor } from "../functions/discord/RandomColor";
-import { restrictRange } from "../functions/general/number";
+import { ButtonOptions } from "../ActionRow/Button";
+import { randomColor } from "../../functions/discord/RandomColor";
+import { x_min_y_sec } from "../../functions/general/string";
+import ButtonRow from "../ActionRow/ButtonRow";
+import { splitArray } from "../../functions/general/array";
+import { restrictRange } from "../../functions/general/number";
 
 interface Question {
     header: APIEmbed;

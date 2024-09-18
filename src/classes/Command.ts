@@ -71,7 +71,6 @@ export class Command<T extends ApplicationCommandType> implements CommandContent
 };
 
 export class CommandManager<T extends ApplicationCommandType> extends StaticManager<Command<T>> {
-
     private getAllData() { return Array.from(this.items.values()).map(c => c.data) };
 
     async registerCommands(): Promise<[boolean, any]> {

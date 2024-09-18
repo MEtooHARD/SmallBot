@@ -1,7 +1,7 @@
 import { ButtonInteraction, ButtonStyle, GuildMember } from "discord.js";
 import { ReferendumModel } from "../../models/ReferendumModel";
-import { ButtonDialog } from "../../classes/ButtonDialog";
 import { Referendum } from "../../classes/Referendum";
+import { ButtonDialog } from "../../classes/Dialog/ButtonDialog";
 
 const Start = async (interaction: ButtonInteraction, svcInfo: string[]) => {
     const document = await ReferendumModel.findById(svcInfo[2]);

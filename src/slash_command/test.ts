@@ -10,9 +10,11 @@ export = new Command<ApplicationCommandType.ChatInput>({
             .setName('image')
             .setDescription('upload an image')
         )
-        .setDMPermission(false)
+    // .setDMPermission(false)
     ,
     async executor(interaction: ChatInputCommandInteraction): Promise<void> {
-        console.log(supabase);
+        const msg = await interaction.user.send('test');
+
+        console.log(msg);
     }
 })

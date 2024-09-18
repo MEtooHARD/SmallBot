@@ -1,9 +1,9 @@
 import { ButtonStyle, Collection, Colors, GuildMember, StringSelectMenuInteraction } from "discord.js";
 import { ReferendumModel } from "../../models/ReferendumModel";
 import { Referendum } from "../../classes/Referendum";
-import { ButtonDialog } from "../../classes/ButtonDialog";
-import { MessageDialog } from "../../classes/MessageDialog";
 import { addElements, removeElements } from "../../functions/general/array";
+import { ButtonDialog } from "../../classes/Dialog/ButtonDialog";
+import { MessageDialog } from "../../classes/Dialog/MessageDialog";
 
 const settings = async (interaction: StringSelectMenuInteraction, svcInfo: string[]) => {
     // fetch doc

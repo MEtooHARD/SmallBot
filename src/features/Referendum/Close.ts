@@ -1,7 +1,7 @@
 import { ButtonInteraction, ButtonStyle, Colors } from "discord.js";
 import { ReferendumModel } from "../../models/ReferendumModel";
 import { Referendum } from "../../classes/Referendum";
-import { ButtonDialog } from "../../classes/ButtonDialog";
+import { ButtonDialog } from "../../classes/Dialog/ButtonDialog";
 
 const Close = async (interaction: ButtonInteraction, svcInfo: string[]) => {
     if (interaction.user.id === svcInfo[2]) {

@@ -40,9 +40,6 @@ export namespace InmArchive {
         'image/svg+xml'
     ]);
 
-    export const isListedMIMEType =
-        (type: string) => MIMETypes.has(type);
-
     const MIMETypesStr = Array.from(MIMETypes.values()).join(', ');
     export const InvalidMIMETypesString = `Valid MIME types:\n${MIMETypesStr}`
 

@@ -1,8 +1,8 @@
-import { APIEmbed, APIEmbedAuthor, Colors, InteractionReplyOptions, InteractionUpdateOptions, Message, MessageCollector, PartialGroupDMChannel, Snowflake } from "discord.js";
-import { x_min_y_sec } from "../functions/general/string";
-import { randomColor } from "../functions/discord/RandomColor";
-import { restrictRange } from "../functions/general/number";
+import { APIEmbed, APIEmbedAuthor, Colors, InteractionReplyOptions, Message, MessageCollector, PartialGroupDMChannel, Snowflake } from "discord.js";
 import { DialogOptions } from "./ButtonDialog";
+import { randomColor } from "../../functions/discord/RandomColor";
+import { x_min_y_sec } from "../../functions/general/string";
+import { restrictRange } from "../../functions/general/number";
 
 export interface Question {
     header: APIEmbed;

@@ -4,7 +4,7 @@ import update from "../../handleEvent/voiceStateUpdate";
 
 const voiceStateUpdate = () => {
     on(Events.VoiceStateUpdate, async (oldState: VoiceState, newState: VoiceState) => {
-        // await update(oldState, newState);
+        await update(oldState, newState);
     });
 }
 

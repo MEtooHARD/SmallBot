@@ -1,4 +1,4 @@
-import { ButtonStyle, Colors, EmbedImageData, InteractionUpdateOptions, MessageCreateOptions } from "discord.js";
+import { APIEmbed, ButtonStyle, Colors, InteractionUpdateOptions, MessageCreateOptions } from "discord.js";
 import ButtonRow from "../ActionRow/ButtonRow";
 import { InmArchive, MaterialSchema } from "./InmArchive";
 import { atUser } from "../../functions/discord/mention";
@@ -15,7 +15,7 @@ export class Material {
 
     constructor(payload: MaterialSchema['Row']) {
         this.props = payload;
-    }
+    };
 
     setStatus(status: Material.Status) { this.props.status = status; }
 
@@ -48,32 +48,36 @@ export class Material {
             .eq('id', this.props.id);
     };
 
+    static OverviewCard = (props: Pick<MaterialSchema['Insert'], 'content' | 'type' | 'name'>)
+        : APIEmbed => ({
+            color: Colors.Aqua,
+            author: { name: 'Inm Archive' },
+            title: 'Overview',
+            fields: [
+                { name: 'name', value: props.name, inline: true },
+                { name: 'type', value: props.type, inline: true },
+                { name: 'content', value: props.content }
+            ],
+        });
+
+    static RecievedCard = (): APIEmbed => ({ color: Colors.Green, title: 'Recieved' });
+
+    Card = (): APIEmbed => ({
+        color: Material.StatusColorMap[this.props.status as Material.Status] || Material.DefaultColor,
+        author: { name: 'Inm Archive' },
+        title: this.props.name,
+        description: this.props.type === 'txt' ? this.props.content : undefined,
+        fields: [
+            { name: 'type', value: this.props.type, inline: true },
+            { name: 'uplaoder', value: atUser(this.props.uploader), inline: true },
+            { name: 'uuid', value: `\`${this.props.id}\``, inline: true }
+        ],
+        image: this.props.type === 'txt' ? undefined : { url: this.props.content },
+    });
+
     ReviewMessage(): MessageCreateOptions & InteractionUpdateOptions {
-        let description: string | undefined,
-            image: EmbedImageData | undefined = undefined,
-            color: number;
-
-        if (this.props.type === 'txt')
-            description = this.props.content;
-        else
-            image = { url: this.props.content };
-
-        color = Material.StatusColorMap[this.props.status as Material.Status]
-            || Material.DefaultColor;
-
         return {
-            embeds: [{
-                color: color,
-                author: { name: 'Inm Archive' },
-                title: this.props.name,
-                description: description,
-                fields: [
-                    { name: 'type', value: this.props.type, inline: true },
-                    { name: 'uplaoder', value: atUser(this.props.uploader), inline: true },
-                    { name: 'uuid', value: `\`${this.props.id}\``, inline: true }
-                ],
-                image: image,
-            }],
+            embeds: [this.Card()],
             components: this.ReviewComponents()
         };
     };

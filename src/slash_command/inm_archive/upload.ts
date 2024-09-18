@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { MaterialSchema } from "../../classes/InmArchive/InmArchive";
 
-export type Material_Content_Type = Pick<MaterialSchema['Insert'], 'content' | 'type'>;;
+export type Material_Content_Type = Pick<MaterialSchema['Insert'], 'content' | 'type'>;
 
 export function solveText(
     interaction: ChatInputCommandInteraction
@@ -13,11 +13,11 @@ export function solveText(
 };
 
 export function solveImage(
-    interaction: ChatInputCommandInteraction,
+    interaction: ChatInputCommandInteraction
 ): Material_Content_Type {
     const attachment = interaction.options.getAttachment('content', true);
     const content = attachment.url;
-    const type = attachment.contentType || 'cannot get a type';
+    const type = attachment.contentType || 'couldn\'t get a type';
 
     return {
         content: content,

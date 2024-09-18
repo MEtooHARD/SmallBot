@@ -21,11 +21,11 @@ export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help C
     loadHelpCenter();
     onDiscordEvents();
     onInmMaterialInsert();
-    if (should_deploy_command) {
-        const [success, error] = await CM.registerCommands();
-        if (success) console.log(`(/): ${[...CM.keys()].join(', ')}`);
-        else console.log(error)
-    }
+    // if (should_deploy_command) {
+    //     const [success, error] = await CM.registerCommands();
+    //     if (success) console.log(`${CM.amount()} (/): ${[...CM.keys()].join(', ')}`);
+    //     else console.log(error);
+    // }
 
     /* mongodb */
     if (mongoDB) {
