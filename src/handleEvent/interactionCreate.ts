@@ -7,14 +7,14 @@ import autocomplete from './interactionCreate/autocomplete';
 import { getSvcInfo } from '../functions/discord/service';
 import { shouldLogIgnoredCustomID } from '../app';
 import { contextMenu } from './interactionCreate/contextmenu';
-import { StaticManager } from '../classes/StaticManager';
+import { Manager } from '../classes/Manager';
 
 import { InmArchive } from '../features/InmArchive'
 import { OrderList } from '../features/OrderList'
 import { Referendum } from '../features/Referendum'
 
 type FeatureHandler = (interaction: MessageComponentInteraction, svcInfo: string[]) => Promise<void>;
-const FeatureManager = new StaticManager<FeatureHandler>([
+const FeatureManager = new Manager<FeatureHandler>([
     ['InmArchive', InmArchive],
     ['OrderList', OrderList],
     ['Referendum', Referendum],

@@ -1,5 +1,5 @@
 import { ApplicationCommandType, PermissionFlagsBits } from "discord.js";
-import { Command } from "../../classes/Command";
+import { Command } from "../../../classes/Command";
 import data from './_data_';
 import { autocomplete } from "./_autocomplete_";
 import _executor_ from "./_executor_";

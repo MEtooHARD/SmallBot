@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { InmArchive } from "../../classes/InmArchive/InmArchive";
+import { InmArchive } from "../../../classes/InmArchive/InmArchive";
 
 export async function handleRegister(interaction: ChatInputCommandInteraction) {
     /// deferred;

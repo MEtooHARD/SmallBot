@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, ApplicationCommandType } from "discord.js";
-import { Command } from "../classes/Command";
-import { supabase } from "../supabase";
+import { Command } from "../../classes/Command";
+import { guildInfoCard } from "../../functions/discord/service";
 
 export = new Command<ApplicationCommandType.ChatInput>({
     data: new SlashCommandBuilder()
@@ -13,8 +13,7 @@ export = new Command<ApplicationCommandType.ChatInput>({
     // .setDMPermission(false)
     ,
     async executor(interaction: ChatInputCommandInteraction): Promise<void> {
-        const msg = await interaction.user.send('test');
-
-        console.log(msg);
+        if (interaction.guild)
+            interaction.reply({ embeds: [await guildInfoCard(interaction.guild)] });
     }
 })

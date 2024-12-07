@@ -2,8 +2,8 @@ import { ChatInputCommandInteraction } from "discord.js";
 import { handleRegister } from "./register";
 import { handleFeed } from "./feed";
 import { Material_Content_Type, solveImage, solveText } from "./upload";
-import { Material } from "../../classes/InmArchive/Material";
-import { InmArchive } from "../../classes/InmArchive/InmArchive";
+import { Material } from "../../../classes/InmArchive/Material";
+import { InmArchive } from "../../../classes/InmArchive/InmArchive";
 
 export default async (interaction: ChatInputCommandInteraction) => {
     const subgroup = interaction.options.getSubcommandGroup();

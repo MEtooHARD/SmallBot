@@ -36,3 +36,13 @@ export const sections = (length: number, str: string): string[] => {
     } while (str);
     return result;
 };
+
+/**
+ * Replaces some of the charactors of `content` with `width` of `symbol`s whenever `content.length` is less than `maxlen` and meanwhile retain the same length of `content`.
+ */
+export const ellipsis = (content: string, maxlen: number, symbol: string = '…', width: number = 2): string => {
+    const half = Math.floor(maxlen / 2);
+    return content.length > maxlen
+        ? `${content.substring(0, Math.floor(maxlen / 2))}${symbol.repeat(width)}${content.slice(-(half - symbol.length * width))}`
+        : content;
+}

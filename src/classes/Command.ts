@@ -12,7 +12,7 @@ import {
 import { REST, Routes } from 'discord.js';
 import { session } from "../app";
 import config from '../config.json';
-import { StaticManager } from "./StaticManager";
+import { Manager } from "./Manager";
 
 type CommandAutoComplete<T extends ApplicationCommandType> =
     T extends ApplicationCommandType.ChatInput
@@ -70,15 +70,48 @@ export class Command<T extends ApplicationCommandType> implements CommandContent
     };
 };
 
-export class CommandManager<T extends ApplicationCommandType> extends StaticManager<Command<T>> {
-    private getAllData() { return Array.from(this.items.values()).map(c => c.data) };
+/* export class CommandWrapper<T extends ApplicationCommandType> {
+    private command: Command<T>;
+    private activated: boolean;
+
+    constructor(command: Command<T>, activated: boolean = true) {
+        this.command = command;
+        this.activated = activated;
+    };
+
+    get data() {
+        return this.command.data;
+    };
+
+    get executor() {
+        return this.command.executor;
+    };
+}; */
+
+export class CommandManager<T extends ApplicationCommandType> extends Manager<Command<T>> {
+    private activation: Map<string, boolean> = new Map<string, boolean>();
+
+    constructor(commands: [string, Command<T>][]) {
+        super(commands);
+        [...this.items.keys()].forEach(key => this.activation.set(key, true));
+    };
+
+    setActivation(name: string, status: boolean): boolean {
+        if (this.items.has(name)) {
+            this.activation.set(name, status);
+            return true;
+        } else
+            return false;
+    };
+
+    isActivated(name: string): boolean { return Boolean(this.activation.get(name)); };
 
     async registerCommands(): Promise<[boolean, any]> {
         const rest = new REST().setToken(config.bot[session].token);
         try {
             await rest.put(
                 Routes.applicationCommands(config.bot[session].id),
-                { body: this.getAllData() },
+                { body: Array.from(this.items.values()).map(c => c.data) },
             );
             return [true, null];
         } catch (e) {
@@ -86,3 +119,7 @@ export class CommandManager<T extends ApplicationCommandType> extends StaticMana
         }
     };
 };
+
+class DevCommand<T extends ApplicationCommandType> extends Command<T> {
+
+}
