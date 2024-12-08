@@ -1,30 +1,25 @@
 
-type Domain = (n: number) => boolean;
 
-type Union = (A: Domain, B: Domain) => Domain;
+export class Sets {
+    private _sets: Map<string, Set<any>> = new Map<string, Set<any>>();
 
-export class Domains {
+    constructor() { }
 
-    static union: Union = (A, B) => (n: number) => A(n) || B(n);
 
-    static intersec: Union = (A, B) => (n: number) => A(n) && B(n);
-
-    static difference: Union = (A, B) => (n: number) => A(n) && !B(n);
-
-    static symDifference: Union = (A, B) => (n: number) => this.union(A, B)(n) && !this.intersec(A, B)(n);
-
-    static Even: Domain = (n: number): boolean => n % 2 === 0;
-
-    static Odd: Domain = (n: number): boolean => n % 2 === 1;
-
-    static Z: Domain = (n: number): boolean => n % 1 === 0;
-
-    static N: Domain = (n: number): boolean => Domains.Z(n) && n >= 0;
 }
 
-Domains.Even(2);
+export namespace Sets {
+    export class Domain {
 
-// const a = Domain.Even(2);
+        Even(n: number): boolean { return n % 2 === 0; }
+
+        Odd(n: number): boolean { return n % 2 === 1; }
+
+        Z(n: number): boolean { return n % 1 === 0; }
+
+        N(n: number): boolean { return this.Z(n) && n >= 0 }
+    }
+}
 
 /* 
 export interface Domain {
