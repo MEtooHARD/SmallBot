@@ -1,17 +1,18 @@
 
 type Domain = (n: number) => boolean;
 
-type Union = (A: Domain, B: Domain) => Domain;
+type Set = (A: Domain, B: Domain) => Domain;
 
 export class Domains {
+    protected _customs: Map<string, Domain> = new Map<string, Domain>();
 
-    static union: Union = (A, B) => (n: number) => A(n) || B(n);
+    static union: Set = (A, B) => (n: number) => A(n) || B(n);
 
-    static intersec: Union = (A, B) => (n: number) => A(n) && B(n);
+    static intersec: Set = (A, B) => (n: number) => A(n) && B(n);
 
-    static difference: Union = (A, B) => (n: number) => A(n) && !B(n);
+    static difference: Set = (A, B) => (n: number) => A(n) && !B(n);
 
-    static symDifference: Union = (A, B) => (n: number) => this.union(A, B)(n) && !this.intersec(A, B)(n);
+    static symDifference: Set = (A, B) => (n: number) => this.union(A, B)(n) && !this.intersec(A, B)(n);
 
     static Even: Domain = (n: number): boolean => n % 2 === 0;
 
@@ -49,16 +50,3 @@ export class Sets {
     };
 }
 */
-
-/* 
-export class Sets {
-    static custom(predicate: (n: number) => boolean): (n: number) => boolean {
-        return predicate;
-    }
-
-    static Even = Sets.custom((n) => n % 2 === 0);
-    static Odd = Sets.custom((n) => n % 2 === 1);
-    static Z = Sets.custom((n) => n % 1 === 0);
-    static N = Sets.custom((n) => Sets.Z(n) && n >= 0);
-}
- */

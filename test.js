@@ -1,4 +1,4 @@
 
-const a = [1, 2, 3, 4, 5];
-a.push(...[6, 7, 8, 9, 10]);
-console.log(a);
+const a = (b) => console.log(typeof b);
+
+a({})
