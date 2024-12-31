@@ -11,7 +11,7 @@ export = new class senpai extends MessageFeature {
     };
 
     async exe(message: Message<boolean>, ...params: any): Promise<void> {
-        message.channel.send({
+        if (!message.channel.isDMBased()) message.channel.send({
             files: [new AttachmentBuilder(fs.readFileSync(path.join(rootPath, 'media', 'pic', '114514.webp')))]
         });
     }

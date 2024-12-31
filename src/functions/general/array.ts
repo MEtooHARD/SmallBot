@@ -81,3 +81,25 @@ export const addElements = <T>(arr: T[], elements: T[]): number => {
         return Number(addElement(arr, elements.splice(0, 1)[0])) + addElements(arr, elements);
     return 0;
 };
+
+export class PosRange implements Iterator<number> {
+    private _value: number;
+    private _range: number;
+    private _volume: number;
+
+    constructor(range: number, volume: number = 1, from: number = 0) {
+        this._value = from - volume;
+        this._range = range;
+        this._volume = volume;
+    };
+
+    next(): IteratorResult<number> {
+        this._value += this._volume;
+        return {
+            value: this._value,
+            done: this._value > this._range
+        };
+    };
+
+    [Symbol.iterator]() { return this; };
+};

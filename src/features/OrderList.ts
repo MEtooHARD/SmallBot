@@ -1,7 +1,5 @@
-import { AnySelectMenuInteraction, ButtonInteraction, ModalSubmitInteraction } from "discord.js";
+import { AnySelectMenuInteraction, ButtonInteraction, MessageComponentInteraction, ModalSubmitInteraction } from "discord.js";
 
-const OrderList = async (interaction: ButtonInteraction | ModalSubmitInteraction | AnySelectMenuInteraction, svcInfo: string[]) => {
+export const OrderList = async (interaction: MessageComponentInteraction, svcInfo: string[]) => {
     await require(`./OrderList/${svcInfo[1]}`)(interaction, svcInfo);
 };
-
-export = OrderList;

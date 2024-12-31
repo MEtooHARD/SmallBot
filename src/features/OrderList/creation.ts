@@ -48,9 +48,11 @@ const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[]) 
         console.log(chalk.red('end') + chalk.yellow(` [${OrderList.serviceName}]`));
         try {
             await rpMesage.delete();
-            interaction.channel?.send({
-                embeds: [orderlist.board(true)]
-            });
+            if (interaction.channel && !interaction.channel.isDMBased()) {
+                interaction.channel?.send({
+                    embeds: [orderlist.board(true)]
+                });
+            }
         } catch (e) {
             console.log('end order list');
             console.log(e);

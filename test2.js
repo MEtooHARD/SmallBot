@@ -1,10 +1,14 @@
-let { fine } = require("./test");
 
-const f = () => {
-    fine = true;
+let b = 0;
+b++;
+
+console.log('c')
+
+const a = () => {
+    console.log('a');
 }
-
 
 module.exports = {
-    f
-}
+    a: a,
+    b: b
+};

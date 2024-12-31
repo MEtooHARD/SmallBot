@@ -1,7 +1,7 @@
 import { ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, StringSelectMenuOptionBuilder } from "discord.js";
 import path from 'node:path';
 import fs from 'node:fs';
-import { shouldLogDoc } from "../app";
+import { should_log_doc } from "../app";
 import chalk from "chalk";
 
 export class Docor {
@@ -108,7 +108,7 @@ export namespace Docor {
                 const entry = path.join(this.getDir(), this._name);
                 this._docF = require(path.join(entry, fileName));
                 // ch
-                if (shouldLogDoc) console.log(`[Doc]create: ${this.getRoute().join(' > ')}`);
+                if (should_log_doc) console.log(`[Doc]create: ${this.getRoute().join(' > ')}`);
                 if (fs.existsSync(entry) && fs.statSync(entry).isDirectory())
                     fs.readdirSync(entry, { withFileTypes: true })
                         .forEach(item => {
@@ -118,7 +118,7 @@ export namespace Docor {
                                     && typeof require(p) === 'function'
                                     && require(p)() instanceof ClassType)
                                     this._children.set(item.name, new Doc(item.name, this, this._level + 1));
-                                else if (shouldLogDoc)
+                                else if (should_log_doc)
                                     console.log(`[Doc]${chalk.yellow('ignore')}: ${this.getRoute().concat(item.name).join(' > ')}`)
                         });
             };

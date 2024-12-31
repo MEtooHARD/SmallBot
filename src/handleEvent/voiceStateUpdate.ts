@@ -1,28 +1,33 @@
-import { Colors, GuildMember, PermissionFlagsBits, PermissionsBitField, StageChannel, VoiceChannel, VoiceState } from 'discord.js';
-import { atUser } from '../functions/discord/mention';
+import { Colors, PermissionFlagsBits, PermissionsBitField, StageChannel, VoiceChannel, VoiceState } from 'discord.js';
+import { botConfig } from '../app';
 
 const update = async (oldState: VoiceState, newState: VoiceState): Promise<void> => {
-    if ((await newState.guild.members.fetch(newState.client)).permissions.has(PermissionsBitField.Flags.Administrator))
-        if (newState.channel instanceof VoiceChannel && oldState.channel?.id !== newState.channel.id) {
-            newState.channel.send({
-                embeds: [
-                    {
-                        color: Colors.Green,
-                        description: `${newState.member?.displayName} joined the voice.`
-                    }
-                ]
-            });
-        } else if (!(newState.channel instanceof StageChannel) && oldState.channel) {
-            oldState.channel.send({
-                embeds: [
-                    {
-                        color: Colors.Red,
-                        description: `${newState.member?.displayName} left the voice.`
-                    }
-                ]
-            });
-        }
+    const newChPermissions = newState.channel?.permissionsFor(botConfig.id);
+    const oldChPermissions = oldState.channel?.permissionsFor(botConfig.id);
 
+    /* join */
+    if (oldState.channel === null
+        && newState.channel
+        && newState.channel.members.size > 1
+        && newChPermissions?.has(PermissionFlagsBits.SendMessages))
+        newState.channel.send({
+            embeds: [{
+                color: Colors.Green,
+                description: `${newState.member?.displayName} joined the voice.`
+            }]
+        });
+
+    /* left */
+    if (newState.channel === null
+        && oldState.channel
+        && oldState.channel.members.size > 1
+        && oldChPermissions?.has(PermissionFlagsBits.SendMessages))
+        oldState.channel.send({
+            embeds: [{
+                color: Colors.Red,
+                description: `${newState.member?.displayName} left the voice.`
+            }]
+        });
 }
 
 export = update;

@@ -9,9 +9,10 @@ export = new class beingpoor extends MessageFeature {
     };
 
     async exe(message: Message<boolean>, ...params: any): Promise<void> {
-        await message.channel.send({
-            content: 'Being poor?',
-            components: earn500(false)
-        });
+        if (!message.channel.isDMBased())
+            await message.channel.send({
+                content: 'Being poor?',
+                components: earn500(false)
+            });
     };
 };

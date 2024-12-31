@@ -1,38 +1,51 @@
-import { Client, ClientEvents, IntentsBitField } from "discord.js";
-import { VoteManager } from "./classes/Vote";
+import { Client, ClientEvents, IntentsBitField, Partials } from "discord.js";
+import config from './config.json';
 
-const client = new Client(
+export const client = new Client(
     {
         intents: [
             IntentsBitField.Flags.Guilds,
             IntentsBitField.Flags.GuildMessages,
             IntentsBitField.Flags.GuildMembers,
             IntentsBitField.Flags.MessageContent,
-            IntentsBitField.Flags.GuildVoiceStates
+            IntentsBitField.Flags.GuildVoiceStates,
+            IntentsBitField.Flags.DirectMessages,
+        ],
+        partials: [
+            Partials.Channel
         ]
     }
 );
 
-export const on = (event: keyof ClientEvents, callback = (...inputs: any) => { }) => {
+export const login = async (token: string) => { client.login(token) };
+export const on = (event: keyof ClientEvents, callback = (...args: any) => { }) => {
     client.on(event, callback);
     console.log('[djs client] on ' + event);
 };
 
-export const login = async (token: string) => { client.login(token) };
+/* Define */
+export enum Session { dev = 'dev', main = 'main' };
+export const [prefix, dividor] = ['s', '!'];
+export const SupervisorGuildId = '1213341621542719548';
+export const BugReportingChannel = '1267489062135009290';
+/* Define */
 
-export const [prefix, divider] = ['s', '!'];
-
-export const shouldLogDoc = false;
-export const shouldDeployCommand = false;
-export const shouldLogIgnoredCustomID = false;
-
-export enum Session {
-    dev = 'dev',
-    main = 'main'
-}
-
+/* Start Up Settings */
 export const session: Session = Session.main;
+export const mongoDB: boolean = false;
+export const should_log_doc = false;
+export const should_log_commands = true;
+export const should_deploy_command = false;
+/* Start Up Settings */
 
-export const mongoDB: boolean = true;
+/* Config */
+export const botConfig = config.bot[session];
+export const mongodbConfig = config.mongodb[session];
+export const supabaseConfig = config.supabase[session];
+/* Config */
 
-export const ReferendumManager = new VoteManager();
+/* Run Time Settings */
+export const shouldLogIgnoredCustomID = false;
+/* Run Time Settings */
+
+

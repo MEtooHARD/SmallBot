@@ -27,3 +27,22 @@ export const x_min_y_sec = (milli: number): string => {
         else return `${min} min`;
     return `${sec} sec`;
 };
+
+export const sections = (length: number, str: string): string[] => {
+    const result: string[] = [];
+    do {
+        result.push(str.slice(0, length));
+        str = str.slice(length);
+    } while (str);
+    return result;
+};
+
+/**
+ * Replaces some of the charactors of `content` with `width` of `symbol`s whenever `content.length` is less than `maxlen` and meanwhile retain the same length of `content`.
+ */
+export const ellipsis = (content: string, maxlen: number, symbol: string = '…', width: number = 2): string => {
+    const half = Math.floor(maxlen / 2);
+    return content.length > maxlen
+        ? `${content.substring(0, Math.floor(maxlen / 2))}${symbol.repeat(width)}${content.slice(-(half - symbol.length * width))}`
+        : content;
+}

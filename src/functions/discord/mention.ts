@@ -21,7 +21,7 @@ export namespace TimeStamp {
         R = ':R'
     };
 
-    export const gen = (time: number, flag: TimeStamp.Flags = TimeStamp.Flags.NON): string => {
+    export const gen = (time: number, flag: Flags = Flags.NON): string => {
         let str = time.toString();
         if (str.length > 10) str = str.slice(0, -3);
         return `<t:${str}${flag}>`;
