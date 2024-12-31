@@ -7,7 +7,7 @@ import autocomplete from './interactionCreate/autocomplete';
 import { getSvcInfo } from '../functions/discord/service';
 import { shouldLogIgnoredCustomID } from '../app';
 import { contextMenu } from './interactionCreate/contextmenu';
-import { Manager } from '../classes/Manager';
+import { Manager } from '../classes/Basic/Manager';
 
 import { InmArchive } from '../features/InmArchive'
 import { OrderList } from '../features/OrderList'

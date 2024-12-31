@@ -12,7 +12,7 @@ import {
 import { REST, Routes } from 'discord.js';
 import { session } from "../app";
 import config from '../config.json';
-import { Manager } from "./Manager";
+import { Manager } from "./Basic/Manager";
 
 type CommandAutoComplete<T extends ApplicationCommandType> =
     T extends ApplicationCommandType.ChatInput

@@ -10,13 +10,13 @@ export class Manager<T extends any> {
 
     get(key: string): T | undefined { return this.items.get(key); };
 
-    set(key: string, val: T) { this.items.set(key, val); };
+    set(key: string, val: T): Map<string, T> { return this.items.set(key, val); };
 
-    del(key: string) { this.items.delete(key); };
+    del(key: string): boolean { return this.items.delete(key); };
 
     keys(): IterableIterator<string> { return this.items.keys(); };
 
-    values(): IterableIterator<T> { return this.items.values(); }
+    vals(): IterableIterator<T> { return this.items.values(); };
 
     size(): number { return this.items.size; };
 }
