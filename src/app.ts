@@ -31,7 +31,7 @@ export const BugReportingChannel = '1267489062135009290';
 /* Define */
 
 /* Start Up Settings */
-export const session: Session = Session.dev;
+export const session: Session = Session.main;
 export const mongoDB: boolean = false;
 export const should_log_doc = false;
 export const should_log_commands = true;
