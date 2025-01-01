@@ -1,5 +1,6 @@
 import { Colors, PermissionFlagsBits, PermissionsBitField, StageChannel, VoiceChannel, VoiceState } from 'discord.js';
 import { botConfig } from '../app';
+import { TimeStamp } from '../functions/discord/mention';
 
 const update = async (oldState: VoiceState, newState: VoiceState): Promise<void> => {
     const newChPermissions = newState.channel?.permissionsFor(botConfig.id);
@@ -13,7 +14,7 @@ const update = async (oldState: VoiceState, newState: VoiceState): Promise<void>
         newState.channel.send({
             embeds: [{
                 color: Colors.Green,
-                description: `${newState.member?.displayName} joined the voice.`
+                description: `${newState.member?.displayName} joined the voice.\nat ${TimeStamp.gen(Date.now())}`
             }]
         });
 
@@ -25,7 +26,7 @@ const update = async (oldState: VoiceState, newState: VoiceState): Promise<void>
         oldState.channel.send({
             embeds: [{
                 color: Colors.Red,
-                description: `${newState.member?.displayName} left the voice.`
+                description: `${newState.member?.displayName} left the voice.\nat ${TimeStamp.gen(Date.now())}`
             }]
         });
 }
