@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction } from 'discord.js';
-import { CM } from '../..';
+import { ChatInputCommandInteraction, Colors } from 'discord.js';
+import { SlashCommands } from '../..';
 
 export = async (interaction: ChatInputCommandInteraction) => {
     if (!interaction.channel || !interaction.guild?.members.me)
         return;
     /* get (slash) command */
-    const command = CM.get(interaction.commandName);
+    const command = SlashCommands.get(interaction.commandName);
     if (!command) return;
     /* skip permission checking for DMChannel */
     if (interaction.channel.isDMBased()) {
@@ -15,17 +15,28 @@ export = async (interaction: ChatInputCommandInteraction) => {
     /* check permission */
     const permissions = interaction.channel
         .permissionsFor(interaction.guild.members.me);
-    if (!permissions.has(command.botPermissions)) {
+    if (!permissions.has(command.requiredPerms)) {
         if (interaction.channel.isThread()
             ? permissions.has("SendMessagesInThreads")
             : permissions.has("SendMessages"))
             interaction.reply({
                 ephemeral: true,
-                content: `missing following permissions: ${permissions.missing(command.botPermissions).join(', ')}`
+                content: `You\'re missing the following permissions: ${permissions.missing(command.requiredPerms).join(', ')}`
             });
         return;
     }
+    /* filter */
+    const filterResult = command.filter(interaction);
     /* execute */
-    if (command.filter(interaction))
+    if (filterResult.result) {
         command.executor(interaction);
+    } else {
+        interaction.reply({
+            ephemeral: true,
+            embeds: [{
+                color: Colors.Yellow,
+                description: `Access denied: ${filterResult.reason}`
+            }]
+        });
+    }
 };

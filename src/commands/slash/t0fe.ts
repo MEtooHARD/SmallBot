@@ -1,9 +1,11 @@
-import { ApplicationCommandType, ChatInputCommandInteraction, ComponentType, Message, SlashCommandBuilder } from "discord.js";
-import { Command } from "../../classes/Command";
+import { ApplicationCommandType, ChatInputCommandInteraction, ComponentType, InteractionContextType, Message, SlashCommandBuilder } from "discord.js";
 import T0FE from "../../classes/games/T0FE";
+import { Command, CommandExecutor } from "../../classes/Command";
 
-export = new Command<ApplicationCommandType.ChatInput>({
-    data: new SlashCommandBuilder()
+export class t0fe extends Command<ApplicationCommandType.ChatInput> {
+    activated = true;
+
+    data = new SlashCommandBuilder()
         .setName('t0fe')
         .setDescription('2048')
         .addIntegerOption(option => option
@@ -26,9 +28,9 @@ export = new Command<ApplicationCommandType.ChatInput>({
                     value: x
                 }
             }))))
-        .setDMPermission(false)
-    ,
-    async executor(interaction: ChatInputCommandInteraction): Promise<void> {
+        .setContexts(InteractionContextType.Guild);
+
+    executor = async (interaction: ChatInputCommandInteraction) => {
         const [rowSize, colSize] = [interaction.options.getInteger('row_size'), interaction.options.getInteger('col_size')];
         const t0fe = new T0FE(interaction.user, rowSize || 5, colSize || 5);
         t0fe.setBoardMessage(await interaction.reply({
@@ -52,4 +54,4 @@ export = new Command<ApplicationCommandType.ChatInput>({
             t0fe.gameover();
         })
     }
-});
+}

@@ -1,15 +1,17 @@
-import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
+import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import { joinVoiceChannel } from "@discordjs/voice";
 import { Command } from "../../classes/Command";
 import { atVoiceChannel } from "../../functions/discord/mention";
 
-export = new Command<ApplicationCommandType.ChatInput>({
-    data: new SlashCommandBuilder()
+export class come_in extends Command<ApplicationCommandType.ChatInput> {
+    activated = true;
+
+    data = new SlashCommandBuilder()
         .setName('come_in')
         .setDescription('Invite me to join a voice channel')
-        .setDMPermission(false)
-    ,
-    async executor(interaction: ChatInputCommandInteraction): Promise<void> {
+        .setContexts(InteractionContextType.Guild);
+
+    executor = async (interaction: ChatInputCommandInteraction) => {
         if (interaction.member instanceof GuildMember)
             if (interaction.member.voice.channel && interaction.guild) {
                 const connection = joinVoiceChannel({
@@ -35,4 +37,4 @@ export = new Command<ApplicationCommandType.ChatInput>({
                 });
             }
     }
-});
+};

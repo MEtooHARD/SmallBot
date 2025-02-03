@@ -1,14 +1,17 @@
-import { ApplicationCommandType, ChatInputCommandInteraction, ComponentType, SlashCommandBuilder } from 'discord.js';
+import { ApplicationCommandType, ChatInputCommandInteraction, ComponentType, InteractionContextType, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../../classes/Command';
 import { Docor } from '../../classes/Docor';
 import { HelpCenter } from '../..';
 
-export = new Command<ApplicationCommandType.ChatInput>({
-    data: new SlashCommandBuilder()
+export class help extends Command<ApplicationCommandType.ChatInput> {
+    activated = true;
+
+    data = new SlashCommandBuilder()
         .setName('help')
         .setDescription('Get some help from here.')
-    ,
-    async executor(interaction: ChatInputCommandInteraction) {
+        .setContexts(InteractionContextType.Guild);
+
+    executor = async (interaction: ChatInputCommandInteraction) => {
         const doc = HelpCenter.getDoc(['Help Center']);
         const rp = await interaction.reply({
             fetchReply: true,
@@ -28,4 +31,4 @@ export = new Command<ApplicationCommandType.ChatInput>({
             await HelpCenter.handleInteraction(i);
         });
     }
-});
+};

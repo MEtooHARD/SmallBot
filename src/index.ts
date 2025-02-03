@@ -7,9 +7,12 @@ import { loadHelpCenter, prepareSlashCommand, onDiscordEvents, onInmMaterialInse
 import { connectMongoDB } from "./mongoose";
 import { supabase } from "./supabase";
 import path from 'node:path';
+import { ApplicationCommandType } from "discord.js";
 
 /* Utility */
-export const CM = new CommandManager(prepareSlashCommand());
+export const SlashCommands = new CommandManager<ApplicationCommandType.ChatInput>(prepareSlashCommand());
+// export const MessageMenuCommands = new CommandManager<ApplicationCommandType.Message>([]);
+// export const UserMenuCommands = new CommandManager<ApplicationCommandType.User>([]);
 export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help Center');
 // export const InmArc = new InmArchive(supabase);
 /* Utility */
@@ -22,8 +25,8 @@ export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help C
     onDiscordEvents();
     onInmMaterialInsert();
     // if (should_deploy_command) {
-    //     const [success, error] = await CM.registerCommands();
-    //     if (success) console.log(`${CM.amount()} (/): ${[...CM.keys()].join(', ')}`);
+    //     const [success, error] = await SlashCommands.registerCommands();
+    //     if (success) console.log(`${SlashCommands.amount()} (/): ${[...SlashCommands.keys()].join(', ')}`);
     //     else console.log(error);
     // }
 

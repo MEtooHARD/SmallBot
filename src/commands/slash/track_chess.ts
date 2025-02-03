@@ -1,18 +1,20 @@
-import { ApplicationCommandType, ChatInputCommandInteraction, SlashCommandBuilder, User } from "discord.js";
+import { ApplicationCommandType, ChatInputCommandInteraction, InteractionContextType, SlashCommandBuilder, User } from "discord.js";
 import { Command } from "../../classes/Command";
 import { Piece, TrackChess } from "../../classes/games/TrackChess";
 
-export = new Command<ApplicationCommandType.ChatInput>({
-    data: new SlashCommandBuilder()
+export class track_chess extends Command<ApplicationCommandType.ChatInput> {
+    activated = true;
+
+    data = new SlashCommandBuilder()
         .setName('track_chess')
         .setDescription('Start a Track Chess.')
-        .setDMPermission(false)
+        .setContexts(InteractionContextType.Guild)
         .addUserOption(option => option
             .setName('opponent')
             .setDescription('Choose your opponent.')
-            .setRequired(true))
-    ,
-    async executor(interaction: ChatInputCommandInteraction): Promise<void> {
+            .setRequired(true));
+
+    executor = async (interaction: ChatInputCommandInteraction) => {
         const p1 = interaction.user;
         const p2 = (interaction.options.getUser('opponent') as User);
         const reply = await interaction.reply(TrackChess.inviteCheck(p1, p2));
@@ -53,4 +55,4 @@ export = new Command<ApplicationCommandType.ChatInput>({
             if (reason === 'time') reply.edit(TrackChess.inviteExpired(p1));
         });
     }
-});
+}
