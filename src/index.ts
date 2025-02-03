@@ -23,7 +23,7 @@ export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help C
     unknownError();
     loadHelpCenter();
     onDiscordEvents();
-    onInmMaterialInsert();
+    // onInmMaterialInsert();
     // if (should_deploy_command) {
     //     const [success, error] = await SlashCommands.registerCommands();
     //     if (success) console.log(`${SlashCommands.amount()} (/): ${[...SlashCommands.keys()].join(', ')}`);

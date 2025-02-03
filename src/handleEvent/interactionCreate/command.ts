@@ -26,16 +26,16 @@ export = async (interaction: ChatInputCommandInteraction) => {
         return;
     }
     /* filter */
-    const filterResult = command.filter(interaction);
+    const [success, reason] = command.filter(interaction);
     /* execute */
-    if (filterResult.result) {
+    if (success) {
         command.executor(interaction);
     } else {
         interaction.reply({
             ephemeral: true,
             embeds: [{
                 color: Colors.Yellow,
-                description: `Access denied: ${filterResult.reason}`
+                description: `Access denied: ${reason}`
             }]
         });
     }

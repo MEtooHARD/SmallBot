@@ -13,6 +13,7 @@ import { REST, Routes } from 'discord.js';
 import { session } from "../app";
 import config from '../config.json';
 import { Manager } from "./Basic/Manager";
+import { Result } from "./GeneralTypes";
 
 type CommandAutoComplete<T extends ApplicationCommandType> =
     T extends ApplicationCommandType.ChatInput
@@ -32,13 +33,8 @@ type CommandInteractionType<T extends ApplicationCommandType> =
 export type CommandExecutor<T extends ApplicationCommandType> =
     (interaction: CommandInteractionType<T>) => Promise<void>;
 
-export type CommandFilterResult = {
-    result: boolean;
-    reason?: string;
-};
-
 export type CommandFilter<T extends ApplicationCommandType> =
-    (interaction: CommandInteractionType<T>) => CommandFilterResult;
+    (interaction: CommandInteractionType<T>) => Result<string>;
 
 type CommandPermissions =
     Array<(typeof PermissionFlagsBits)[keyof typeof PermissionFlagsBits]>;
@@ -49,7 +45,7 @@ export abstract class Command<T extends ApplicationCommandType> {
     readonly requiredPerms: CommandPermissions = [];
     readonly complete: CommandAutoComplete<T> | undefined;
     abstract readonly executor: CommandExecutor<T>;
-    readonly filter: CommandFilter<T> = () => ({ result: true });
+    readonly filter: CommandFilter<T> = () => [true];
 };
 
 export class CommandManager<T extends ApplicationCommandType> extends Manager<Command<T>> {
