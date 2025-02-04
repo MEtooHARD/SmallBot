@@ -1,5 +1,5 @@
-import { ChatInputCommandInteraction, Colors } from 'discord.js';
-import { SlashCommands } from '../..';
+import { ChatInputCommandInteraction, Colors, PermissionFlagsBits } from 'discord.js';
+import { SlashCommands } from '../../commands';
 
 export = async (interaction: ChatInputCommandInteraction) => {
     if (!interaction.channel || !interaction.guild?.members.me)
@@ -17,17 +17,17 @@ export = async (interaction: ChatInputCommandInteraction) => {
         .permissionsFor(interaction.guild.members.me);
     if (!permissions.has(command.requiredPerms)) {
         if (interaction.channel.isThread()
-            ? permissions.has("SendMessagesInThreads")
-            : permissions.has("SendMessages"))
+            ? permissions.has(PermissionFlagsBits.SendMessagesInThreads)
+            : permissions.has(PermissionFlagsBits.SendMessages))
             interaction.reply({
                 ephemeral: true,
-                content: `You\'re missing the following permissions: ${permissions.missing(command.requiredPerms).join(', ')}`
+                content: `I need permissions: ${permissions.missing(command.requiredPerms).join(', ')}`
             });
         return;
     }
-    /* filter */
+
     const [success, reason] = command.filter(interaction);
-    /* execute */
+
     if (success) {
         command.executor(interaction);
     } else {

@@ -56,7 +56,7 @@ class GuildEmojiCounter extends Manager<GuildEmojiCounterItem> {
         return item && { id: item.emoji.dec, count: item.count };
     }
 
-    getAllEmojiItem(): GuildEmojiCounterItem[] { return [...this.items.values()]; }
+    getAllEmojiItem(): GuildEmojiCounterItem[] { return [...this.vals()]; }
 
     getAllEmojiBasic(): BasicEmojiCountInfo[] {
         return this.getAllEmojiItem()

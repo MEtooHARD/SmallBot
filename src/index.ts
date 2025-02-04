@@ -1,18 +1,14 @@
 import rootPath from "get-root-path";
 import { botConfig, login, mongoDB, mongodbConfig, should_deploy_command } from "./app";
-import { CommandManager } from "./classes/Command";
 import { Docor } from "./classes/Docor";
 import { unknownError } from "./events/other/unknowError";
-import { loadHelpCenter, prepareSlashCommand, onDiscordEvents, onInmMaterialInsert, onMongoDBEvents } from "./load";
+import { loadHelpCenter, onDiscordEvents, onInmMaterialInsert, onMongoDBEvents } from "./load";
 import { connectMongoDB } from "./mongoose";
-import { supabase } from "./supabase";
 import path from 'node:path';
-import { ApplicationCommandType } from "discord.js";
+import { supabase } from "./supabase";
+import { SlashCommands } from "./commands";
 
 /* Utility */
-export const SlashCommands = new CommandManager<ApplicationCommandType.ChatInput>(prepareSlashCommand());
-// export const MessageMenuCommands = new CommandManager<ApplicationCommandType.Message>([]);
-// export const UserMenuCommands = new CommandManager<ApplicationCommandType.User>([]);
 export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help Center');
 // export const InmArc = new InmArchive(supabase);
 /* Utility */
@@ -20,10 +16,13 @@ export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help C
 (async () => {
     /* setup */
     supabase;
+    SlashCommands;
     unknownError();
     loadHelpCenter();
     onDiscordEvents();
-    // onInmMaterialInsert();
+    /* setup */
+
+    onInmMaterialInsert();
     // if (should_deploy_command) {
     //     const [success, error] = await SlashCommands.registerCommands();
     //     if (success) console.log(`${SlashCommands.amount()} (/): ${[...SlashCommands.keys()].join(', ')}`);

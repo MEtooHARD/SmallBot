@@ -49,12 +49,15 @@ export abstract class Command<T extends ApplicationCommandType> {
 };
 
 export class CommandManager<T extends ApplicationCommandType> extends Manager<Command<T>> {
-    constructor(commands: [string, Command<T>][]) {
-        super(commands);
+    constructor(commands: (new () => Command<T>)[]) {
+        super(commands.map((command) => {
+            const instance = new command();
+            return [instance.data.name, instance];
+        }));
     };
 
     setActivation(name: string, status: boolean): boolean {
-        const command = this.items.get(name);
+        const command = this.get(name);
         if (command) {
             command.activated = status;
             return true;
@@ -69,7 +72,7 @@ export class CommandManager<T extends ApplicationCommandType> extends Manager<Co
         try {
             await rest.put(
                 Routes.applicationCommands(config.bot[session].id),
-                { body: Array.from(this.items.values()).map(c => c.data) },
+                { body: Array.from(this.vals()).map(c => c.data) },
             );
             return [true, null];
         } catch (e) {

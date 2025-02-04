@@ -1,6 +1,6 @@
 import { DMChannel, Message } from "discord.js";
 import { MessageCommand } from "../../../classes/MessageFeature";
-import { SlashCommands } from "../../..";
+import { SlashCommands } from "../../../commands";
 
 export = new class reloadSC extends MessageCommand {
     filter = (message: Message<boolean>, param: string[]): boolean => {
