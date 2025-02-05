@@ -1,9 +1,9 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import { joinVoiceChannel } from "@discordjs/voice";
-import { Command } from "../../classes/Command";
+import { AppCommand } from "../../classes/Command";
 import { atVoiceChannel } from "../../functions/discord/mention";
 
-export class come_in extends Command<ApplicationCommandType.ChatInput> {
+export class come_in extends AppCommand<ApplicationCommandType.ChatInput> {
     activated = true;
 
     data = new SlashCommandBuilder()

@@ -1,5 +1,5 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, PermissionFlagsBits } from "discord.js";
-import { Command, CommandExecutor } from "../../../classes/Command";
+import { AppCommand, CommandExecutor } from "../../../classes/Command";
 import data from './_data_';
 import { autocomplete } from "./_autocomplete_";
 import _executor_ from "./_executor_";
@@ -9,7 +9,7 @@ import { InmArchive } from "../../../classes/InmArchive/InmArchive";
 import { handleRegister } from "./register";
 import { handleFeed } from "./feed";
 
-export class inm_archive extends Command<ApplicationCommandType.ChatInput> {
+export class inm_archive extends AppCommand<ApplicationCommandType.ChatInput> {
     activated = true;
 
     data = data;

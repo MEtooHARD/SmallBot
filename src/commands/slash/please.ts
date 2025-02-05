@@ -1,8 +1,8 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, InteractionContextType, SlashCommandBuilder, User } from 'discord.js';
-import { Command } from '../../classes/Command';
+import { AppCommand } from '../../classes/Command';
 import { atUser } from '../../functions/discord/mention';
 
-export class please extends Command<ApplicationCommandType.ChatInput> {
+export class please extends AppCommand<ApplicationCommandType.ChatInput> {
     activated = true;
 
     data = new SlashCommandBuilder()

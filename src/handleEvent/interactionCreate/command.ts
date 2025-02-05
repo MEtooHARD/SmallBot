@@ -9,7 +9,7 @@ export = async (interaction: ChatInputCommandInteraction) => {
     if (!command) return;
     /* skip permission checking for DMChannel */
     if (interaction.channel.isDMBased()) {
-        command.filter(interaction) && command.executor(interaction);
+        command.validator(interaction) && command.executor(interaction);
         return;
     }
     /* check permission */
@@ -26,7 +26,7 @@ export = async (interaction: ChatInputCommandInteraction) => {
         return;
     }
 
-    const [success, reason] = command.filter(interaction);
+    const [success, reason] = command.validator(interaction);
 
     if (success) {
         command.executor(interaction);

@@ -20,7 +20,7 @@ type CommandAutoComplete<T extends ApplicationCommandType> =
     ? (interaction: AutocompleteInteraction) => Promise<void>
     : never;
 
-type CommandData<T extends ApplicationCommandType> =
+type CommandRegisterData<T extends ApplicationCommandType> =
     T extends ApplicationCommandType.ChatInput
     ? (SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder)
     : ContextMenuCommandBuilder;
@@ -33,23 +33,25 @@ type CommandInteractionType<T extends ApplicationCommandType> =
 export type CommandExecutor<T extends ApplicationCommandType> =
     (interaction: CommandInteractionType<T>) => Promise<void>;
 
-export type CommandFilter<T extends ApplicationCommandType> =
+export type CommandValidator<T extends ApplicationCommandType> =
     (interaction: CommandInteractionType<T>) => Result<string>;
 
 type CommandPermissions =
     Array<(typeof PermissionFlagsBits)[keyof typeof PermissionFlagsBits]>;
 
-export abstract class Command<T extends ApplicationCommandType> {
+/*  */
+
+export abstract class AppCommand<T extends ApplicationCommandType> {
     activated: Readonly<boolean> = true;
-    abstract readonly data: CommandData<T>;
+    abstract readonly data: CommandRegisterData<T>;
     readonly requiredPerms: CommandPermissions = [];
     readonly complete: CommandAutoComplete<T> | undefined;
     abstract readonly executor: CommandExecutor<T>;
-    readonly filter: CommandFilter<T> = () => [true];
+    readonly validator: CommandValidator<T> = () => [true];
 };
 
-export class CommandManager<T extends ApplicationCommandType> extends Manager<Command<T>> {
-    constructor(commands: (new () => Command<T>)[]) {
+export class CommandManager<T extends ApplicationCommandType> extends Manager<AppCommand<T>> {
+    constructor(commands: (new () => AppCommand<T>)[]) {
         super(commands.map((command) => {
             const instance = new command();
             return [instance.data.name, instance];
