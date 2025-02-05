@@ -4,7 +4,11 @@ import { byChance, randomInt } from "../../../functions/general/number";
 import homo from "../../../functions/general/homo";
 
 export = new class ii45i4 extends MessageFeature {
+    numbers: number[] = [];
+
     filter(message: Message<boolean>, ...params: any): boolean {
+        const numbers = message.content.match(/\d+/g) as RegExpMatchArray;
+
         return /\d/.test(message.content) && byChance(0.3);
     };
     async exe(message: Message<boolean>, ...params: any): Promise<void> {

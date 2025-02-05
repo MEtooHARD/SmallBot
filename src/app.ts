@@ -1,5 +1,12 @@
-import { Client, ClientEvents, IntentsBitField, Partials } from "discord.js";
+import {
+    ApplicationCommandType,
+    Client,
+    ClientEvents,
+    IntentsBitField,
+    Partials
+} from "discord.js";
 import config from './config.json';
+import { CommandManager } from "./classes/Command";
 
 export const client = new Client(
     {
@@ -47,5 +54,4 @@ export const supabaseConfig = config.supabase[session];
 /* Run Time Settings */
 export const shouldLogIgnoredCustomID = false;
 /* Run Time Settings */
-
 

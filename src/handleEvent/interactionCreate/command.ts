@@ -1,31 +1,42 @@
-import { ChatInputCommandInteraction } from 'discord.js';
-import { CM } from '../..';
+import { ChatInputCommandInteraction, Colors, PermissionFlagsBits } from 'discord.js';
+import { SlashCommands } from '../../commands';
 
 export = async (interaction: ChatInputCommandInteraction) => {
     if (!interaction.channel || !interaction.guild?.members.me)
         return;
     /* get (slash) command */
-    const command = CM.get(interaction.commandName);
+    const command = SlashCommands.get(interaction.commandName);
     if (!command) return;
     /* skip permission checking for DMChannel */
     if (interaction.channel.isDMBased()) {
-        command.filter(interaction) && command.executor(interaction);
+        command.validator(interaction) && command.executor(interaction);
         return;
     }
     /* check permission */
     const permissions = interaction.channel
         .permissionsFor(interaction.guild.members.me);
-    if (!permissions.has(command.botPermissions)) {
+    if (!permissions.has(command.requiredPerms)) {
         if (interaction.channel.isThread()
-            ? permissions.has("SendMessagesInThreads")
-            : permissions.has("SendMessages"))
+            ? permissions.has(PermissionFlagsBits.SendMessagesInThreads)
+            : permissions.has(PermissionFlagsBits.SendMessages))
             interaction.reply({
                 ephemeral: true,
-                content: `missing following permissions: ${permissions.missing(command.botPermissions).join(', ')}`
+                content: `I need permissions: ${permissions.missing(command.requiredPerms).join(', ')}`
             });
         return;
     }
-    /* execute */
-    if (command.filter(interaction))
+
+    const [success, reason] = command.validator(interaction);
+
+    if (success) {
         command.executor(interaction);
+    } else {
+        interaction.reply({
+            ephemeral: true,
+            embeds: [{
+                color: Colors.Yellow,
+                description: `Access denied: ${reason}`
+            }]
+        });
+    }
 };

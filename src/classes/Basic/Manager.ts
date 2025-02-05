@@ -1,6 +1,6 @@
 
 export class Manager<T extends any> {
-    protected items: Map<string, T>;
+    private items: Map<string, T>;
 
     constructor(items?: [string, T][]) {
         this.items = new Map<string, T>(items);

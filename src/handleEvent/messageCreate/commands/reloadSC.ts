@@ -1,6 +1,6 @@
 import { DMChannel, Message } from "discord.js";
 import { MessageCommand } from "../../../classes/MessageFeature";
-import { CM } from "../../..";
+import { SlashCommands } from "../../../commands";
 
 export = new class reloadSC extends MessageCommand {
     filter = (message: Message<boolean>, param: string[]): boolean => {
@@ -8,10 +8,10 @@ export = new class reloadSC extends MessageCommand {
     };
 
     exe = async (message: Message<boolean>, param: string[]): Promise<void> => {
-        const [success, error] = await CM.registerCommands();
+        const [success, error] = await SlashCommands.registerCommands();
 
         if (success)
-            message.reply([...CM.keys()].join('\n'));
+            message.reply([...SlashCommands.keys()].join('\n'));
         if (error)
             message.reply('failed');
     };
