@@ -15,10 +15,7 @@ import config from '../config.json';
 import { Manager } from "./Basic/Manager";
 import { Result } from "./GeneralTypes";
 
-type CommandAutoComplete<T extends ApplicationCommandType> =
-    T extends ApplicationCommandType.ChatInput
-    ? (interaction: AutocompleteInteraction) => Promise<void>
-    : never;
+type AutoComplete = (interaction: AutocompleteInteraction) => Promise<void>
 
 type CommandRegisterData<T extends ApplicationCommandType> =
     T extends ApplicationCommandType.ChatInput
@@ -39,19 +36,24 @@ export type CommandValidator<T extends ApplicationCommandType> =
 type CommandPermissions =
     Array<(typeof PermissionFlagsBits)[keyof typeof PermissionFlagsBits]>;
 
-/*  */
-
-export abstract class AppCommand<T extends ApplicationCommandType> {
+abstract class AppCommand<T extends ApplicationCommandType> {
     activated: Readonly<boolean> = true;
     abstract readonly data: CommandRegisterData<T>;
     readonly requiredPerms: CommandPermissions = [];
-    readonly complete: CommandAutoComplete<T> | undefined;
-    abstract readonly executor: CommandExecutor<T>;
     readonly validator: CommandValidator<T> = () => [true];
+    abstract readonly executor: CommandExecutor<T>;
 };
 
-export class CommandManager<T extends ApplicationCommandType> extends Manager<AppCommand<T>> {
-    constructor(commands: (new () => AppCommand<T>)[]) {
+export abstract class SlashCommand extends AppCommand<ApplicationCommandType.ChatInput> {
+    readonly complete: AutoComplete | undefined;
+};
+
+export abstract class MessageContextMenuCommand extends AppCommand<ApplicationCommandType.Message> { }
+
+export abstract class UserContextMenuCommand extends AppCommand<ApplicationCommandType.User> { }
+
+export class CommandManager<T extends ApplicationCommandType, C extends AppCommand<T>> extends Manager<C> {
+    constructor(commands: (new () => C)[]) {
         super(commands.map((command) => {
             const instance = new command();
             return [instance.data.name, instance];
@@ -69,12 +71,12 @@ export class CommandManager<T extends ApplicationCommandType> extends Manager<Ap
 
     isActivated(name: string): boolean { return Boolean(this.get(name)?.activated); };
 
-    async registerCommands(): Promise<[boolean, any]> {
+    static async registerCommands(commands: AppCommand<ApplicationCommandType>[]): Promise<[boolean, any]> {
         const rest = new REST().setToken(config.bot[session].token);
         try {
             await rest.put(
                 Routes.applicationCommands(config.bot[session].id),
-                { body: Array.from(this.vals()).map(c => c.data) },
+                { body: commands.map(c => c.data) },
             );
             return [true, null];
         } catch (e) {

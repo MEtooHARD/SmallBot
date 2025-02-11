@@ -1,5 +1,5 @@
 import { ApplicationCommandType, AutocompleteInteraction, CacheType, ChatInputCommandInteraction, InteractionContextType, SlashCommandBuilder } from "discord.js";
-import { AppCommand } from "../../classes/Command";
+import { SlashCommand } from "../../classes/Command";
 import { picPath } from "../../functions/general/path";
 import fs from 'node:fs';
 
@@ -7,7 +7,7 @@ const items: string[] = [
     'God\'s Hands'
 ];
 
-export class stink extends AppCommand<ApplicationCommandType.ChatInput> {
+export class stink extends SlashCommand {
     activated = true;
 
     data = new SlashCommandBuilder()

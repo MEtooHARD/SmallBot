@@ -1,8 +1,8 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, InteractionContextType, SlashCommandBuilder } from 'discord.js';
-import { AppCommand } from '../../classes/Command';
+import { SlashCommand } from '../../classes/Command';
 import OrderList from '../../classes/OrderList';
 
-export class order_list extends AppCommand<ApplicationCommandType.ChatInput> {
+export class order_list extends SlashCommand {
     activated = true;
 
     data = new SlashCommandBuilder()

@@ -15,7 +15,7 @@ export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help C
 
 (async () => {
     /* setup */
-    supabase;
+    // supabase;
     SlashCommands;
     unknownError();
     loadHelpCenter();

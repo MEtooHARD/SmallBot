@@ -1,10 +1,10 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, InteractionContextType, PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder } from "discord.js";
-import { AppCommand } from "../../classes/Command";
+import { SlashCommand } from "../../classes/Command";
 import { connectionStatus } from "../../mongoose";
 import { Referendum } from "../../classes/Referendum";
 import { ConnectionStates } from "mongoose";
 
-export class referendum extends AppCommand<ApplicationCommandType.ChatInput> {
+export class referendum extends SlashCommand {
     activated = true;
 
     data = new SlashCommandBuilder()
