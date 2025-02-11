@@ -2,16 +2,17 @@ import { BaseInteraction, MessageComponentInteraction } from 'discord.js';
 import menu from './interactionCreate/menu';
 import modal from './interactionCreate/modal';
 import button from './interactionCreate/button';
-import command from './interactionCreate/command';
+import command from './interactionCreate/SlashCommand';
 import autocomplete from './interactionCreate/autocomplete';
 import { getSvcInfo } from '../functions/discord/service';
 import { shouldLogIgnoredCustomID } from '../app';
-import { contextMenu } from './interactionCreate/contextmenu';
 import { Manager } from '../classes/Basic/Manager';
 
 import { InmArchive } from '../features/InmArchive'
 import { OrderList } from '../features/OrderList'
 import { Referendum } from '../features/Referendum'
+import { handleMessageContextMenu } from './interactionCreate/MessagContextMenu';
+import { handleUserContextMenu } from './interactionCreate/UserContextMenu';
 
 type FeatureHandler = (interaction: MessageComponentInteraction, svcInfo: string[]) => Promise<void>;
 const FeatureManager = new Manager<FeatureHandler>([
@@ -22,9 +23,11 @@ const FeatureManager = new Manager<FeatureHandler>([
 
 const create = async (interaction: BaseInteraction): Promise<void> => {
     if (interaction.isChatInputCommand())
-        /* await */ command(interaction);
-    else if (interaction.isUserContextMenuCommand() || interaction.isMessageContextMenuCommand())
-        await contextMenu(interaction);
+        command(interaction);
+    else if (interaction.isMessageContextMenuCommand())
+        handleMessageContextMenu(interaction);
+    else if (interaction.isUserContextMenuCommand())
+        handleUserContextMenu(interaction);
     else if (interaction.isAutocomplete())
         autocomplete(interaction);
     else if (interaction.isMessageComponent() || interaction.isModalSubmit()) {

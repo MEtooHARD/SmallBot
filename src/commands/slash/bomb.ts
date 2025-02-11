@@ -1,11 +1,11 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember, InteractionContextType, MessageComponentInteraction, PartialGroupDMChannel, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
-import { AppCommand, CommandExecutor } from "../../classes/Command";
+import { SlashCommand, CommandExecutor } from "../../classes/Command";
 import { doAfterSec } from "../../functions/general/delay";
 import { atUser } from "../../functions/discord/mention";
 import Bomber from "../../classes/Bomber";
 import ButtonRow from "../../classes/ActionRow/ButtonRow";
 
-export class bomb extends AppCommand<ApplicationCommandType.ChatInput> {
+export class bomb extends SlashCommand {
     activated = true;
 
     data = new SlashCommandBuilder()

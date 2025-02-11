@@ -1,9 +1,9 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, ApplicationCommandType, InteractionContextType } from "discord.js";
-import { AppCommand, CommandValidator } from "../../classes/Command";
+import { SlashCommand, CommandValidator } from "../../classes/Command";
 import { guildInfoCard } from "../../functions/discord/service";
 import { Result } from "../../classes/GeneralTypes";
 
-export class test extends AppCommand<ApplicationCommandType.ChatInput> {
+export class test extends SlashCommand {
     activated = true;
 
     data = new SlashCommandBuilder()
@@ -13,7 +13,8 @@ export class test extends AppCommand<ApplicationCommandType.ChatInput> {
 
     validator: CommandValidator<ApplicationCommandType.ChatInput> =
         (interaction: ChatInputCommandInteraction): Result<string> => {
-            return [true];
+            return [interaction.user.id === '732128546407055452',
+                'You are not allowed to use this command.'];
         };
 
     executor = async (interaction: ChatInputCommandInteraction) => {
