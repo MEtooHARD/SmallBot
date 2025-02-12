@@ -31,8 +31,8 @@ export class ii45i4_mc extends MessageContextMenuCommand {
         const theOneChosenShit = numbers[randomInt(0, numbers.length - 1)];
         const result = homo(Number(theOneChosenShit));
         try {
-            await interaction.reply(`${theOneChosenShit} = \`${result}\`
-# <:810:1339066209957838969>`);
+            await interaction.reply(`${theOneChosenShit} = \`${result}\``);
+            // # <:810:1339066209957838969>
         } catch (e) {
             sendDebugMessage(e, 'unhandledRejection')
         }
