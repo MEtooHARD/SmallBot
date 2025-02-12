@@ -18,7 +18,7 @@ const _executor_/* : CommandExecutor<ApplicationCommandType.ChatInput> */ = asyn
 
             /* ivalid MIME type */
             if (subcommand === 'image' && !InmArchive.MIMETypes.has(type)) {
-                interaction.reply({ ephemeral: true, content: InmArchive.InvalidMIMETypesString });
+                interaction.reply({ flags: 'Ephemeral', content: InmArchive.InvalidMIMETypesString });
                 return;
             }
             /* overview */
@@ -55,7 +55,7 @@ const _executor_/* : CommandExecutor<ApplicationCommandType.ChatInput> */ = asyn
             else throw 'upload failed';
 
         } catch (e) {
-            interaction.followUp({ ephemeral: true, content: 'process failed.' });
+            interaction.followUp({ flags: 'Ephemeral', content: 'process failed.' });
         }
     } else
         if (subcommand === 'register')

@@ -2,17 +2,16 @@ import { BaseInteraction, MessageComponentInteraction } from 'discord.js';
 import menu from './interactionCreate/menu';
 import modal from './interactionCreate/modal';
 import button from './interactionCreate/button';
-import command from './interactionCreate/SlashCommand';
 import autocomplete from './interactionCreate/autocomplete';
 import { getSvcInfo } from '../functions/discord/service';
 import { shouldLogIgnoredCustomID } from '../app';
 import { Manager } from '../classes/Basic/Manager';
-
 import { InmArchive } from '../features/InmArchive'
 import { OrderList } from '../features/OrderList'
 import { Referendum } from '../features/Referendum'
-import { handleMessageContextMenu } from './interactionCreate/MessagContextMenu';
-import { handleUserContextMenu } from './interactionCreate/UserContextMenu';
+import { handleMessageContextMenuCommand } from './interactionCreate/MessagContextMenu';
+import { handleUserContextMenuCommand } from './interactionCreate/UserContextMenu';
+import { handleSlashCommand } from './interactionCreate/SlashCommand';
 
 type FeatureHandler = (interaction: MessageComponentInteraction, svcInfo: string[]) => Promise<void>;
 const FeatureManager = new Manager<FeatureHandler>([
@@ -23,11 +22,11 @@ const FeatureManager = new Manager<FeatureHandler>([
 
 const create = async (interaction: BaseInteraction): Promise<void> => {
     if (interaction.isChatInputCommand())
-        command(interaction);
+        handleSlashCommand(interaction);
     else if (interaction.isMessageContextMenuCommand())
-        handleMessageContextMenu(interaction);
+        handleMessageContextMenuCommand(interaction);
     else if (interaction.isUserContextMenuCommand())
-        handleUserContextMenu(interaction);
+        handleUserContextMenuCommand(interaction);
     else if (interaction.isAutocomplete())
         autocomplete(interaction);
     else if (interaction.isMessageComponent() || interaction.isModalSubmit()) {
@@ -40,7 +39,7 @@ const create = async (interaction: BaseInteraction): Promise<void> => {
                     feature(interaction as MessageComponentInteraction, svcInfo)
                 else {
                     console.log('service failed: ' + interaction.customId);
-                    await interaction.reply({ ephemeral: true, content: 'service not found' });
+                    await interaction.reply({ flags: 'Ephemeral', content: 'service not found' });
                 }
             } else {
                 if (interaction.isButton()) await button(interaction);

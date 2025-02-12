@@ -26,7 +26,7 @@ export class inm_archive extends SlashCommand {
 
                 /* ivalid MIME type */
                 if (subcommand === 'image' && !InmArchive.MIMETypes.has(type)) {
-                    interaction.reply({ ephemeral: true, content: InmArchive.InvalidMIMETypesString });
+                    interaction.reply({ flags: 'Ephemeral', content: InmArchive.InvalidMIMETypesString });
                     return;
                 }
                 /* overview */
@@ -63,7 +63,7 @@ export class inm_archive extends SlashCommand {
                 else throw 'upload failed';
 
             } catch (e) {
-                interaction.followUp({ ephemeral: true, content: 'process failed.' });
+                interaction.followUp({ flags: 'Ephemeral', content: 'process failed.' });
             }
         } else
             if (subcommand === 'register')

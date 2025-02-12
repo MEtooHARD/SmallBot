@@ -1,7 +1,8 @@
 import { ChatInputCommandInteraction, Colors, PermissionFlagsBits } from 'discord.js';
 import { SlashCommands } from '../../commands';
+import { logSlashCommand } from '../../functions/general/log';
 
-export = async (interaction: ChatInputCommandInteraction) => {
+export const handleSlashCommand = async (interaction: ChatInputCommandInteraction) => {
     if (!interaction.channel || !interaction.guild?.members.me)
         return;
     /* get (slash) command */
@@ -9,6 +10,7 @@ export = async (interaction: ChatInputCommandInteraction) => {
     if (!command) return;
     /* skip permission checking for DMChannel */
     if (interaction.channel.isDMBased()) {
+        logSlashCommand(interaction);
         command.validator(interaction) && command.executor(interaction);
         return;
     }
@@ -20,7 +22,7 @@ export = async (interaction: ChatInputCommandInteraction) => {
             ? permissions.has(PermissionFlagsBits.SendMessagesInThreads)
             : permissions.has(PermissionFlagsBits.SendMessages))
             interaction.reply({
-                ephemeral: true,
+                flags: 'Ephemeral',
                 content: `I need permissions: ${permissions.missing(command.requiredPerms).join(', ')}`
             });
         return;
@@ -29,10 +31,11 @@ export = async (interaction: ChatInputCommandInteraction) => {
     const [success, reason] = command.validator(interaction);
 
     if (success) {
+        logSlashCommand(interaction);
         command.executor(interaction);
     } else {
         interaction.reply({
-            ephemeral: true,
+            flags: 'Ephemeral',
             embeds: [{
                 color: Colors.Yellow,
                 description: `Access denied: ${reason}`

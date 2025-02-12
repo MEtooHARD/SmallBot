@@ -35,12 +35,12 @@ const Close = async (interaction: ButtonInteraction, svcInfo: string[]) => {
                     await document.save();
                     await interaction.message.edit(new Referendum(document).getMessage());
                 }
-            } catch (e) { await interaction.reply({ ephemeral: true, content: 'something went wrong.' }); }
+            } catch (e) { await interaction.reply({ flags: 'Ephemeral', content: 'something went wrong.' }); }
         } else {
-            await interaction.reply({ ephemeral: true, content: 'data not found.' });
+            await interaction.reply({ flags: 'Ephemeral', content: 'data not found.' });
         }
     } else {
-        await interaction.reply({ ephemeral: true, content: 'You are not granted to do this.' })
+        await interaction.reply({ flags: 'Ephemeral', content: 'You are not granted to do this.' })
     }
 };
 

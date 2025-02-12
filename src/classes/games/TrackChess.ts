@@ -147,7 +147,7 @@ export class TrackChess {
 
     static inviteCheck(p1: User, p2: User): InteractionReplyOptions {
         return (p1.id === p2.id || p2.bot) ? {
-            ephemeral: true,
+            flags: 'Ephemeral',
             embeds: [{ title: 'Stop sucking.' }]
         } : {
             embeds: [{

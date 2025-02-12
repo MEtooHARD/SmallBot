@@ -1,5 +1,5 @@
 import { UserContextMenuCommandInteraction } from "discord.js";
 
-export const handleUserContextMenu = async (interaction: UserContextMenuCommandInteraction) => {
+export const handleUserContextMenuCommand = async (interaction: UserContextMenuCommandInteraction) => {
     console.log(interaction);
 };

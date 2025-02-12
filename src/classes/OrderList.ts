@@ -171,8 +171,8 @@ class OrderList {
 
     static orderFailedRpMsg(): InteractionReplyOptions {
         return {
+            flags: 'Ephemeral',
             fetchReply: true,
-            ephemeral: true,
             embeds: [
                 {
                     color: Colors.Yellow,
@@ -184,8 +184,8 @@ class OrderList {
 
     static orderSucceedRpMsg(): InteractionReplyOptions {
         return {
+            flags: 'Ephemeral',
             fetchReply: true,
-            ephemeral: true,
             embeds: [
                 {
                     color: Colors.Green,
@@ -197,8 +197,8 @@ class OrderList {
 
     static editSuccessRpMsg = (): InteractionReplyOptions => {
         return {
+            flags: 'Ephemeral',
             fetchReply: true,
-            ephemeral: true,
             embeds: [
                 {
                     color: Colors.Green,
@@ -210,7 +210,7 @@ class OrderList {
 
     static endCheckRpMsg = (): InteractionReplyOptions => {
         return {
-            ephemeral: true,
+            flags: 'Ephemeral',
             fetchReply: true,
             embeds: [
                 {
@@ -232,8 +232,8 @@ class OrderList {
 
     static notOrganizerRpMsg = (): InteractionReplyOptions => {
         return {
+            flags: 'Ephemeral',
             fetchReply: true,
-            ephemeral: true,
             embeds: [
                 {
                     color: Colors.Yellow,

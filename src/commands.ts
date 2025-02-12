@@ -17,7 +17,7 @@ import { ii45i4_mc } from "./commands/message/ii45i4";
 export const SlashCommands
     = new CommandManager<ApplicationCommandType.ChatInput, SlashCommand>(
         [bomb, come_in, help, /* inm_archive, */ order_list,
-            please, referendum, stink, t0fe, test, track_chess]
+            please, /* referendum, */ stink, t0fe, test, track_chess]
     );
 export const MessageMenuCommands
     = new CommandManager<ApplicationCommandType.Message, MessageContextMenuCommand>(
