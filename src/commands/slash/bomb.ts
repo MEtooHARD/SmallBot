@@ -34,7 +34,7 @@ export class bomb extends SlashCommand {
         const period = Number(interaction.options.getNumber('period')) || 5;
         if (isNaN(count) || !(target instanceof GuildMember) || !target) {
             interaction.reply({
-                ephemeral: true,
+                flags: 'Ephemeral',
                 content: 'Some eror occured. pls contact my owner.'
             })
         } else {
@@ -83,7 +83,7 @@ export class bomb extends SlashCommand {
 
             collector.on('ignore', (i: MessageComponentInteraction) => {
                 i.reply({
-                    ephemeral: true,
+                    flags: 'Ephemeral',
                     content: 'You\'re not @' + target.user.username
                 })
             })

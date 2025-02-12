@@ -14,8 +14,8 @@ export class help extends SlashCommand {
     executor = async (interaction: ChatInputCommandInteraction) => {
         const doc = HelpCenter.getDoc(['Help Center']);
         const rp = await interaction.reply({
+            flags: 'Ephemeral',
             fetchReply: true,
-            ephemeral: true,
             embeds: doc ? doc.getEmbeds() : [],
             components: doc ? [Docor.resolveToSelectMenu(doc)] : [],
             content: doc ? '' : 'something went wrong.'

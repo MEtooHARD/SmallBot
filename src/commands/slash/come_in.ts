@@ -27,12 +27,12 @@ export class come_in extends SlashCommand {
                 // })
 
                 interaction.reply({
-                    ephemeral: true,
+                    flags: 'Ephemeral',
                     content: `Joint ${atVoiceChannel(interaction.member.voice.channel)}.`
                 });
             } else {
                 interaction.reply({
-                    ephemeral: true,
+                    flags: 'Ephemeral',
                     content: 'You must be in a voice channel.'
                 });
             }

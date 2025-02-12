@@ -2,7 +2,7 @@ import { Colors, MessageContextMenuCommandInteraction, PermissionFlagsBits } fro
 import { MessageMenuCommands } from "../../commands";
 import { CommandInteractionIn } from "../../functions/discord/scope";
 
-export const handleMessageContextMenu = async (interaction: MessageContextMenuCommandInteraction) => {
+export const handleMessageContextMenuCommand = async (interaction: MessageContextMenuCommandInteraction) => {
     /* get command */
     const command = MessageMenuCommands.get(interaction.commandName);
     if (!command) return;
@@ -14,7 +14,7 @@ export const handleMessageContextMenu = async (interaction: MessageContextMenuCo
             command.executor(interaction);
         } else {
             interaction.reply({
-                ephemeral: true,
+                flags: 'Ephemeral',
                 embeds: [{
                     color: Colors.Yellow,
                     description: `Access denied: ${reason}`,
@@ -53,7 +53,7 @@ export const handleMessageContextMenu = async (interaction: MessageContextMenuCo
             command.executor(interaction);
         } else {
             interaction.reply({
-                ephemeral: true,
+                flags: 'Ephemeral',
                 embeds: [{
                     color: Colors.Yellow,
                     description: `Access denied: ${reason}`
