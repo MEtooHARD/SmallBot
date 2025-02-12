@@ -17,7 +17,7 @@ export const handleMessageContextMenu = async (interaction: MessageContextMenuCo
                 ephemeral: true,
                 embeds: [{
                     color: Colors.Yellow,
-                    description: `Access denied: ${reason}`
+                    description: `Access denied: ${reason}`,
                 }]
             });
         }
@@ -26,17 +26,26 @@ export const handleMessageContextMenu = async (interaction: MessageContextMenuCo
 
     if (CommandInteractionIn['Guild'](interaction)) {
         /* check permission */
-        const permissions = interaction.appPermissions;
-        if (!permissions.has(command.requiredPerms)) {
-            if (interaction.channel.isThread()
-                ? permissions.has(PermissionFlagsBits.SendMessagesInThreads)
-                : permissions.has(PermissionFlagsBits.SendMessages))
-                interaction.reply({
-                    ephemeral: true,
-                    content: `I need permissions: ${permissions.missing(command.requiredPerms).join(', ')}`
-                });
+        if (interaction.guild && !interaction.appPermissions.has(command.requiredPerms)) {
+            interaction.reply({
+                flags: 'Ephemeral',
+                embeds: [{
+                    color: Colors.Yellow,
+                    description: `I lack the permissions: ${interaction.appPermissions.missing(command.requiredPerms).join(', ')}`
+                }]
+            });
             return;
         }
+        // else if (!interaction.guild && !interaction.memberPermissions?.has(PermissionFlagsBits.SendMessages)) {
+        //     interaction.reply({
+        //         flags: 'Ephemeral',
+        //         embeds: [{
+        //             color: Colors.Yellow,
+        //             description: `You lack the permissions: ${interaction.appPermissions.missing(command.requiredPerms).join(', ')}`
+        //         }]
+        //     });
+        //     return;
+        // }
 
         const [success, reason] = command.validator(interaction);
 

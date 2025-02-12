@@ -1,4 +1,18 @@
-import { ApplicationCommand, CacheTypeReducer, CommandInteraction, DMChannel, Guild, GuildMember, GuildResolvable, GuildTextBasedChannel, InteractionContextType, Message, Snowflake, TextChannel } from "discord.js";
+import {
+    ApplicationCommand,
+    CacheTypeReducer,
+    CommandInteraction,
+    DMChannel,
+    Guild,
+    GuildMember,
+    GuildResolvable,
+    GuildTextBasedChannel,
+    InteractionContextType,
+    Message,
+    Snowflake,
+    TextBasedChannel,
+    TextChannel
+} from "discord.js";
 
 
 export function isGuildMessage(msg: Message)
@@ -13,9 +27,9 @@ export const CommandInteractionIn = {
             commandGuildId: Snowflake,
             context: InteractionContextType.Guild,
             ephemeral: boolean,
-            guild: CacheTypeReducer<'cached', Guild>,
+            guild: CacheTypeReducer<'cached', Guild, null> | null,
             guildId: Snowflake,
-            channel: CacheTypeReducer<'cached', GuildTextBasedChannel>,
+            channel: CacheTypeReducer<'cached', GuildTextBasedChannel | null, GuildTextBasedChannel | null, GuildTextBasedChannel | null, TextBasedChannel | null>,
             member: CacheTypeReducer<'cached', GuildMember>,
         } => {
         return interaction.context === InteractionContextType.Guild;
