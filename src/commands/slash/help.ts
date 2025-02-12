@@ -15,7 +15,7 @@ export class help extends SlashCommand {
         const doc = HelpCenter.getDoc(['Help Center']);
         const rp = await interaction.reply({
             flags: 'Ephemeral',
-            fetchReply: true,
+            withResponse: false,
             embeds: doc ? doc.getEmbeds() : [],
             components: doc ? [Docor.resolveToSelectMenu(doc)] : [],
             content: doc ? '' : 'something went wrong.'
