@@ -16,13 +16,13 @@ const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[]) 
     if (interaction?.components[1]?.components[0])
         orderlist.setDescription(interaction.components[1].components[0].value);
 
-    const rpMesage = await interaction.reply({
+    const response = await interaction.reply({
         embeds: [orderlist.board()],
         components: orderlist.panel(),
-        fetchReply: true
+        withResponse: false
     });
 
-    const collector = rpMesage.createMessageComponentCollector({
+    const collector = response.createMessageComponentCollector({
         componentType: ComponentType.Button,
         idle: 2 * 60 * 60 * 1000
     });
@@ -47,7 +47,7 @@ const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[]) 
     collector.on('end', async (collection, reason: string) => {
         console.log(chalk.red('end') + chalk.yellow(` [${OrderList.serviceName}]`));
         try {
-            await rpMesage.delete();
+            await response.delete();
             if (interaction.channel && !interaction.channel.isDMBased()) {
                 interaction.channel?.send({
                     embeds: [orderlist.board(true)]

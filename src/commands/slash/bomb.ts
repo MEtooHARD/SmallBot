@@ -1,15 +1,17 @@
-import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember, MessageComponentInteraction, PartialGroupDMChannel, SlashCommandBuilder } from "discord.js";
-import { Command } from "../../classes/Command";
+import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember, InteractionContextType, MessageComponentInteraction, PartialGroupDMChannel, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
+import { SlashCommand, CommandExecutor } from "../../classes/Command";
 import { doAfterSec } from "../../functions/general/delay";
 import { atUser } from "../../functions/discord/mention";
 import Bomber from "../../classes/Bomber";
 import ButtonRow from "../../classes/ActionRow/ButtonRow";
 
-export = new Command<ApplicationCommandType.ChatInput>({
-    data: new SlashCommandBuilder()
+export class bomb extends SlashCommand {
+    activated = true;
+
+    data = new SlashCommandBuilder()
         .setName('bomb')
         .setDescription('Bomb someone')
-        .setDMPermission(false)
+        .setContexts(InteractionContextType.Guild)
         .addUserOption(option => option
             .setName('target')
             .setDescription('The person you want to bomb.')
@@ -24,15 +26,15 @@ export = new Command<ApplicationCommandType.ChatInput>({
             .setName('period')
             .setDescription('The period of each bomb.')
             .setMinValue(2)
-            .setMaxValue(15))
-    ,
-    async executor(interaction: ChatInputCommandInteraction): Promise<void> {
+            .setMaxValue(15));
+
+    executor: CommandExecutor<ApplicationCommandType.ChatInput> = async (interaction: ChatInputCommandInteraction) => {
         const target = interaction.options.getMember('target');
         const count = Number(interaction.options.getNumber('count'));
         const period = Number(interaction.options.getNumber('period')) || 5;
         if (isNaN(count) || !(target instanceof GuildMember) || !target) {
             interaction.reply({
-                ephemeral: true,
+                flags: 'Ephemeral',
                 content: 'Some eror occured. pls contact my owner.'
             })
         } else {
@@ -81,7 +83,7 @@ export = new Command<ApplicationCommandType.ChatInput>({
 
             collector.on('ignore', (i: MessageComponentInteraction) => {
                 i.reply({
-                    ephemeral: true,
+                    flags: 'Ephemeral',
                     content: 'You\'re not @' + target.user.username
                 })
             })
@@ -89,4 +91,4 @@ export = new Command<ApplicationCommandType.ChatInput>({
             bomb.bomb();
         }
     }
-});
+};

@@ -9,3 +9,5 @@ export class Position {
 };
 
 export interface NestedArray<T> extends Array<T | NestedArray<T>> { };
+
+export type Result<T> = [boolean, T?];

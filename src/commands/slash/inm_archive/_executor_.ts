@@ -1,11 +1,12 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import { ApplicationCommandType, ChatInputCommandInteraction } from "discord.js";
 import { handleRegister } from "./register";
 import { handleFeed } from "./feed";
 import { Material_Content_Type, solveImage, solveText } from "./upload";
 import { Material } from "../../../classes/InmArchive/Material";
 import { InmArchive } from "../../../classes/InmArchive/InmArchive";
+import { CommandExecutor } from "../../../classes/Command";
 
-export default async (interaction: ChatInputCommandInteraction) => {
+const _executor_/* : CommandExecutor<ApplicationCommandType.ChatInput> */ = async (interaction: ChatInputCommandInteraction) => {
     const subgroup = interaction.options.getSubcommandGroup();
     const subcommand = interaction.options.getSubcommand();
 
@@ -17,7 +18,7 @@ export default async (interaction: ChatInputCommandInteraction) => {
 
             /* ivalid MIME type */
             if (subcommand === 'image' && !InmArchive.MIMETypes.has(type)) {
-                interaction.reply({ ephemeral: true, content: InmArchive.InvalidMIMETypesString });
+                interaction.reply({ flags: 'Ephemeral', content: InmArchive.InvalidMIMETypesString });
                 return;
             }
             /* overview */
@@ -54,7 +55,7 @@ export default async (interaction: ChatInputCommandInteraction) => {
             else throw 'upload failed';
 
         } catch (e) {
-            interaction.followUp({ ephemeral: true, content: 'process failed.' });
+            interaction.followUp({ flags: 'Ephemeral', content: 'process failed.' });
         }
     } else
         if (subcommand === 'register')
@@ -64,3 +65,5 @@ export default async (interaction: ChatInputCommandInteraction) => {
             handleFeed(interaction);
         }
 };
+
+export default _executor_;

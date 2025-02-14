@@ -1,0 +1,30 @@
+import { ApplicationCommandType, AutocompleteInteraction, CacheType, ChatInputCommandInteraction, InteractionContextType, SlashCommandBuilder } from "discord.js";
+import { SlashCommand } from "../../classes/Command";
+import { picPath } from "../../functions/general/path";
+import fs from 'node:fs';
+
+const items: string[] = [
+    'God\'s Hands'
+];
+
+export class stink extends SlashCommand {
+    activated = true;
+
+    data = new SlashCommandBuilder()
+        .setName('stink')
+        .setDescription('1145141919810')
+        .addStringOption(option => option
+            .setName('item')
+            .setDescription('Stinky Thingy')
+            .setChoices(...items.map(x => { return { name: x, value: x, } }))
+            .setRequired(true))
+        .setContexts(InteractionContextType.Guild);
+
+    executor = async (interaction: ChatInputCommandInteraction) => {
+        interaction.reply({
+            files: [{
+                attachment: fs.readFileSync(picPath('114514.webp'))
+            }]
+        });
+    }
+}

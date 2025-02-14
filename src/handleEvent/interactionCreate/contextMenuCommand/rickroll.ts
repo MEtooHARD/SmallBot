@@ -1,6 +1,6 @@
-import { ApplicationCommandType, ContextMenuCommandBuilder } from "discord.js";
+import { ApplicationCommandType, ContextMenuCommandBuilder, InteractionContextType } from "discord.js";
 
 export const data = new ContextMenuCommandBuilder()
     .setName('Rick Roll')
-    .setDMPermission(false)
+    .setContexts([InteractionContextType.Guild])
     .setType(ApplicationCommandType.User);

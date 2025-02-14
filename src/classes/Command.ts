@@ -13,13 +13,11 @@ import { REST, Routes } from 'discord.js';
 import { session } from "../app";
 import config from '../config.json';
 import { Manager } from "./Basic/Manager";
+import { Result } from "./GeneralTypes";
 
-type CommandAutoComplete<T extends ApplicationCommandType> =
-    T extends ApplicationCommandType.ChatInput
-    ? (interaction: AutocompleteInteraction) => Promise<void>
-    : never;
+type AutoComplete = (interaction: AutocompleteInteraction) => Promise<void>
 
-type CommandData<T extends ApplicationCommandType> =
+type CommandRegisterData<T extends ApplicationCommandType> =
     T extends ApplicationCommandType.ChatInput
     ? (SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder)
     : ContextMenuCommandBuilder;
@@ -29,89 +27,56 @@ type CommandInteractionType<T extends ApplicationCommandType> =
     T extends ApplicationCommandType.Message ? MessageContextMenuCommandInteraction :
     UserContextMenuCommandInteraction;
 
-type CommandExecutor<T extends ApplicationCommandType> =
+export type CommandExecutor<T extends ApplicationCommandType> =
     (interaction: CommandInteractionType<T>) => Promise<void>;
 
-type CommandFilter<T extends ApplicationCommandType> =
-    (interaction: CommandInteractionType<T>) => boolean;
+export type CommandValidator<T extends ApplicationCommandType> =
+    (interaction: CommandInteractionType<T>) => Result<string>;
 
 type CommandPermissions =
     Array<(typeof PermissionFlagsBits)[keyof typeof PermissionFlagsBits]>;
 
-interface CommandGeneralContent<T extends ApplicationCommandType> {
-    complete?: CommandAutoComplete<T>;
-    data: CommandData<T>;
-    executor: CommandExecutor<T>;
+abstract class AppCommand<T extends ApplicationCommandType> {
+    activated: Readonly<boolean> = true;
+    abstract readonly data: CommandRegisterData<T>;
+    readonly requiredPerms: CommandPermissions = [];
+    readonly validator: CommandValidator<T> = () => [true];
+    abstract readonly executor: CommandExecutor<T>;
 };
 
-interface CommandContent<T extends ApplicationCommandType> extends CommandGeneralContent<T> {
-    filter: CommandFilter<T>;
-    botPermissions: CommandPermissions;
-}
-
-interface CommandCreateOptions<T extends ApplicationCommandType> extends CommandGeneralContent<T> {
-    filter?: CommandFilter<T>;
-    botPermissions?: CommandPermissions;
+export abstract class SlashCommand extends AppCommand<ApplicationCommandType.ChatInput> {
+    readonly complete: AutoComplete | undefined;
 };
 
-export class Command<T extends ApplicationCommandType> implements CommandContent<T> {
-    readonly complete: CommandAutoComplete<T> | undefined;
-    readonly data: CommandData<T>;
-    readonly executor: CommandExecutor<T>;
-    readonly filter: CommandFilter<T>;
-    readonly botPermissions: CommandPermissions;
+export abstract class MessageContextMenuCommand extends AppCommand<ApplicationCommandType.Message> { }
 
-    constructor({ complete = undefined, data, executor, filter, botPermissions }: CommandCreateOptions<T>) {
-        this.complete = complete;
-        this.data = data;
-        this.executor = executor;
-        this.filter = filter || ((i: CommandInteractionType<T>) => true);
-        this.botPermissions = botPermissions || [];
-    };
-};
+export abstract class UserContextMenuCommand extends AppCommand<ApplicationCommandType.User> { }
 
-/* export class CommandWrapper<T extends ApplicationCommandType> {
-    private command: Command<T>;
-    private activated: boolean;
-
-    constructor(command: Command<T>, activated: boolean = true) {
-        this.command = command;
-        this.activated = activated;
-    };
-
-    get data() {
-        return this.command.data;
-    };
-
-    get executor() {
-        return this.command.executor;
-    };
-}; */
-
-export class CommandManager<T extends ApplicationCommandType> extends Manager<Command<T>> {
-    private activation: Map<string, boolean> = new Map<string, boolean>();
-
-    constructor(commands: [string, Command<T>][]) {
-        super(commands);
-        [...this.items.keys()].forEach(key => this.activation.set(key, true));
+export class CommandManager<T extends ApplicationCommandType, C extends AppCommand<T>> extends Manager<C> {
+    constructor(commands: (new () => C)[]) {
+        super(commands.map((command) => {
+            const instance = new command();
+            return [instance.data.name, instance];
+        }));
     };
 
     setActivation(name: string, status: boolean): boolean {
-        if (this.items.has(name)) {
-            this.activation.set(name, status);
+        const command = this.get(name);
+        if (command) {
+            command.activated = status;
             return true;
         } else
             return false;
     };
 
-    isActivated(name: string): boolean { return Boolean(this.activation.get(name)); };
+    isActivated(name: string): boolean { return Boolean(this.get(name)?.activated); };
 
-    async registerCommands(): Promise<[boolean, any]> {
+    static async registerCommands(commands: AppCommand<ApplicationCommandType>[]): Promise<[boolean, any]> {
         const rest = new REST().setToken(config.bot[session].token);
         try {
             await rest.put(
                 Routes.applicationCommands(config.bot[session].id),
-                { body: Array.from(this.items.values()).map(c => c.data) },
+                { body: commands.map(c => c.data) },
             );
             return [true, null];
         } catch (e) {
@@ -119,7 +84,3 @@ export class CommandManager<T extends ApplicationCommandType> extends Manager<Co
         }
     };
 };
-
-class DevCommand<T extends ApplicationCommandType> extends Command<T> {
-
-}

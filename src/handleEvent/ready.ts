@@ -1,12 +1,13 @@
 import chalk from 'chalk';
 import { Client } from 'discord.js';
 import { session } from '../app';
-import { CM } from '..';
+import { MessageMenuCommands, SlashCommands } from '../commands';
 
 const clientReady = async (client: Client): Promise<void> => {
     console.log('[djs client] ' + chalk.green('ready'));
     console.log('logged in as ' + chalk.bgYellow(session));
-    console.log(`${CM.size()} (/): ${[...CM.keys()].join(', ')}`);
+    console.log(`${SlashCommands.size()} (/): ${[...SlashCommands.keys()].join(', ')}`);
+    console.log(`${MessageMenuCommands.size()} msg menu: ${[...MessageMenuCommands.keys()].join(', ')}`);
 }
 
 export = clientReady;
