@@ -17,56 +17,10 @@ export class Docor {
         if (route.length === 1 && route[0] === this._Document.name) return this._Document;
         let doc: Docor.Doc | undefined = this._Document;
         for (const r of route.slice(1)) {
-            if (doc === undefined)
-                break;
+            if (doc === undefined) break;
             doc = doc.getChild(r);
         }
         return doc;
-    };
-
-    async handleInteraction(interaction: StringSelectMenuInteraction) {
-        const doc = this.getDoc(interaction.values[0].split('>'));
-        try {
-            if (doc)
-                await interaction.update({
-                    embeds: doc.getEmbeds(),
-                    components: [Docor.resolveToSelectMenu(doc)]
-                });
-            else
-                await interaction.update({
-                    content: 'something went wrong. try use /help again.',
-                    embeds: [],
-                    components: []
-                })
-        } catch (e) { }
-    };
-
-    static resolveToSelectMenu(doc: Docor.Doc): ActionRowBuilder<StringSelectMenuBuilder> {
-        const route = doc.getRoute();
-        const menu = new ActionRowBuilder<StringSelectMenuBuilder>()
-            .addComponents(new StringSelectMenuBuilder()
-                .setCustomId(`$[${doc.rootName}]`)
-                .setPlaceholder((route.join(' > ').length > 35 ? '...' : '') + route.join(' > ').slice(-35))
-                .setOptions(...Array.from(doc.children.keys())
-                    .map(key => doc.children.get(key) as Docor.Doc)
-                    .map(d => new StringSelectMenuOptionBuilder()
-                        .setLabel(d.name)
-                        .setValue(route.concat(d.name).join('>'))
-                        .setEmoji(d.children.size ? '📁' : '📑')))
-                .addOptions((doc.level > 0)
-                    ? [new StringSelectMenuOptionBuilder()
-                        .setLabel('Back')
-                        .setValue(route.slice(0, route.length > 1 ? -1 : 1).join('>'))
-                        .setEmoji('◀️')]
-                    : [])
-                .addOptions((doc.level > 1)
-                    ? [new StringSelectMenuOptionBuilder()
-                        .setLabel('Home')
-                        .setValue(doc.rootName)
-                        .setEmoji('🏠')]
-                    : [])
-            );
-        return menu;
     };
 };
 
@@ -148,6 +102,34 @@ export namespace Docor {
                 return this._root === null
                     ? Doc.base
                     : path.join((this._root as Doc).getDir(), this._root._name);
+            };
+
+            SelectMenu(): ActionRowBuilder<StringSelectMenuBuilder> {
+                const route = this.getRoute();
+                const menu = new ActionRowBuilder<StringSelectMenuBuilder>()
+                    .addComponents(new StringSelectMenuBuilder()
+                        .setCustomId(`$[${this.rootName}]`)
+                        .setPlaceholder((route.join(' > ').length > 35 ? '...' : '') + route.join(' > ').slice(-35))
+                        .setOptions(...Array.from(this.children.keys())
+                            .map(key => this.children.get(key) as Doc)
+                            .map(d => new StringSelectMenuOptionBuilder()
+                                .setLabel(d.name)
+                                .setValue(route.concat(d.name).join('>'))
+                                .setEmoji(d.children.size ? '📁' : '📑')))
+                        .addOptions((this.level > 0)
+                            ? [new StringSelectMenuOptionBuilder()
+                                .setLabel('Back')
+                                .setValue(route.slice(0, route.length > 1 ? -1 : 1).join('>'))
+                                .setEmoji('◀️')]
+                            : [])
+                        .addOptions((this.level > 1)
+                            ? [new StringSelectMenuOptionBuilder()
+                                .setLabel('Home')
+                                .setValue(this.rootName)
+                                .setEmoji('🏠')]
+                            : [])
+                    );
+                return menu;
             };
         };
     };

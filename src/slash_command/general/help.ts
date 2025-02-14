@@ -14,7 +14,7 @@ export = new Command<ApplicationCommandType.ChatInput>({
             fetchReply: true,
             ephemeral: true,
             embeds: doc ? doc.getEmbeds() : [],
-            components: doc ? [Docor.resolveToSelectMenu(doc)] : [],
+            components: doc ? [doc.SelectMenu()] : [],
             content: doc ? '' : 'something went wrong.'
         });
 
@@ -25,7 +25,21 @@ export = new Command<ApplicationCommandType.ChatInput>({
         });
 
         collector.on('collect', async i => {
-            await HelpCenter.handleInteraction(i);
+            // HelpCenter.handleInteraction(i);
+            const doc = HelpCenter.getDoc(i.values[0].split('>'));
+            try {
+                if (doc)
+                    await i.update({
+                        embeds: doc.getEmbeds(),
+                        components: [doc.SelectMenu()]
+                    });
+                else
+                    await i.update({
+                        content: 'something went wrong. try use /help again.',
+                        embeds: [],
+                        components: []
+                    })
+            } catch (e) { }
         });
     }
 });
