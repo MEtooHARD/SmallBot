@@ -1,0 +1,7 @@
+{
+    "supported": [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ]
+}

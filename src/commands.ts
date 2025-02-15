@@ -10,16 +10,22 @@ import { t0fe } from "./commands/slash/t0fe";
 import { track_chess } from "./commands/slash/track_chess";
 import { test } from "./commands/slash/test";
 
-import { CommandManager, MessageContextMenuCommand, SlashCommand } from "./classes/Command";
-import { ApplicationCommandType } from "discord.js";
+import { CommandManager, MessageContextMenuCommand, SlashCommand, UserContextMenuCommand } from "./classes/Command";
 import { ii45i4_mc } from "./commands/message/ii45i4";
+import { wife } from "./commands/user/wife";
 
 export const SlashCommands
-    = new CommandManager<ApplicationCommandType.ChatInput, SlashCommand>(
-        [bomb, come_in, help, /* inm_archive, */ order_list,
-            please, /* referendum, */ stink, t0fe, test, track_chess]
+    = new CommandManager<SlashCommand>(
+        [bomb,/*  come_in ,*/ help, /* inm_archive, order_list, */
+            /*please,  referendum, */ /* stink, */ t0fe/* , test */, track_chess]
     );
+
 export const MessageMenuCommands
-    = new CommandManager<ApplicationCommandType.Message, MessageContextMenuCommand>(
-        [ii45i4_mc]);
-// export const UserMenuCommands = new CommandManager<ApplicationCommandType.User>([]);
+    = new CommandManager<MessageContextMenuCommand>(
+        [ii45i4_mc]
+    );
+
+export const UserMenuCommands
+    = new CommandManager<UserContextMenuCommand>(
+        [wife]
+    );
