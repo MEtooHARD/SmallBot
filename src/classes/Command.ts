@@ -52,7 +52,7 @@ export abstract class MessageContextMenuCommand extends AppCommand<ApplicationCo
 
 export abstract class UserContextMenuCommand extends AppCommand<ApplicationCommandType.User> { }
 
-export class CommandManager<T extends ApplicationCommandType, C extends AppCommand<T>> extends Manager<C> {
+export class CommandManager<C extends AppCommand<ApplicationCommandType>> extends Manager<C> {
     constructor(commands: (new () => C)[]) {
         super(commands.map((command) => {
             const instance = new command();

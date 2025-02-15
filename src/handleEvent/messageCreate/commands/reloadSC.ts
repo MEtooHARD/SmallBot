@@ -1,6 +1,6 @@
 import { DMChannel, Message } from "discord.js";
 import { MessageCommand } from "../../../classes/MessageFeature";
-import { MessageMenuCommands, SlashCommands } from "../../../commands";
+import { MessageMenuCommands, SlashCommands, UserMenuCommands } from "../../../commands";
 import { CommandManager } from "../../../classes/Command";
 
 export = new class reloadSC extends MessageCommand {
@@ -12,17 +12,20 @@ export = new class reloadSC extends MessageCommand {
         const [success, error] =
             await CommandManager.registerCommands([
                 ...SlashCommands.vals(),
-                ...MessageMenuCommands.vals()
+                ...MessageMenuCommands.vals(),
+                ...UserMenuCommands.vals()
             ]);
 
-        if (success)
-            message.reply(
-                `Slashes:
+        if (success) message.reply(
+            `Slash:
 ${[...SlashCommands.keys()].join('\n')}
 
-Menus:
-${[...MessageMenuCommands.keys()].join('\n')}`);
-        if (error)
-            message.reply('failed');
+Message Menu:
+${[...MessageMenuCommands.keys()].join('\n')}
+
+User Menu:
+${[...UserMenuCommands.keys()].join('\n')}`);
+
+        if (error) message.reply('failed');
     };
 };

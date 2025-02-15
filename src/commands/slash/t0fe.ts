@@ -6,7 +6,7 @@ export class t0fe extends SlashCommand {
     activated = true;
 
     data = new SlashCommandBuilder()
-        .setName('t0fe')
+        .setName('2048')
         .setDescription('2048')
         .addIntegerOption(option => option
             .setRequired(false)

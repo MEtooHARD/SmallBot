@@ -15,9 +15,9 @@ export class help extends SlashCommand {
         const doc = HelpCenter.getDoc(['Help Center']);
         const rp = await interaction.reply({
             flags: 'Ephemeral',
-            fetchReply: true,
+            withResponse: false,
             embeds: doc ? doc.getEmbeds() : [],
-            components: doc ? [Docor.resolveToSelectMenu(doc)] : [],
+            components: doc ? [doc.SelectMenu()] : [],
             content: doc ? '' : 'something went wrong.'
         });
 
@@ -28,7 +28,21 @@ export class help extends SlashCommand {
         });
 
         collector.on('collect', async i => {
-            await HelpCenter.handleInteraction(i);
+            // HelpCenter.handleInteraction(i);
+            const doc = HelpCenter.getDoc(i.values[0].split('>'));
+            try {
+                if (doc)
+                    await i.update({
+                        embeds: doc.getEmbeds(),
+                        components: [doc.SelectMenu()]
+                    });
+                else
+                    await i.update({
+                        content: 'something went wrong. try use /help again.',
+                        embeds: [],
+                        components: []
+                    })
+            } catch (e) { }
         });
     }
 };

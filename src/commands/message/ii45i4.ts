@@ -1,9 +1,14 @@
 import { ContextMenuCommandBuilder, ApplicationCommandType, InteractionContextType, ApplicationIntegrationType, PermissionFlagsBits } from "discord.js";
 import { CommandExecutor, CommandValidator, MessageContextMenuCommand } from "../../classes/Command";
 import { Result } from "../../classes/GeneralTypes";
-import { randomInt } from "../../functions/general/number";
 import homo from "../../functions/general/homo";
 import { sendDebugMessage } from "../../events/other/unknowError";
+import { supported } from '../../static/MIME_image.json'
+import { createWorker, OEM } from "tesseract.js";
+import { randomPick } from "../../functions/general/array";
+import path from 'node:path';
+import rootPath from "get-root-path";
+
 
 export class ii45i4_mc extends MessageContextMenuCommand {
     activated: Readonly<boolean> = true;
@@ -23,18 +28,70 @@ export class ii45i4_mc extends MessageContextMenuCommand {
         );
 
     validator: CommandValidator<ApplicationCommandType.Message> = (interaction): Result<string> => {
-        return [/\d/.test(interaction.targetMessage.content), "Message does not contain any number."];
+        const hasImage = interaction.targetMessage.attachments
+            .filter(_ => _.contentType && supported.includes(_.contentType))
+            .size > 0;
+        const hasNum = /\d/.test(interaction.targetMessage.content);
+
+        return [hasImage || hasNum, "Message does not contain any number in texts or supported image."];
     };
 
     executor: CommandExecutor<ApplicationCommandType.Message> = async (interaction) => {
-        const numbers = interaction.targetMessage.content.match(/\d+/gm) as RegExpMatchArray;
-        const theOneChosenShit = numbers[randomInt(0, numbers.length - 1)];
-        const result = homo(Number(theOneChosenShit));
-        try {
-            await interaction.reply(`${theOneChosenShit} = \`${result}\``);
-            // # <:810:1339066209957838969>
-        } catch (e) {
-            sendDebugMessage(e, 'unhandledRejection')
+        const defer = interaction.deferReply();
+
+        const worker = await createWorker(['eng', 'osd'],
+            OEM.TESSERACT_ONLY,
+            {});
+
+        const content_numbers: string[] =
+            interaction.targetMessage.content
+                .match(/\d+/gm) as RegExpMatchArray || [];
+
+        const valid_images =
+            interaction.targetMessage.attachments
+                .filter(attachment => supported
+                    .includes(attachment.contentType as string))
+                .map(attachment => attachment.url);
+        const image = randomPick(valid_images)[0];
+        let image_numbers: string[] = [];
+        if (image) {
+            const result = await worker.recognize(image, {}, { blocks: true });
+
+            image_numbers =
+                result.data.blocks?.map(
+                    block => block.paragraphs.map(
+                        paragraph => paragraph.lines.map(
+                            line => line.words
+                                .filter(word => word.confidence > 20 && /\d/.test(word.text))
+                                .map(word => word.text.match(/\d+/g) as RegExpMatchArray)
+                                .flat()
+                        ).flat()
+                    ).flat()
+                ).flat()
+                || [];
+
+            // console.log(image_numbers);
+            // console.log(content_numbers);
+        }
+
+        await defer;
+
+        const collection = content_numbers.concat(image_numbers);
+        if (collection.length > 0) {
+            const theOneChosenShit = randomPick(collection)[0];
+            const result = homo(Number(theOneChosenShit));
+
+            try {
+                await interaction.editReply(`${theOneChosenShit} = \`${result}\``);
+            } catch (e) {
+                sendDebugMessage(e, 'unhandledRejection')
+            }
+        } else {
+            try {
+                await interaction.editReply("Couldn't recognize any number.");
+            } catch (e) {
+                sendDebugMessage(e, 'unhandledRejection');
+            }
         }
     };
 }
