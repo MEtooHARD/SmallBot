@@ -13,6 +13,7 @@ import { test } from "./commands/slash/test";
 import { CommandManager, MessageContextMenuCommand, SlashCommand, UserContextMenuCommand } from "./classes/Command";
 import { ii45i4_mc } from "./commands/message/ii45i4";
 import { wife } from "./commands/user/wife";
+import { gay } from "./commands/user/gay";
 
 export const SlashCommands
     = new CommandManager<SlashCommand>(
@@ -27,5 +28,5 @@ export const MessageMenuCommands
 
 export const UserMenuCommands
     = new CommandManager<UserContextMenuCommand>(
-        [wife]
+        [wife, gay]
     );

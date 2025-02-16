@@ -6,17 +6,16 @@ import sharp from "sharp";
 const AvatarSize = 230;
 const WifeMeterSize = 400;
 
-const background = sharp('media/pic/wife_thermometer.png')
+const background = sharp('media/pic/gay_thermometer.png')
     .resize(WifeMeterSize, null);
 
-export class wife extends UserContextMenuCommand {
-
+export class gay extends UserContextMenuCommand {
     data: ContextMenuCommandBuilder = new ContextMenuCommandBuilder()
-        .setName('WIFE')
+        .setName('9ay')
         .setType(ApplicationCommandType.User)
         .setIntegrationTypes(
-            ApplicationIntegrationType.UserInstall,
-            ApplicationIntegrationType.GuildInstall
+            ApplicationIntegrationType.GuildInstall,
+            ApplicationIntegrationType.UserInstall
         )
         .setContexts(
             InteractionContextType.Guild,
@@ -27,12 +26,8 @@ export class wife extends UserContextMenuCommand {
         PermissionFlagsBits.AttachFiles,
     ]
 
-    // validator: CommandValidator<ApplicationCommandType.User>
-    //     = (interaction) => {
-
-    //     };
-
     executor: CommandExecutor<ApplicationCommandType.User> = async (interaction) => {
+
         await interaction.deferReply();
 
         try {
