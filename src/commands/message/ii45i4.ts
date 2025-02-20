@@ -5,12 +5,10 @@ import {
     ApplicationIntegrationType,
     PermissionFlagsBits
 } from "discord.js";
-import { CommandExecutor, CommandValidator, MessageContextMenuCommand } from "../../classes/Command";
+import { CommandExecutor, MessageContextMenuCommand, MessageContextMenuValidator } from "../../classes/Command";
 import { Result } from "../../classes/GeneralTypes";
 import homo from "../../functions/general/homo";
 import { sendDebugMessage } from "../../events/other/unknowError";
-import { supported } from '../../static/MIME_image.json'
-import { createWorker, OEM } from "tesseract.js";
 import { randomPick } from "../../functions/general/array";
 
 
@@ -31,7 +29,7 @@ export class ii45i4_mc extends MessageContextMenuCommand {
             ApplicationIntegrationType.GuildInstall
         );
 
-    validator: CommandValidator<ApplicationCommandType.Message> = (interaction): Result<string> => {
+    validator: MessageContextMenuValidator = (interaction): Result<string> => {
         // const hasImage = interaction.targetMessage.attachments
         //     .filter(_ => _.contentType && supported.includes(_.contentType))
         //     .size > 0;

@@ -1,6 +1,6 @@
 import { Colors, UserContextMenuCommandInteraction } from "discord.js";
 import { CommandInteractionIn } from "../../functions/discord/scope";
-import { UserMenuCommands } from "../../commands";
+import { UserMenuCommands } from "../../utilities";
 
 export const handleUserContextMenuCommand = async (interaction: UserContextMenuCommandInteraction) => {
     /* get command */

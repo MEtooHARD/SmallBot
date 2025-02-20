@@ -5,10 +5,10 @@ import { atUser } from "../../functions/discord/mention";
 import { PostgrestSingleResponse, RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 import { fetchChannel } from "../../functions/discord/fetch";
 import { SupervisorGuildId } from "../../app";
-import { supabase } from "../../supabase";
+import { supabaseClient } from "../../supabase";
 
 export class Material {
-    static readonly InsertRealtimeChannel = supabase.channel('insert_review');
+    static readonly InsertRealtimeChannel = supabaseClient.channel('insert_review');
     static readonly DiscordInsertReviewChannelId = '1279438389506080872';
 
     readonly props: MaterialSchema['Row'];

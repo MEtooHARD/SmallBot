@@ -103,3 +103,30 @@ export class PosRange implements Iterator<number> {
 
     [Symbol.iterator]() { return this; };
 };
+
+
+export function biSplitArray<T>
+    (arr: T[], splitBy: (element: T) => boolean)
+    : [Y: T[], X: T[]] {
+    const Y: T[] = [], X: T[] = [];
+    arr.forEach(ele => {
+        if (splitBy(ele)) Y.push(ele);
+        else X.push(ele);
+    })
+
+    return [Y, X];
+}
+
+export function groupElements<T>
+    (arr: T[], genKey: (ele: T) => Iterable<string>)
+    : [string, T[]][] {
+    const map = new Map<string, T[]>();
+
+    for (const obj of arr)
+        for (const key of genKey(obj)) {
+            if (!map.has(key)) map.set(key, []);
+            map.get(key)!.push(obj);
+        }
+
+    return [...map.entries()];
+}

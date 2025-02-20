@@ -1,7 +1,7 @@
 import { ApplicationCommandType, ChatInputCommandInteraction, ComponentType, InteractionContextType, SlashCommandBuilder } from 'discord.js';
 import { SlashCommand } from '../../classes/Command';
 import { Docor } from '../../classes/Docor';
-import { HelpCenter } from '../..';
+import { HelpCenter } from '../../utilities';
 
 export class help extends SlashCommand {
     activated = true;

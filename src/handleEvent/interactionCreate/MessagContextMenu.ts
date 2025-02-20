@@ -1,5 +1,5 @@
 import { Colors, MessageContextMenuCommandInteraction, PermissionFlagsBits } from "discord.js";
-import { MessageMenuCommands } from "../../commands";
+import { MessageMenuCommands } from "../../utilities";
 import { CommandInteractionIn } from "../../functions/discord/scope";
 
 export const handleMessageContextMenuCommand = async (interaction: MessageContextMenuCommandInteraction) => {

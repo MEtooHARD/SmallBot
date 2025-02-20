@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, PermissionFlagsBits } from 'discord.js';
-import { SlashCommands } from '../../commands';
+import { SlashCommands } from '../../utilities';
 import { logSlashCommand } from '../../functions/general/log';
 
 export const handleSlashCommand = async (interaction: ChatInputCommandInteraction) => {

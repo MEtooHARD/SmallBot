@@ -1,9 +1,9 @@
 import path from 'node:path';
 import { should_log_commands } from "./app";
 import { getDirectories } from "./functions/general/path";
-import { HelpCenter } from ".";
 import { InmArchive, MaterialSchema } from "./classes/InmArchive/InmArchive";
 import { REALTIME_LISTEN_TYPES } from "@supabase/supabase-js";
+import { HelpCenter } from './utilities';
 
 export const loadHelpCenter = () => {
     HelpCenter;
