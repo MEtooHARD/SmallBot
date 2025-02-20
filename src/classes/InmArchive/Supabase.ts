@@ -1,7 +1,7 @@
 import { RealtimeChannel } from "@supabase/supabase-js";
-import { supabase } from "../../supabase";
+import { supabaseClient } from "../../supabase";
 
-supabase.channel('connection')
+supabaseClient.channel('connection')
     .subscribe(_ => { });
 
 export class SupabaseManager {

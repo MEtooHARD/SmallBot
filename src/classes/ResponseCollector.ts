@@ -1,147 +1,127 @@
-import { APIEmbed, ButtonInteraction, Colors, ComponentType, InteractionCollector, InteractionUpdateOptions, Message } from "discord.js";
+import { ButtonComponent, Colors, ComponentType, InteractionReplyOptions, InteractionResponse, InteractionUpdateOptions, Message, MessageCollectorOptionsParams } from "discord.js";
 import { ButtonOptions } from "./ActionRow/Button";
-import { x_min_y_sec } from "../functions/general/string";
 import ButtonRow from "./ActionRow/ButtonRow";
-import { splitArray } from "../functions/general/array";
 
-interface Answer {
-    customId?: string;
-    label?: string;
-    emoji?: string;
-};
+type ButtonsRow = [ButtonOptions]
+    | [ButtonOptions, ButtonOptions]
+    | [ButtonOptions, ButtonOptions, ButtonOptions]
+    | [ButtonOptions, ButtonOptions, ButtonOptions, ButtonOptions]
+    | [ButtonOptions, ButtonOptions, ButtonOptions, ButtonOptions, ButtonOptions];
+
+type ButtonsLayout = [ButtonsRow]
+    | [ButtonsRow, ButtonsRow]
+    | [ButtonsRow, ButtonsRow, ButtonsRow]
+    | [ButtonsRow, ButtonsRow, ButtonsRow, ButtonsRow]
+    | [ButtonsRow, ButtonsRow, ButtonsRow, ButtonsRow, ButtonsRow];
 
 export interface QuestionData {
-    question: string;
-    description?: string;
-    options: ButtonOptions[];
-    color?: number;
-};
+    readonly title: string;
+    readonly description?: string;
+    readonly options: ButtonsLayout;
+    collectorData: MessageCollectorOptionsParams<ComponentType.Button>;
+}
 
-export class Question {
-    question: string;
-    description: string = '';
-    options: ButtonOptions[];
-    answer: Answer = { customId: '' };
-    color: number = Colors.Aqua;
+export enum QuestionStatus { INIT, SET, CLOSED }
 
-    constructor(data: QuestionData) {
-        this.question = data.question;
-        this.options = data.options;
-        if (data.color) this.color = data.color;
-        if (data.description) this.description = data.description;
+export class Question implements QuestionData {
+    readonly title: string;
+    readonly description?: string;
+    readonly options: ButtonsLayout;
+    protected answer: string = '';
+    collectorData: MessageCollectorOptionsParams<ComponentType.Button>;
+    protected _status: QuestionStatus = QuestionStatus.INIT;
+    protected _endReason?: string;
+
+    constructor({
+        title,
+        options,
+        description,
+        collectorData
+    }: QuestionData) {
+        if (options.length === 1 && options[0].length < 1) throw new Error('Must provide at least 1 options');
+        this.title = title;
+        this.options = options;
+        this.description = description;
+        this.collectorData = collectorData;
     };
 
-    set response(ans: string) {
-        const option = this.options.find(button => button.customId === ans);
-        if (option)
-            this.answer = {
-                customId: option.customId,
-                emoji: option.emoji,
-                label: option.label
-            };
-        else {
-            console.log('warning: found no corresponding option');
-            this.answer = {
-                customId: '404 Not Found',
-                label: '404 Not Found'
-            };
+    getMessageOptions(ephemeral: boolean = false): InteractionReplyOptions {
+        return {
+            flags: ephemeral ? 'Ephemeral' : undefined,
+            embeds: [{
+                color: Colors.Blurple,
+                title: this.title,
+                description: this.description,
+                footer: {
+                    text: `time limit: ${this.collectorData.time
+                        ? this.collectorData.time / 1000 + 's'
+                        : 'no'}`
+                }
+            }],
+            components: this.options.map(row => new ButtonRow(row))
         }
     };
 
-    setColor(color: number): Question {
-        this.color = color;
-        return this;
-    };
-};
+    onResponse(message: Message | InteractionResponse) {
+        return new Promise<string>((resolve, reject) => {
+            const collector = message.createMessageComponentCollector(this.collectorData);
 
-export class ResponseCollector {
-    private questions: Question[] = [];
-    private collector: InteractionCollector<ButtonInteraction> | null = null;
-    private progress: number = 0;
-    private started: boolean = false;
-    private idle: number = 60 * 1000;
-    reporter: (answer: Answer, interaction: ButtonInteraction) => void = () => { };
+            collector.on('collect', interaction => {
+                this.answer = interaction.customId;
+                const button = interaction.component as ButtonComponent;
+                interaction.update({
+                    embeds: [{
+                        // author: { name: '' }
+                        color: Colors.Green,
+                        title: this.title,
+                        description: this.description,
+                        fields: [{
+                            name: 'Chosen',
+                            value: (button.label || button.emoji?.name)!
+                        }]
+                    }],
+                    components: []
+                });
+            });
 
-    constructor(questions: Question[]) { this.questions = questions; };
+            collector.on('end', (collected, reason) => {
+                this._endReason = reason;
+                this._status = QuestionStatus.CLOSED;
+                if (reason === 'limit')
+                    resolve(this.answer);
+                else
+                    reject(reason);
+            });
 
-    start(message: Message, callback: (answer: Answer, interaction: ButtonInteraction) => void): void {
-        this.reporter = callback;
-        this.started = true;
-        this.collector = message.createMessageComponentCollector<ComponentType.Button>({ idle: this.idle });
-
-        this.collector.on('collect', async (interaction: ButtonInteraction) => {
-            this.reportResponse(interaction);
-            this.next();
-            if (this.progress < this.questions.length)
-                message = await interaction.update({ ...this.UI, fetchReply: true });
-            else
-                interaction.update(this.review);
-        });
-    };
-
-    stop(): void { if (this.collector) this.collector.stop(); };
-
-    next(): void {
-        this.progress++;
-        if (this.progress >= this.questions.length) this.stop();
-
+            this._status = QuestionStatus.SET;
+        })
     };
 
-    reportResponse(interaction: ButtonInteraction): void {
-        this.questions[this.progress].response = interaction.customId;
-        this.reporter(this.questions[this.progress].answer, interaction);
-    };
+    get status() { return this._status; };
 
-    get UI(): InteractionUpdateOptions {
-        return {
-            embeds: [this.header],
-            components: this.panel,
-        };
-    };
+    get endReason() { return this._endReason; };
+}
 
-    get header(): APIEmbed {
-        return {
-            author: { name: ResponseCollector.AUTHOR },
-            color: this.questions[this.progress].color,
-            title: this.questions[this.progress].question,
-            description: this.questions[this.progress].description,
-            footer: { text: `${this.progress + 1}/${this.questions.length} questions • idle: ${x_min_y_sec(this.idle)}` }
-        };
-    };
+// export class ResponseCollector {
+//     protected _questions: Question[] = [];
+//     protected _channel: Channel;
 
-    get panel(): ButtonRow[] {
-        return splitArray(this.questions[this.progress].options, 5)
-            .map(options => new ButtonRow(options));
-    };
+//     constructor(channel: Channel) {
+//         this._channel = channel;
+//     };
 
-    get review(): InteractionUpdateOptions {
-        return {
-            embeds: [{
-                author: { name: ResponseCollector.AUTHOR },
-                title: 'Responses Review',
-                description: this.questions
-                    .map(question => `**${question.question}**: ${question.answer.label || question.answer.emoji}`)
-                    .join('\n')
-            }],
-            components: []
-        };
-    };
+//     addQuestion(question: Question) {
+//         this._questions.push(question);
+//     };
 
-    setIdle(duration: number): ResponseCollector {
-        this.idle = duration;
-        return this;
-    };
+//     async askQuestions() {
+//         for (const question of this._questions) {
+//             const message = await question.channel.send(question.getMessageOptions());
+//             question.onResponse(message);
+//         }
+//     };
 
-    addQuestions(items: Question[]): ResponseCollector {
-        this.questions.push(...items);
-        return this;
-    };
-
-    setQuestions(items: Question[]): ResponseCollector {
-        if (this.started) console.log('warning: set questions after started.');
-        else this.questions = items;
-        return this;
-    };
-
-    static AUTHOR = 'Response Collector alpha';
-};
+//     getQuestions() {
+//         return this._questions;
+//     };
+// }

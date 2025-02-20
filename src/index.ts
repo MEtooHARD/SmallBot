@@ -5,18 +5,13 @@ import { unknownError } from "./events/other/unknowError";
 import { loadHelpCenter, onDiscordEvents, onInmMaterialInsert, onMongoDBEvents } from "./load";
 import { connectMongoDB } from "./mongoose";
 import path from 'node:path';
-import { supabase } from "./supabase";
-import { SlashCommands } from "./commands";
-
-/* Utility */
-export const HelpCenter = new Docor(path.join(rootPath, 'dist', 'docs'), 'Help Center');
-// export const InmArc = new InmArchive(supabase);
-/* Utility */
+import { SlashCommands } from "./utilities";
+import { ImageStorage } from "./classes/ImageStorage";
 
 (async () => {
     /* setup */
-    // supabase;
     SlashCommands;
+    ImageStorage.init();
     unknownError();
     loadHelpCenter();
     onDiscordEvents();

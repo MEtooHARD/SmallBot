@@ -1,6 +1,6 @@
 import { DMChannel, Message } from "discord.js";
 import { MessageCommand } from "../../../classes/MessageFeature";
-import { MessageMenuCommands, SlashCommands, UserMenuCommands } from "../../../commands";
+import { MessageMenuCommands, SlashCommands, UserMenuCommands } from "../../../utilities";
 import { CommandManager } from "../../../classes/Command";
 
 export = new class reloadSC extends MessageCommand {

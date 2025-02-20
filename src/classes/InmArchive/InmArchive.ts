@@ -1,7 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "../../database.types";
 import { Snowflake } from "discord.js";
-import { supabase } from "../../supabase";
+import { supabaseClient } from "../../supabase";
 import { Material } from './Material';
 
 export type MaterialSchema = Database['public']['Tables']['material'];
@@ -9,7 +9,7 @@ export type MaterialSchema = Database['public']['Tables']['material'];
 export class InmArchive {
     static readonly Material = Material;
 
-    static readonly database: SupabaseClient<Database> = supabase;
+    static readonly database: SupabaseClient<Database> = supabaseClient;
 
     static async hasUser(UID: Snowflake): Promise<boolean> {
         const { data, error } = await InmArchive.database
@@ -21,7 +21,7 @@ export class InmArchive {
     }
 
     static async addUser(UID: string): Promise<boolean> {
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('user')
             .insert({ snowflake: UID });
         if (error) console.log(error);

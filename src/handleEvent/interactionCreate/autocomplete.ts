@@ -1,5 +1,5 @@
 import { AutocompleteInteraction } from 'discord.js';
-import { SlashCommands } from '../../commands';
+import { SlashCommands } from '../../utilities';
 
 const autocomplete = (interaction: AutocompleteInteraction) => {
     const command = SlashCommands.get(interaction.commandName);

@@ -24,6 +24,30 @@ export type Database = {
         }
         Relationships: []
       }
+      image_storage: {
+        Row: {
+          group: string
+          guild_id: string
+          id: string
+          name: string
+          url: string
+        }
+        Insert: {
+          group: string
+          guild_id: string
+          id?: string
+          name: string
+          url: string
+        }
+        Update: {
+          group?: string
+          guild_id?: string
+          id?: string
+          name?: string
+          url?: string
+        }
+        Relationships: []
+      }
       material: {
         Row: {
           content: string
@@ -82,7 +106,77 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      image_storage_exists_group: {
+        Args: {
+          guildid: string
+          group_: string
+        }
+        Returns: boolean
+      }
+      image_storage_exists_image: {
+        Args: {
+          guildid: string
+          group_: string
+          name_: string
+        }
+        Returns: boolean
+      }
+      image_storage_get_groups: {
+        Args: {
+          guildid: string
+        }
+        Returns: {
+          group: string
+        }[]
+      }
+      image_storage_get_image: {
+        Args: {
+          guildid: string
+          group_: string
+          name_: string
+        }
+        Returns: {
+          group: string
+          guild_id: string
+          id: string
+          name: string
+          url: string
+        }
+      }
+      image_storage_get_image_count_of_group: {
+        Args: {
+          guildid: string
+          group_: string
+        }
+        Returns: number
+      }
+      image_storage_get_image_url: {
+        Args: {
+          guildid: string
+          group_: string
+          name_: string
+        }
+        Returns: string
+      }
+      image_storage_get_name_by_group: {
+        Args: {
+          guildid: string
+          group_: string
+          name_: string
+        }
+        Returns: {
+          name: string
+          group: string
+        }[]
+      }
+      image_storage_update_group: {
+        Args: {
+          guildid: string
+          group_: string
+          new_group: string
+        }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

@@ -1,0 +1,123 @@
+import { ApplicationIntegrationType, InteractionContextType, SlashCommandBuilder } from "discord.js";
+
+export const data = new SlashCommandBuilder()
+    .setName('image_storage')
+    .setDescription('Manage images for this guild')
+    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
+    .setContexts(InteractionContextType.Guild)
+    .addSubcommand(subcommand => subcommand
+        .setName('add')
+        .setDescription('Upload an image')
+        .addStringOption(option => option
+            .setRequired(true)
+            .setAutocomplete(true)
+            .setName('group')
+            .setDescription('Select from existing groups or create a new one')
+            .setMaxLength(40)
+        )
+        .addStringOption(option => option
+            .setRequired(true)
+            .setAutocomplete(true)
+            .setName('name')
+            .setDescription('Please create a new one')
+            .setMaxLength(40)
+        )
+        .addAttachmentOption(option => option
+            .setRequired(true)
+            .setName('image')
+            .setDescription('The image to upload')
+        )
+    )
+    .addSubcommand(subcommand => subcommand
+        .setName('remove')
+        .setDescription('Remove an image.')
+        .addStringOption(option => option
+            .setRequired(true)
+            .setAutocomplete(true)
+            .setName('group')
+            .setDescription('The group of the image')
+            .setMaxLength(40)
+        )
+        .addStringOption(option => option
+            .setRequired(true)
+            .setAutocomplete(true)
+            .setName('name')
+            .setDescription('The name of the image')
+            .setMaxLength(40)
+        )
+    )
+    .addSubcommand(subcommand => subcommand
+        .setName('get')
+        .setDescription('Retrieve an image.')
+        .addStringOption(option => option
+            .setRequired(true)
+            .setAutocomplete(true)
+            .setName('group')
+            .setDescription('The group of the image')
+            .setMaxLength(40)
+        )
+        .addStringOption(option => option
+            .setRequired(true)
+            .setAutocomplete(true)
+            .setName('name')
+            .setDescription('The name of the image')
+            .setMaxLength(40)
+        )
+        .addBooleanOption(option => option
+            .setName('peek')
+            .setDescription('Shows in ephemeral')
+        )
+    )
+    .addSubcommandGroup(group => group
+        .setName('rename')
+        .setDescription('rename image or group')
+        .addSubcommand(subcommand => subcommand
+            .setName('image')
+            .setDescription('Rename an image')
+            .addStringOption(option => option
+                .setRequired(true)
+                .setAutocomplete(true)
+                .setName('group')
+                .setDescription('The group of the image')
+                .setMaxLength(40)
+            )
+            .addStringOption(option => option
+                .setRequired(true)
+                .setAutocomplete(true)
+                .setName('name')
+                .setDescription('The old name of the image')
+                .setMaxLength(40)
+            )
+            .addStringOption(option => option
+                .setAutocomplete(true)
+                .setName('new_group')
+                .setDescription('The new group of the image')
+                .setMaxLength(40)
+            )
+            .addStringOption(option => option
+                .setAutocomplete(true)
+                .setName('new_name')
+                .setDescription('The new name of the image')
+                .setMaxLength(40)
+            )
+
+        )
+        .addSubcommand(subcommand => subcommand
+            .setName('group')
+            .setDescription('Rename a group (not conflict detection)')
+            .addStringOption(option => option
+                .setRequired(true)
+                .setAutocomplete(true)
+                .setName('group')
+                .setDescription('The group to rename')
+                .setMaxLength(40)
+            )
+            .addStringOption(option => option
+                .setRequired(true)
+                .setAutocomplete(true)
+                .setName('new_group')
+                .setDescription('The new name of the group (select or create)')
+                .setMaxLength(40)
+            )
+        )
+    )

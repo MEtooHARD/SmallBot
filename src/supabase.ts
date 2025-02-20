@@ -3,6 +3,6 @@ import { supabaseConfig } from './app';
 import { Database } from './database.types';
 
 // Initialize Supabase client
-export const supabase = createClient<Database>(
+export const supabaseClient = createClient<Database>(
     supabaseConfig.project_url,
     supabaseConfig.ServiceKey);
