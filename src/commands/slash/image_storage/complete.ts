@@ -1,6 +1,6 @@
 import { AutocompleteInteraction } from "discord.js";
 import { AutoComplete } from "../../../classes/Command";
-import { ImageStorage } from "../../../classes/ImageStorage";
+import { MediaStorage } from "../../../classes/ImageStorage";
 import { strNotEmpty } from "./command";
 
 export const complete: AutoComplete = async (interaction) => {
@@ -33,7 +33,7 @@ export const complete: AutoComplete = async (interaction) => {
 };
 
 const returnGroups: AutoComplete = async (interaction) => {
-    const { data, error } = await ImageStorage.searchGroups(interaction.guildId as string);
+    const { data, error } = await MediaStorage.searchGroups(interaction.guildId as string);
 
     if (data) {
         interaction.respond(data
@@ -46,7 +46,7 @@ const returnGroups: AutoComplete = async (interaction) => {
 }
 
 const returnNamesOfGroup = async (interaction: AutocompleteInteraction, group: string, name: string) => {
-    const { data, error } = await ImageStorage.searchNameByGroup(interaction.guildId as string, group, name);
+    const { data, error } = await MediaStorage.searchNameByGroup(interaction.guildId as string, group, name);
 
     if (data) {
         interaction.respond(data.map(v => ({ name: v.name, value: v.name })));

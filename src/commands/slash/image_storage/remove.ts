@@ -1,6 +1,6 @@
 import { Colors } from "discord.js";
 import { ChatInputExecutor } from "../../../classes/Command";
-import { ImageStorage } from "../../../classes/ImageStorage";
+import { MediaStorage } from "../../../classes/ImageStorage";
 
 export const remove: ChatInputExecutor = async (interaction) => {
     const guildId = interaction.guildId as string;
@@ -9,7 +9,7 @@ export const remove: ChatInputExecutor = async (interaction) => {
 
     const defer = interaction.deferReply();
 
-    const { error, data } = await ImageStorage.removeImage(guildId, group, name);
+    const { error, data } = await MediaStorage.removeImage(guildId, group, name);
 
     await defer;
     if (data) {
@@ -18,7 +18,7 @@ export const remove: ChatInputExecutor = async (interaction) => {
                 color: Colors.Green,
                 description: 'Removed.'
             },
-            ImageStorage.imageDisplay(data.name, data.group, data.url)]
+            MediaStorage.imageDisplay(data.name, data.group, data.url)]
         });
     } else {
         await interaction.editReply({

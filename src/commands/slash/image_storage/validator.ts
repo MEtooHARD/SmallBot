@@ -1,10 +1,10 @@
 import { REALTIME_SUBSCRIBE_STATES } from "@supabase/supabase-js";
 import { ChatInputValidator } from "../../../classes/Command";
-import { ImageStorage } from "../../../classes/ImageStorage";
+import { MediaStorage } from "../../../classes/ImageStorage";
 
 
 export const validator: ChatInputValidator = (interaction) => {
-    if (ImageStorage.ConnectionStatus !== REALTIME_SUBSCRIBE_STATES.SUBSCRIBED)
+    if (MediaStorage.ConnectionStatus !== REALTIME_SUBSCRIBE_STATES.SUBSCRIBED)
         return [true, 'Connection to database is fucked.'];
     else {
         const subC = interaction.options.getSubcommand();

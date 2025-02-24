@@ -24,7 +24,7 @@ export const SlashCommands
     = new CommandManager<SlashCommand>([
         bomb,/*  come_in ,*/ help, /* inm_archive, order_list, */
             /*please,  referendum, */ /* stink, */ t0fe, test, track_chess,
-        image_storage
+        /* image_storage */
     ]);
 
 export const MessageMenuCommands

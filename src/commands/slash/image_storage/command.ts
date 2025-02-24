@@ -12,7 +12,7 @@ import { validator } from "./validator";
 export const strNotEmpty = (s: string) => (s.length > 0 && s.match(/\S+/))
 
 export class image_storage extends SlashCommand {
-    // guilds: string[] = ['1146136373225586828'];
+    guilds: string[] = ['1213341621542719548'];
 
     data = data;
 

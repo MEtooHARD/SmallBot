@@ -1,12 +1,10 @@
 import {
-    ApplicationCommandType,
     Client,
     ClientEvents,
     IntentsBitField,
     Partials
 } from "discord.js";
 import config from './config.json';
-import { CommandManager } from "./classes/Command";
 
 export const client = new Client(
     {
@@ -38,8 +36,7 @@ export const BugReportingChannel = '1267489062135009290';
 /* Define */
 
 /* Start Up Settings */
-export const session: Session = Session.main;
-export const mongoDB: boolean = false;
+export const session: Session = Session.dev;
 export const should_log_doc = false;
 export const should_log_commands = true;
 export const should_deploy_command = false;
@@ -55,3 +52,13 @@ export const supabaseConfig = config.supabase[session];
 export const shouldLogIgnoredCustomID = false;
 /* Run Time Settings */
 
+/* Database */
+export const mongoDB: boolean = false;
+export const supabase: boolean = true;
+/* Database */
+
+/* Services */
+export const Services = {
+    ImageStorage: true && supabase
+}
+/* Services */

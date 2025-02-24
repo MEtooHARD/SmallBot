@@ -32,6 +32,7 @@
         "get-root-path": "^2.0.2",
         "libsodium-wrappers": "^0.7.13",
         "mongoose": "^8.4.4",
+        "openai": "^4.85.4",
         "sharp": "^0.33.5",
         "supabase": "^2.12.1",
         "tesseract.js": "^6.0.0",
