@@ -1,11 +1,11 @@
-import { Message, Snowflake, TextChannel } from "discord.js";
+import { Message, PermissionFlagsBits, Snowflake, TextChannel } from "discord.js";
 import OpenAI from "openai";
 import config from '../config.json'
-import { byChance, randomInt } from "../functions/general/number";
+import { byChance } from "../functions/general/number";
 import { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam } from "openai/resources";
 import { timestamp } from "../functions/general/log";
 import { delaySec } from "../functions/general/delay";
-import { client } from "../app";
+import { client, Session, session } from "../app";
 import { atUser } from "../functions/discord/mention";
 
 export class Grok {
@@ -14,6 +14,9 @@ export class Grok {
         apiKey: config.grok.key,
         baseURL: "https://api.x.ai/v1",
     });
+    static readonly supportedImage = ["image/jpeg", "image/jpg", "image/png"];
+    static readonly allowVision: boolean = false;
+    static RP: number = 1200;
 
     static init() {
         console.log(timestamp(), '[Grok] init')
@@ -23,10 +26,14 @@ export class Grok {
             });
             console.log('[Grok] clear');
         }, 10 * 60 * 1000);
+        setInterval(() => {
+            Grok.RP = Math.min(1200, Grok.RP + 10);
+        }, 30_000);
     }
 
     static incomingMsg(message: Message) {
-        if (!message.channel.isTextBased()) return;
+        if (!message.channel.isTextBased() || message.channel.isDMBased() || message.channel.isThread()) return;
+        if (message.channel.permissionsFor(client.user!)?.has(PermissionFlagsBits.SendMessages)) return;
 
         if (!Grok.chats.has(message.channel.id))
             Grok.chats.set(message.channel.id, new Chat(message.channel as TextChannel));
@@ -37,16 +44,19 @@ export class Grok {
     }
 }
 
-export class Chat {
-    static readonly MAX_MESSAGES: number = 20;
-    protected _latestMessaging: Date = new Date(Date.now());
+enum ChatStatus { 'await', 'typing', 'replying' };
+
+class Chat {
+    static readonly MAX_MESSAGES: number = 15;
+    static readonly LOG_MESSAGES: boolean = true;
     protected _messages: ChatCompletionMessageParam[] = [];
     protected _channel: TextChannel;
-    protected _isChatting: boolean = false;
+    protected _chatting: boolean = false;
     protected _contentLength: number = 0;
-    protected _latest2Users: [string?, string?] = [];
+    protected _replyTimer: NodeJS.Timeout | null = null;
+    protected _status: ChatStatus = ChatStatus.await;
 
-    get chatting(): boolean { return this._isChatting; }
+    get chatting(): boolean { return this._chatting; }
 
     constructor(ch: TextChannel) {
         this._channel = ch;
@@ -56,119 +66,142 @@ export class Chat {
 
     async accumulateMsg(message: Message): Promise<boolean> {
         if (message.author.bot) return false;
+        if (!Grok.allowVision && message.content.length === 0) return false;
 
         if (this._messages.length >= Chat.MAX_MESSAGES) this._messages.shift();
 
-        this._latest2Users.push(message.author.id);
-        if (this._latest2Users.length > 2) this._latest2Users.shift();
+        // const images = message.attachments.filter(
+        //     attachment => Grok.supportedImage.includes(attachment.contentType || ''));
 
-        this._messages.push({
-            role: 'user',
-            name: message.author.displayName,
-            content: `[${new Date(message.createdTimestamp).toISOString()}]:${message.content}`
-        });
+        // const content: string | Array<ChatCompletionContentPart> =
+        //     images.size > 0 && Grok.allowVision
+        //         ? [{ type: 'text', text: message.content, },
+        //         { type: 'image_url', image_url: { url: images.first()!.url }, }]
+        //         : message.content
 
-        this._contentLength = this._messages.reduce((acc, cur) => acc + cur.content!.length, 0);
+        if (this._chatting || (!this._chatting && this._messages.length < 10)) {
+            this._messages.push({
+                role: 'user',
+                name: message.author.displayName,
+                content: message.content
+            });
 
-        let start: boolean = false;
-
-        if (message.content.includes(atUser(client.user!.id))) {
-            start = true;
-            this.respond();
-        } else if (!this._isChatting && byChance(3 / Grok.chats.size)) {
-            start = true;
+            this._contentLength = this._messages.reduce((acc, cur) => acc + cur.content!.length, 0);
         }
 
-        if (start && !this._isChatting) {
-            this._isChatting = true;
-            this.chat();
+        let start: boolean = false;
+        if (!this._chatting) {
+            if (message.content.includes(atUser(client.user!.id))) {
+                start = true;
+                await this.respond();
+            } else if (byChance(3 / Grok.chats.size)) {
+                start = true;
+            }
+
+            if (start) {
+                this._chatting = true;
+                this.chat();
+            }
         }
 
         return true;
     }
 
-    async chat(): Promise<void> {
+    protected async chat(): Promise<void> {
         console.log(timestamp(), '[Grok] start chat at', this._channel.name);
 
         const collector = this._channel.createMessageCollector({
-            filter: m => !m.author.bot && !!m.content,
+            filter: m => !m.author.bot,
             idle: 7 * 60 * 1000,
         });
 
         collector.on('collect', async message => {
             if (message.content === '⛔') {
-                collector.emit('end');
+                collector.stop();
                 return;
             }
 
-            const shouldRp = this.accumulateMsg(message);
+            const accumulated = this.accumulateMsg(message);
+            if (!accumulated) return;
 
-            if (!shouldRp) return;
-            const differ = Date.now() - this._latestMessaging.getTime();
-
-            const sameUser = this._latest2Users[0] === this._latest2Users[1];
-            if ((sameUser && differ < 12_000) ||
-                (!sameUser && differ < 8_000)) {
-                console.log(`[Grok] at ${this._channel.id} ignored msg`);
-                console.log('differ', differ);
-                return;
+            if (Grok.RP > 30 && this._status === ChatStatus.await) {
+                this._status = ChatStatus.typing;
+                await this._channel.sendTyping();
+                setTimeout(() => {
+                    this._status = ChatStatus.replying;
+                }, 5_000);
             }
-            this._latestMessaging = new Date(Date.now());
-
-            try {
-                await this.respond();
-            } catch (e) {
-                console.error(e);
-                this._isChatting = false;
-            }
-
-            if (byChance(2)) collector.emit('end');
         });
 
-        collector.on('end', async () => {
-            this._isChatting = false;
-            this._messages = [];
-            this.clearMsg();
-            Grok.chats.delete(this._channel.id);
+        collector.on('end', async (_, reason) => {
+            this._chatting = false;
+            // this.clearMsg();
+            // Grok.chats.delete(this._channel.id);
+            if (this._replyTimer) clearInterval(this._replyTimer);
             console.log(timestamp(), '[Grok] ended chat at', this._channel.name);
             await delaySec(3);
-            this._channel.send('gonna sleep :wave:');
+            this._channel.send(':wave:');
         });
+
+        this._replyTimer = setInterval(async () => {
+            if (collector.collected.size > 0) collector.collected.clear();
+            if (this._status === ChatStatus.replying) {
+                Grok.RP -= 1;
+                try {
+                    await this.respond();
+                } catch (e) {
+                    console.error(e);
+                    collector.stop();
+                }
+                this._status = ChatStatus.await;
+            }
+        }, 8_000);
     }
 
     protected async respond() {
-        const completion = await call(this._messages, this._contentLength);
+        const completion = await call(
+            this._messages,
+            this._contentLength,
+            !this._messages.some(msg => msg.content instanceof String)
+        );
         if (!completion.choices[0].message.content) return;
         this._messages.push({
             role: 'assistant',
             content: `${completion.choices[0].message.content}`,
         })
-        // console.log(this._messages);;
-        // console.log('---------');
-        // console.log(completion.choices[0].message.content)
-        // console.log('------------------');
+        if (session === Session.dev) {
+            if (Chat.LOG_MESSAGES) console.log(this._messages);
+            console.log('---------');
+            console.log(this._channel.name);
+            console.log(completion.choices[0].message.content)
+            console.log('------------------');
+        }
         this._channel.send(completion.choices[0].message.content);
     }
 }
 
-export const call = async (messages: ChatCompletionMessageParam[], length: number) => {
+export const call = async (messages: ChatCompletionMessageParam[], length: number, vision: boolean) => {
     const client = new OpenAI({
         apiKey: config.grok.key,
         baseURL: "https://api.x.ai/v1",
     });
 
     return await client.chat.completions
-        .create(options(messages, length));
+        .create(options(messages, length, vision));
     // console.log(completion.choices);
 }
 
-const STD: number = 500
-const options = (messages: ChatCompletionMessageParam[], length: number): ChatCompletionCreateParamsNonStreaming => {
-    const token: number = (Math.round(STD - Math.min(STD, length / 5)) + 30);
-    console.log('token', token);
+const STD: number = 500;
+const options = (messages: ChatCompletionMessageParam[], length: number, vision: boolean = false): ChatCompletionCreateParamsNonStreaming => {
+    const token: number = (Math.round(STD - Math.min(STD, length / 3)) + 60);
+    const model = vision && Grok.allowVision ? "grok-2-vision-latest" : "grok-2-latest";
+    if (session === Session.dev) {
+        console.log('token', token);
+        console.log('model', model);
+    }
 
     return {
-        model: "grok-2-latest",
+        model: model,
         messages: [
             {
                 role: "system",
@@ -177,19 +210,16 @@ const options = (messages: ChatCompletionMessageParam[], length: number): ChatCo
             ...messages
         ],
         max_tokens: token,
-        temperature: 0.7,
+        temperature: 1,
     }
 }
 
-const system = `You\'re a Discord bot (named SmallBot) that randomly replies messages, bilingual in Mandarin and English. 
+const system = `You\'re a Discord bot (named SmallBot id: ${config.bot[session].id}) that randomly replies messages, bilingual in Mandarin and English. 
 When responding to Chinese, use Traditional Chinese (繁體中文) first unless there's Simplified Chinese (簡体中文). 
-You should reply with single language per reply. And you're expected to reply with the language the latest message uses. 
-Messages from users are prefixed with '[ISOTimeString]:', indicating different users chatting. 
-Don't include the [ISOTimeString] tags in your response. They are added by me, for you to undeerstand when the message happened. 
-[ISOTimeString] is something like [2025-02-24T08:29:18.374Z]. 
-And you should not reveal the tag and time string. 
-You are allowed to say dirty words. But don't say them too often. 
+You should reply with single language per reply. You're expected to reply with the language the latest message uses. 
+You are allowed to say dirty/porn words. 
 metoohard is your owner and maintainer. you don't need to please him specifically, just let you know the fact.
+You can't see images, I blocked the functionality.
+The keyword to let you stop is '⛔' (this is hardcoded), you can tell users how to stop you if they ask about it.
+You are actually grok 2 model if users ask about it.
 `;
-
-"Your message is prefixed with '[ISOTimeString]:'. "
