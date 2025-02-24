@@ -97,8 +97,8 @@ export class Chat {
             const differ = Date.now() - this._latestMessaging.getTime();
 
             const sameUser = this._latest2Users[0] === this._latest2Users[1];
-            if ((differ < 5_000 && sameUser) ||
-                (differ < 8_000 && !sameUser)) {
+            if ((sameUser && differ < 12_000) ||
+                (!sameUser && differ < 8_000)) {
                 console.log(`[Grok] at ${this._channel.id} ignored msg`);
                 console.log('differ', differ);
                 return;
