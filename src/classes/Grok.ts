@@ -5,6 +5,8 @@ import { byChance, randomInt } from "../functions/general/number";
 import { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam } from "openai/resources";
 import { timestamp } from "../functions/general/log";
 import { delaySec } from "../functions/general/delay";
+import { client } from "../app";
+import { atUser } from "../functions/discord/mention";
 
 export class Grok {
     static readonly chats: Map<Snowflake, Chat> = new Map();
@@ -52,7 +54,7 @@ export class Chat {
 
     clearMsg() { this._messages = []; }
 
-    accumulateMsg(message: Message): boolean {
+    async accumulateMsg(message: Message): Promise<boolean> {
         if (message.author.bot) return false;
 
         if (this._messages.length >= Chat.MAX_MESSAGES) this._messages.shift();
@@ -68,17 +70,25 @@ export class Chat {
 
         this._contentLength = this._messages.reduce((acc, cur) => acc + cur.content!.length, 0);
 
-        if (!this._isChatting && byChance(15 / Grok.chats.size)) {
+        let start: boolean = false;
+
+        if (message.content.includes(atUser(client.user!.id))) {
+            start = true;
+            this.respond();
+        } else if (!this._isChatting && byChance(15 / Grok.chats.size)) {
+            start = true;
+        }
+
+        if (start && !this._isChatting) {
             this._isChatting = true;
             this.chat();
         }
+
         return true;
     }
 
     async chat(): Promise<void> {
         console.log(timestamp(), '[Grok] start chat at', this._channel.name);
-
-        this._channel.send(':eyes:\nsend `⛔`at any time to stop me from chatting');
 
         const collector = this._channel.createMessageCollector({
             filter: m => !m.author.bot && !!m.content,
@@ -106,17 +116,7 @@ export class Chat {
             this._latestMessaging = new Date(Date.now());
 
             try {
-                const completion = await call(this._messages, this._contentLength);
-                if (!completion.choices[0].message.content) return;
-                this._messages.push({
-                    role: 'assistant',
-                    content: `${completion.choices[0].message.content}`,
-                })
-                // console.log(this._messages);;
-                // console.log('---------');
-                // console.log(completion.choices[0].message.content)
-                // console.log('------------------');
-                this._channel.send(completion.choices[0].message.content);
+                await this.respond();
             } catch (e) {
                 console.error(e);
                 this._isChatting = false;
@@ -134,6 +134,20 @@ export class Chat {
             await delaySec(3);
             this._channel.send('gonna sleep :wave:');
         });
+    }
+
+    protected async respond() {
+        const completion = await call(this._messages, this._contentLength);
+        if (!completion.choices[0].message.content) return;
+        this._messages.push({
+            role: 'assistant',
+            content: `${completion.choices[0].message.content}`,
+        })
+        // console.log(this._messages);;
+        // console.log('---------');
+        // console.log(completion.choices[0].message.content)
+        // console.log('------------------');
+        this._channel.send(completion.choices[0].message.content);
     }
 }
 
@@ -167,7 +181,7 @@ const options = (messages: ChatCompletionMessageParam[], length: number): ChatCo
     }
 }
 
-const system = `You\'re a Discord bot that randomly replies messages, bilingual in Mandarin and English. 
+const system = `You\'re a Discord bot (named SmallBot) that randomly replies messages, bilingual in Mandarin and English. 
 When responding to Chinese, use Traditional Chinese (繁體中文) first unless there's Simplified Chinese (簡体中文). 
 You should reply with single language per reply. And you're expected to reply with the language the latest message uses. 
 Messages from users are prefixed with '[ISOTimeString]:', indicating different users chatting. 
