@@ -68,7 +68,7 @@ export class Chat {
 
         this._contentLength = this._messages.reduce((acc, cur) => acc + cur.content!.length, 0);
 
-        if (!this._isChatting && byChance(15)) {
+        if (!this._isChatting && byChance(15 / Grok.chats.size)) {
             this._isChatting = true;
             this.chat();
         }
@@ -112,10 +112,10 @@ export class Chat {
                     role: 'assistant',
                     content: `${completion.choices[0].message.content}`,
                 })
-                console.log(this._messages);;
-                console.log('---------');
-                console.log(completion.choices[0].message.content)
-                console.log('------------------');
+                // console.log(this._messages);;
+                // console.log('---------');
+                // console.log(completion.choices[0].message.content)
+                // console.log('------------------');
                 this._channel.send(completion.choices[0].message.content);
             } catch (e) {
                 console.error(e);
@@ -129,6 +129,7 @@ export class Chat {
             this._isChatting = false;
             this._messages = [];
             this.clearMsg();
+            Grok.chats.delete(this._channel.id);
             console.log(timestamp(), '[Grok] ended chat at', this._channel.name);
             await delaySec(3);
             this._channel.send('gonna sleep :wave:');
