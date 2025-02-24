@@ -129,6 +129,7 @@ export class Chat {
             this._isChatting = false;
             this._messages = [];
             this.clearMsg();
+            Grok.chats.delete(this._channel.id);
             console.log(timestamp(), '[Grok] ended chat at', this._channel.name);
             await delaySec(3);
             this._channel.send('gonna sleep :wave:');
