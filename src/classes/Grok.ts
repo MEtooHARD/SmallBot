@@ -33,8 +33,7 @@ export class Grok {
 
     static incomingMsg(message: Message) {
         if (!message.channel.isTextBased() || message.channel.isDMBased() || message.channel.isThread()) return;
-        if (message.channel.permissionsFor(client.user!)?.has(PermissionFlagsBits.SendMessages)) return;
-
+        if (!message.channel.permissionsFor(message.client.user)?.has(PermissionFlagsBits.SendMessages)) return;
         if (!Grok.chats.has(message.channel.id))
             Grok.chats.set(message.channel.id, new Chat(message.channel as TextChannel));
 
@@ -68,7 +67,7 @@ class Chat {
         if (message.author.bot) return false;
         if (!Grok.allowVision && message.content.length === 0) return false;
 
-        if (this._messages.length >= Chat.MAX_MESSAGES) this._messages.shift();
+        if (this._messages.length >= (this.chatting ? Chat.MAX_MESSAGES : 5)) this._messages.shift();
 
         // const images = message.attachments.filter(
         //     attachment => Grok.supportedImage.includes(attachment.contentType || ''));
@@ -79,15 +78,13 @@ class Chat {
         //         { type: 'image_url', image_url: { url: images.first()!.url }, }]
         //         : message.content
 
-        if (this._chatting || (!this._chatting && this._messages.length < 10)) {
-            this._messages.push({
-                role: 'user',
-                name: message.author.displayName,
-                content: message.content
-            });
+        this._messages.push({
+            role: 'user',
+            name: message.author.displayName,
+            content: message.content
+        });
 
-            this._contentLength = this._messages.reduce((acc, cur) => acc + cur.content!.length, 0);
-        }
+        this._contentLength = this._messages.reduce((acc, cur) => acc + cur.content!.length, 0);
 
         let start: boolean = false;
         if (!this._chatting) {
@@ -117,6 +114,7 @@ class Chat {
 
         collector.on('collect', async message => {
             if (message.content === '⛔') {
+                this.clearMsg();
                 collector.stop();
                 return;
             }
