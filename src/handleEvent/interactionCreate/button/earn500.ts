@@ -5,15 +5,17 @@ import { byChance, randomNumberRange } from "../../../functions/general/number";
 import { earn500 } from "../../../functions/discord/cmps";
 
 export = async (interaction: ButtonInteraction): Promise<void> => {
-    try { interaction.message.edit({ components: earn500(true) }); } catch (e) { }
+
+    await interaction.update({ components: earn500(true) });
+
     if (byChance(50)) {
-        const reply = (await interaction.reply({
+        const reply = await interaction.followUp({
             content: atUser(interaction.user) + ' 這你也信?',
-            fetchReply: true
-        }));
+        });
         if (reply.channel.isDMBased()) return;
-        const collector = reply
-            .channel.createMessageCollector({ filter: message => message.author.id === interaction.user.id, time: 30 * 1000, max: 1 });
+
+        const collector = reply.channel
+            .createMessageCollector({ filter: message => message.author.id === interaction.user.id, time: 30 * 1000, max: 1 });
 
         collector.on('collect', async (message: Message) => {
             if (message.channel.isDMBased()) return;

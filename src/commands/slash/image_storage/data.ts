@@ -68,6 +68,25 @@ export const data = new SlashCommandBuilder()
             .setDescription('Shows in ephemeral')
         )
     )
+    // .addSubcommandGroup(group => group
+    //     .setName('list')
+    //     .setDescription('List images or groups')
+    //     .addSubcommand(subcommand => subcommand
+    //         .setName('groups')
+    //         .setDescription('List groups of this guild')
+    //     )
+    // .addSubcommand(subcommand => subcommand
+    //     .setName('images')
+    //     .setDescription('List images of a group')
+    //     .addStringOption(option => option
+    //         .setRequired(true)
+    //         .setAutocomplete(true)
+    //         .setName('group')
+    //         .setDescription('The group to list')
+    //         .setMaxLength(40)
+    //     )
+    // )
+    // )
     .addSubcommandGroup(group => group
         .setName('rename')
         .setDescription('rename image or group')

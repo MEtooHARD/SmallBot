@@ -1,24 +1,60 @@
 import { REALTIME_SUBSCRIBE_STATES } from "@supabase/supabase-js";
 import { supabaseClient } from "../supabase";
 import chalk from "chalk";
-import { APIEmbed, Colors, Snowflake } from "discord.js";
+import { APIEmbed, Collection, Colors, Snowflake } from "discord.js";
 import { Database } from "../database.types";
+import { timestamp } from "../functions/general/log";
 
-export class ImageStorage {
+
+
+type Image = Database['public']['Tables']['image_storage']['Row'] & { id?: string };
+
+class ImageStorageCache {
+    protected readonly _guilds: Collection<Snowflake, ImageStorageGuild> = new Collection();
+
+    list(): Snowflake[] { return [...this._guilds.keys()]; }
+
+    getGuild(guild_id: Snowflake) { return this._guilds.get(guild_id); }
+}
+
+class ImageStorageGuild {
+    readonly groups: Collection<string, ImageStorageGroup> = new Collection();
+    protected _lastUpdated: Date = new Date(Date.now());
+
+    get lastUpdated() { return this._lastUpdated; }
+
+    list(): string[] { return [...this.groups.keys()]; }
+
+    getGroup(group: string) { return this.groups.get(group); }
+}
+
+class ImageStorageGroup {
+    readonly images: Collection<string, Image> = new Collection();
+    protected _lastUpdated: Date = new Date(Date.now());
+
+    get lastUpdated() { return this._lastUpdated; }
+
+    list(): string[] { return [...this.images.keys()]; }
+
+    getImage(name: string) { return this.images.get(name); }
+}
+
+export class MediaStorage {
     private static _ConnectionStatus = REALTIME_SUBSCRIBE_STATES.CLOSED;
+    // public static cache: ImageStorageCache = new ImageStorageCache();
 
-    static get ConnectionStatus() { return ImageStorage._ConnectionStatus; }
+    static get ConnectionStatus() { return MediaStorage._ConnectionStatus; }
 
     public static init() {
+        console.log(timestamp(), '[MediaStorage] Initialize');
         supabaseClient
             .channel('image_storage')
-            .subscribe(ImageStorage.ChangeConnectionStatus);
+            .subscribe(MediaStorage.ConnectionStatusChange);
     }
 
-    public static ChangeConnectionStatus(s: REALTIME_SUBSCRIBE_STATES) {
-        ImageStorage._ConnectionStatus = s;
-        console.log(chalk.bgBlackBright(new Date().toISOString()),
-            '\n[ImageStorage] Connection > ', s);
+    private static ConnectionStatusChange(s: REALTIME_SUBSCRIBE_STATES) {
+        MediaStorage._ConnectionStatus = s;
+        console.log(chalk.bgBlackBright(new Date().toISOString()), '[MediaStorage] Connection >', s);
     }
 
     public static getImage(
@@ -30,15 +66,6 @@ export class ImageStorage {
             .rpc('image_storage_get_image',
                 { name_: name, group_: group, guildid: guild_id });
     }
-
-    // public static getImages(guild_id: Snowflake, group: string) {
-    //     return supabaseClient
-    //         .from('image_storage')
-    //         .select('name, group, url')
-    //         .eq('guild_id', guild_id)
-    //         .eq('group', group)
-    //         .limit(20);
-    // }
 
     public static getImageUrl(
         guild_id: Snowflake,

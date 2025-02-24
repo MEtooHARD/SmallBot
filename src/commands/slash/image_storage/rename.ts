@@ -1,6 +1,6 @@
 import { ButtonStyle, ChatInputCommandInteraction, Colors, ComponentType } from "discord.js"
 import { ChatInputExecutor } from "../../../classes/Command"
-import { ImageStorage } from "../../../classes/ImageStorage"
+import { MediaStorage } from "../../../classes/ImageStorage"
 import { Question } from "../../../classes/ResponseCollector"
 
 
@@ -18,8 +18,8 @@ export const rename: {
         const defer = interaction.deferReply();
 
         const [renamee, target] = await Promise.all([
-            ImageStorage.existsImage(guildId, group, name),
-            ImageStorage.existsImage(guildId, newGroup, newName)
+            MediaStorage.existsImage(guildId, group, name),
+            MediaStorage.existsImage(guildId, newGroup, newName)
         ]);
 
         const response = await defer;
@@ -50,14 +50,14 @@ export const rename: {
             await interaction.editReply(question.getMessageOptions());
 
             try {
-                const answer = await question.onResponse(response);
+                const answers = await question.onResponse(response);
 
-                if (answer === 'No') {
+                if (answers[0].text === 'No') {
                     interaction.followUp(`Rename cancelled.`);
                     return;
                 }
 
-                const { data: image, error: update_error } = await ImageStorage.updateImage(guildId, group, name, newGroup, newName);
+                const { data: image, error: update_error } = await MediaStorage.updateImage(guildId, group, name, newGroup, newName);
 
                 if (update_error) {
                     console.error(update_error);
@@ -88,9 +88,9 @@ export const rename: {
         const defer = interaction.deferReply();
 
         const [exists_group, image_count, exists_newGroup] = await Promise.all([
-            ImageStorage.existsGroup(guildId, group),
-            ImageStorage.getImageCountOfGroup(guildId, group),
-            ImageStorage.existsGroup(guildId, newGroup)
+            MediaStorage.existsGroup(guildId, group),
+            MediaStorage.getImageCountOfGroup(guildId, group),
+            MediaStorage.existsGroup(guildId, newGroup)
         ]);
 
         const response = await defer;
@@ -122,14 +122,14 @@ export const rename: {
         await interaction.editReply(question.getMessageOptions());
 
         try {
-            const answer = await question.onResponse(response);
+            const answers = await question.onResponse(response);
 
-            if (answer === 'No') {
+            if (answers[0].text === 'No') {
                 interaction.followUp(`Rename cancelled.`);
                 return;
             }
 
-            const update_result = await ImageStorage.updateGroup(guildId, group, newGroup);
+            const update_result = await MediaStorage.updateGroup(guildId, group, newGroup);
 
             if (update_result.error) {
                 console.error(update_result.error);

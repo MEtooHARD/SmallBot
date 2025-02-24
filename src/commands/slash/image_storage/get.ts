@@ -1,5 +1,5 @@
 import { ChatInputExecutor } from "../../../classes/Command";
-import { ImageStorage } from "../../../classes/ImageStorage";
+import { MediaStorage } from "../../../classes/ImageStorage";
 
 export const get: ChatInputExecutor = async (interaction) => {
     const guildId = interaction.guildId as string;
@@ -11,7 +11,7 @@ export const get: ChatInputExecutor = async (interaction) => {
         ? interaction.deferReply({ flags: 'Ephemeral' })
         : interaction.deferReply();
 
-    const { data: url, error } = await ImageStorage.getImageUrl(guildId, group, name);
+    const { data: url, error } = await MediaStorage.getImageUrl(guildId, group, name);
 
     await defer;
 

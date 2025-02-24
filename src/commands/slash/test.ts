@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder, InteractionContextTyp
 import { ChatInputValidator, SlashCommand } from "../../classes/Command";
 import { Result } from "../../classes/GeneralTypes";
 import { Question } from "../../classes/ResponseCollector";
+import { delaySec } from "../../functions/general/delay";
 
 export class test extends SlashCommand {
     activated = true;
@@ -23,31 +24,35 @@ export class test extends SlashCommand {
         };
 
     executor = async (interaction: ChatInputCommandInteraction) => {
-        const question = new Question({
-            title: 'test q',
-            description: 'test d',
-            options: [
-                [
-                    { label: 'dsadasdasd', customId: 'test', style: ButtonStyle.Primary },
-                    { label: 'dasdasd', customId: 'tes', style: ButtonStyle.Primary }
-                ],
-                [
-                    { label: 'asd', customId: 'USADASDAs', style: ButtonStyle.Primary },
-                    { label: 'dasfadfasd', customId: 'ttes', style: ButtonStyle.Primary }
-                ]
-            ],
-            collectorData: {
-                max: 1,
-                componentType: ComponentType.Button,
-                filter: (i) => i.user.id === interaction.user.id,
-                idle: 20 * 1000
-            }
-        })
+        // const question = new Question({
+        //     title: 'test q',
+        //     description: 'test d',
+        //     options: [
+        //         [
+        //             { label: 'dsadasdasd', customId: 'test', style: ButtonStyle.Primary },
+        //             { label: 'dasdasd', customId: 'tes', style: ButtonStyle.Primary }
+        //         ],
+        //         [
+        //             { label: 'asd', customId: 'USADASDAs', style: ButtonStyle.Primary },
+        //             { label: 'dasfadfasd', customId: 'ttes', style: ButtonStyle.Primary }
+        //         ]
+        //     ],
+        //     collectorData: {
+        //         max: 1,
+        //         componentType: ComponentType.Button,
+        //         filter: (i) => i.user.id === interaction.user.id,
+        //         idle: 20 * 1000
+        //     }
+        // })
 
-        const response = await interaction.reply(question.getMessageOptions());
+        // const response = await interaction.reply(question.getMessageOptions());
 
-        // question.onResponse(response, () => {
-        //     console.log(question.answer);
-        // });
+        // const answers = await question.onResponse(response);
+
+        await interaction.reply('test');
+
+        await delaySec(10);
+
+        await interaction.followUp('test')
     }
 }

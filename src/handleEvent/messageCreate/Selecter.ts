@@ -7,6 +7,7 @@ import { getCmdInfo } from "../../functions/discord/msgCommand";
 import { randomPick } from "../../functions/general/array";
 import { logMsgCommand, logMsgFeature } from "../../functions/general/log";
 import { shouldRpMsg } from "../../functions/config/shouldReply";
+import { Grok } from "../../classes/Grok";
 
 export = new class Selecter extends MessageFeature {
     filter = (message: Message<boolean>): boolean => { return true; };
@@ -32,15 +33,21 @@ export = new class Selecter extends MessageFeature {
 
             const temp = Object.keys(features);
 
+            let hitFeature = false;
+
             for (let i = 0; i < features.length; i++) {
                 const featureName = features[Number(randomPick(temp, 1, true)[0])];
                 const feature = require(path.join(__dirname, "features", featureName)) as MessageFeature;
-                if (feature.filter(message)) {
+                if (feature.filter(message) && !Grok.chats.get(message.channel.id)?.chatting) {
                     logMsgFeature(message, featureName);
+                    hitFeature = true;
                     await feature.exe(message);
                     break;
                 }
             }
+
+            if (!hitFeature && message.channel.id !== '1151741686389690428')
+                Grok.incomingMsg(message);
         }
     };
 }

@@ -1,6 +1,6 @@
 import { AttachmentBuilder, Colors } from "discord.js";
 import { ChatInputExecutor } from "../../../classes/Command";
-import { ImageStorage } from "../../../classes/ImageStorage";
+import { MediaStorage } from "../../../classes/ImageStorage";
 
 export const add: ChatInputExecutor = async (interaction) => {
     const guildId = interaction.guildId as string;
@@ -10,7 +10,7 @@ export const add: ChatInputExecutor = async (interaction) => {
 
     const defer = interaction.deferReply();
 
-    const { data, error } = await ImageStorage.getImage(guildId, group, name);
+    const { data, error } = await MediaStorage.getImage(guildId, group, name);
 
     await defer;
     if (data) {
@@ -27,7 +27,7 @@ export const add: ChatInputExecutor = async (interaction) => {
 
         const permanentUrl = reply.attachments.first()?.url as string;
 
-        const { error } = await ImageStorage.addImage({
+        const { error } = await MediaStorage.addImage({
             guild_id: guildId,
             name: name,
             group: group,
@@ -38,7 +38,7 @@ export const add: ChatInputExecutor = async (interaction) => {
             await interaction.followUp('Upload failed.');
         } else {
             await interaction.followUp({
-                embeds: [ImageStorage.imageDisplay(name, group, permanentUrl)]
+                embeds: [MediaStorage.imageDisplay(name, group, permanentUrl)]
             });
         }
     }

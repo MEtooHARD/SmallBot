@@ -1,6 +1,6 @@
 import { Colors } from "discord.js";
 import { ChatInputExecutor } from "../../../classes/Command";
-import { ImageStorage } from "../../../classes/ImageStorage";
+import { MediaStorage } from "../../../classes/ImageStorage";
 
 
 export const list: ChatInputExecutor = async (interaction) => {
