@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { MessageCommand, MessageFeature } from "../../classes/MessageFeature";
-import { prefix } from "../../app";
+import { prefix, Session, session } from "../../app";
 import fs from "node:fs";
 import path from "node:path";
 import { getCmdInfo } from "../../functions/discord/msgCommand";
@@ -46,7 +46,7 @@ export = new class Selecter extends MessageFeature {
                 }
             }
 
-            if (!hitFeature && message.channel.id !== '1151741686389690428')
+            if (!hitFeature && !(session === Session.main && message.channel.id === '1151741686389690428'))
                 Grok.incomingMsg(message);
         }
     };
