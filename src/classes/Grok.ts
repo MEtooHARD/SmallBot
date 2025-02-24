@@ -75,7 +75,7 @@ export class Chat {
         if (message.content.includes(atUser(client.user!.id))) {
             start = true;
             this.respond();
-        } else if (!this._isChatting && byChance(Math.max(3 / Grok.chats.size))) {
+        } else if (!this._isChatting && byChance(3 / Grok.chats.size)) {
             start = true;
         }
 
