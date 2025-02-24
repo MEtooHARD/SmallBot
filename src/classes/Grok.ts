@@ -112,10 +112,10 @@ export class Chat {
                     role: 'assistant',
                     content: `${completion.choices[0].message.content}`,
                 })
-                console.log(this._messages);;
-                console.log('---------');
-                console.log(completion.choices[0].message.content)
-                console.log('------------------');
+                // console.log(this._messages);;
+                // console.log('---------');
+                // console.log(completion.choices[0].message.content)
+                // console.log('------------------');
                 this._channel.send(completion.choices[0].message.content);
             } catch (e) {
                 console.error(e);
