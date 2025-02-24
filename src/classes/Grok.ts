@@ -68,7 +68,7 @@ export class Chat {
 
         this._contentLength = this._messages.reduce((acc, cur) => acc + cur.content!.length, 0);
 
-        if (!this._isChatting && byChance(15)) {
+        if (!this._isChatting && byChance(15 / Grok.chats.size)) {
             this._isChatting = true;
             this.chat();
         }
