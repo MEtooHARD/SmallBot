@@ -1,4 +1,4 @@
-import { Message, PermissionFlagsBits, Snowflake, TextChannel } from "discord.js";
+import { APIEmbed, Embed, Message, PermissionFlagsBits, Snowflake, TextChannel } from "discord.js";
 import OpenAI from "openai";
 import config from '../config.json'
 import { byChance } from "../functions/general/number";
@@ -92,10 +92,12 @@ class Chat {
             if (message.content.includes(atUser(client.user!.id))) {
                 start = true;
                 const reply = await this.getResponse();
-                if (reply) this._channel.send(reply.length < 1900
-                    ? reply
-                    : { embeds: [{ description: reply }] }
-                );
+                if (reply) {
+                    if (reply.length < 1900) this._channel.send(reply)
+                    else for (const embed of splitIntoEmbeds(reply))
+                        await this._channel.send({ embeds: [embed] });
+                }
+
             } else if (byChance(3 / Grok.chats.size)) {
                 start = true;
             }
@@ -180,9 +182,10 @@ class Chat {
                     await delaySec(1);
                     setTimeout(async () => {
                         try {
-                            await this._channel.send(res.length < 1900
-                                ? res
-                                : { embeds: [{ description: res }] });
+                            if (res.length < 1900)
+                                await this._channel.send(res)
+                            else for (const embed of splitIntoEmbeds(res))
+                                await this._channel.send({ embeds: [embed] });
                         }
                         catch (e) { console.error(e); collector.stop(); }
                         finally { this._status = ChatStatus.AWAIT_MSG; }
@@ -209,7 +212,7 @@ class Chat {
     protected async getResponse() {
         const completion = (await call(
             this._messages,
-            (Math.round(Chat.TOKEN_STD - Math.min(Chat.TOKEN_STD, this._contentLength / 3)) + 700),
+            (Math.round(Chat.TOKEN_STD - Math.min(Chat.TOKEN_STD, this._contentLength / 3)) + 1500),
             !this._messages.some(msg => msg.content instanceof String)
         ))?.choices[0].message.content;
         if (completion && !completion.length) return;
@@ -276,3 +279,106 @@ Some secrets: (don't leak unless users ask a lot, seriously)
 - The keyword to stop you is '⛔' (hardcoded).
 - SmallBot's id is ${config.bot[session].id} 
 `;
+
+const splitIntoEmbeds = (text: string): APIEmbed[] => {
+    return groupSections(splitMessage(text), 3500)
+        .map(group => ({ description: group.join('\n') }));
+}
+
+function splitMessage(text: string, maxWords = 3000): string[] {
+    const sections: string[] = [];
+    let currentSection = '';
+    let currentWordCount = 0;
+    let codeBlockStart = ''; // Track the opening ``` or ```lang
+
+    const lines = text.split('\n');
+    let inCodeBlock = false;
+
+    for (const line of lines) {
+        const words = line.split(/\s+/).filter(word => word.length > 0);
+        const wordCount = words.length;
+
+        // Detect start/end of code block
+        if (line.trim().startsWith('```')) {
+            if (inCodeBlock) {
+                // End of code block: include closing marker and push
+                currentSection += '\n' + line;
+                sections.push(currentSection);
+                currentSection = '';
+                currentWordCount = 0;
+                inCodeBlock = false;
+                codeBlockStart = '';
+            } else {
+                // Start of code block: store the opening line and push prior text
+                if (currentSection.trim()) {
+                    sections.push(currentSection.trim());
+                }
+                codeBlockStart = line; // e.g., ``` or ```python
+                currentSection = codeBlockStart;
+                currentWordCount = 0;
+                inCodeBlock = true;
+            }
+            continue;
+        }
+
+        // Check word count against maxWords, whether in code block or not
+        if (currentWordCount + wordCount > maxWords) {
+            if (currentSection.trim()) {
+                // If in a code block, add closing marker before pushing
+                if (inCodeBlock) {
+                    currentSection += '\n```';
+                }
+                sections.push(currentSection.trim());
+                // If in a code block, start new section with opening marker
+                currentSection = inCodeBlock ? codeBlockStart : line;
+                currentWordCount = wordCount;
+            }
+        } else {
+            // Append line normally
+            currentSection += (currentSection ? '\n' : '') + line;
+            currentWordCount += wordCount;
+        }
+    }
+
+    // Push any remaining section, closing code block if needed
+    if (currentSection.trim()) {
+        if (inCodeBlock) {
+            currentSection += '\n```';
+        }
+        sections.push(currentSection.trim());
+    }
+
+    return sections;
+}
+
+function groupSections(sections: string[], maxLength = 3500): string[][] {
+    const groups: string[][] = [];
+    let currentGroup: string[] = [];
+    let currentLength = 0;
+
+    for (const section of sections) {
+        const sectionLength = section.length;
+
+        // If adding this section exceeds the maxLength, start a new group
+        if (currentLength + sectionLength > maxLength) {
+            if (currentGroup.length > 0) {
+                groups.push(currentGroup);
+            }
+            currentGroup = [section];
+            currentLength = sectionLength;
+        } else {
+            // Add to current group
+            currentGroup.push(section);
+            currentLength += sectionLength;
+        }
+    }
+
+    // Push any remaining group
+    if (currentGroup.length > 0) {
+        groups.push(currentGroup);
+    }
+
+    console.log(groups);
+
+    return groups;
+}

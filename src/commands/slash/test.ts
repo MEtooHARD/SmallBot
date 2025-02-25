@@ -24,35 +24,5 @@ export class test extends SlashCommand {
         };
 
     executor = async (interaction: ChatInputCommandInteraction) => {
-        // const question = new Question({
-        //     title: 'test q',
-        //     description: 'test d',
-        //     options: [
-        //         [
-        //             { label: 'dsadasdasd', customId: 'test', style: ButtonStyle.Primary },
-        //             { label: 'dasdasd', customId: 'tes', style: ButtonStyle.Primary }
-        //         ],
-        //         [
-        //             { label: 'asd', customId: 'USADASDAs', style: ButtonStyle.Primary },
-        //             { label: 'dasfadfasd', customId: 'ttes', style: ButtonStyle.Primary }
-        //         ]
-        //     ],
-        //     collectorData: {
-        //         max: 1,
-        //         componentType: ComponentType.Button,
-        //         filter: (i) => i.user.id === interaction.user.id,
-        //         idle: 20 * 1000
-        //     }
-        // })
-
-        // const response = await interaction.reply(question.getMessageOptions());
-
-        // const answers = await question.onResponse(response);
-
-        await interaction.reply('test');
-
-        await delaySec(10);
-
-        await interaction.followUp('test')
     }
 }
