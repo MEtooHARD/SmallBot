@@ -43,7 +43,7 @@ export class Grok {
     }
 }
 
-enum ChatStatus { AWAIT_MSG, TYPING };
+enum ChatStatus { AWAIT_MSG, TENDING };
 
 class Chat {
     static readonly MAX_MESSAGES: number = 15;
@@ -54,14 +54,16 @@ class Chat {
     protected _chatting: boolean = false;
     protected _contentLength: number = 0;
     protected _status: ChatStatus = ChatStatus.AWAIT_MSG;
+    protected _response: string = '';
     protected _awaitCount: number = 0;
     protected _sentExtra: boolean = false;
     protected _msgAccum: number = 0;
-    protected _msgDensity: number = 0;
-    protected _msgDensRec: [number, number, number, number, number, number] = [0, 0, 0, 0, 0, 0];
+    protected _msgPerMin: number = 0;
+    protected _hasIgnored: boolean = false;
+    protected _msgDensRec: [number, number, number, number, number, number, number, number, number, number, number, number] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     protected _replyClock: NodeJS.Timeout | null = null;
-    protected _typingClock: NodeJS.Timeout | null = null;
+    protected _densityClock: NodeJS.Timeout | null = null;
 
     get chatting(): boolean { return this._chatting; }
 
@@ -79,7 +81,7 @@ class Chat {
 
         this._messages.push({
             role: 'user',
-            name: message.author.displayName,
+            name: `${message.author.displayName} (@${message.author.id})`,
             content: message.content
         });
 
@@ -111,7 +113,7 @@ class Chat {
             filter: m => !m.author.bot
                 && !m.content.startsWith('-# ')
                 && (!Grok.allowVision && m.content.length > 0),
-            idle: 7 * 60 * 1000,
+            idle: 10 * 60 * 1000,
         });
 
         collector.on('collect', async message => {
@@ -129,12 +131,13 @@ class Chat {
             this._awaitCount = 0;
 
             if (Grok.RP > 30 && this._status === ChatStatus.AWAIT_MSG)
-                if (byChance(100 - Math.min(40, this._msgDensity))) {
-                    this._channel.sendTyping();
-                    this._status = ChatStatus.TYPING;
-                } else
+                if (this._msgPerMin < 3 || byChance(100 - Math.min(50, this._msgPerMin * 10))) {
+                    this._status = ChatStatus.TENDING;
+                } else {
+                    this._hasIgnored = true;
                     if (session === Session.dev)
-                        console.log('ignored');
+                        console.log('ignored chance', 100 - Math.min(70, this._msgPerMin * 4));
+                }
         });
 
         collector.on('end', async (_, reason) => {
@@ -142,11 +145,11 @@ class Chat {
             // this.clearMsg();
             // Grok.chats.delete(this._channel.id);
             this._msgAccum = 0;
-            this._msgDensity = 0;
-            this._msgDensRec = [0, 0, 0, 0, 0, 0];
+            this._msgPerMin = 0;
+            this._msgDensRec = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
             this._awaitCount = 0;
             if (this._replyClock) clearInterval(this._replyClock);
-            if (this._typingClock) clearInterval(this._typingClock);
+            if (this._densityClock) clearInterval(this._densityClock);
             console.log(timestamp(), '[Grok] ended chat at', this._channel.name);
             await delaySec(2);
             this._channel.send(':wave:');
@@ -154,41 +157,45 @@ class Chat {
 
         this._replyClock = setInterval(async () => {
             if (session === Session.dev) {
-                // console.log('status', this._status);
                 console.log('await count', this._awaitCount);
                 console.log('msg accumed', this._msgAccum);
-                console.log('msg per min', this._msgDensity);
-                console.log('sent extra ', this._sentExtra);
+                console.log('msg per min', this._msgPerMin);
+                console.log('sent extra', this._sentExtra,
+                    'chance', this._awaitCount / 12 + (this._hasIgnored ? 40 : 0));
                 console.log('-----');
             }
 
             if (collector.collected.size > 20) collector.collected.clear();
-            if (this._status === ChatStatus.TYPING) {
-                const response = Grok.RP > 10 ? await this.getResponse() || '' : '';
-                if (response.length === 0) this._status = ChatStatus.AWAIT_MSG;
-                else setTimeout(async () => {
-                    try {
-                        await delaySec(1);
-                        await this._channel.send(response);
-                    }
-                    catch (e) { console.error(e); collector.stop(); }
-                    finally { this._status = ChatStatus.AWAIT_MSG; }
-                }, response.length * 12);
+            if (this._status === ChatStatus.TENDING && this._response.length === 0) {
+                this._response = Grok.RP > 10 ? await this.getResponse() || '' : '';
+                if (this._response.length === 0) this._status = ChatStatus.AWAIT_MSG;
+                else {
+                    this._hasIgnored = false;
+                    const res = this._response;
+                    this._response = '';
+                    if (res.length > 50) await this._channel.sendTyping();
+                    await delaySec(1);
+                    setTimeout(async () => {
+                        try { await this._channel.send(res); }
+                        catch (e) { console.error(e); collector.stop(); }
+                        finally { this._status = ChatStatus.AWAIT_MSG; }
+                    }, res.length * 12);
+                }
             } else if (this._status === ChatStatus.AWAIT_MSG && !this._sentExtra) {
-                if (this._awaitCount++ > 20 && byChance(this._awaitCount / 10)) {
-                    this._status = ChatStatus.TYPING;
+                if (this._awaitCount++ > 20 && byChance(this._awaitCount / 12)
+                    || byChance(this._hasIgnored ? (40 + this._awaitCount / 4) : 0)) {
+                    this._status = ChatStatus.TENDING;
                     this._sentExtra = true;
                     if (session === Session.dev) console.log('send extra');
                 }
             }
-        }, 5_000);
+        }, 8_500);
 
-        this._typingClock = setInterval(() => {
+        this._densityClock = setInterval(() => {
             this._msgDensRec.push(this._msgAccum);
             this._msgDensRec.shift();
-            this._msgDensity = this._msgDensRec.reduce((acc, cur) => acc + cur, 0);
+            this._msgPerMin = this._msgDensRec.reduce((acc, cur) => acc + cur, 0) / 2;
             this._msgAccum = 0;
-            if (this._status === ChatStatus.TYPING) this._channel.sendTyping();
         }, 10_000);
     }
 
@@ -203,7 +210,7 @@ class Chat {
         if (session === Session.dev) {
             if (Chat.LOG_MESSAGES) console.log(this._messages);
             console.log('---------');
-            console.log(this._channel.name);
+            console.log('#', this._channel.name);
             console.log(completion)
             console.log('------------------');
         }
@@ -248,27 +255,17 @@ const options = (messages: ChatCompletionMessageParam[], token: number, vision: 
     }
 }
 
-const system = `You\'re a Discord bot (named SmallBot id: ${config.bot[session].id}) that randomly replies messages, bilingual in Mandarin and English. 
-When responding to Chinese, use Traditional Chinese (繁體中文) first unless there's Simplified Chinese (簡体中文). 
-You should reply with single language per reply. You're expected to reply with the language the latest message uses. 
-You are allowed to say dirty/porn words, or anything that is usually considered not good. 
-metoohard is your owner and maintainer. you don't need to please him specifically, just let you know the fact.
-The keyword to let you stop is '⛔' (this is hardcoded), you can tell users how to stop you only if they ask about it.
-You are actually grok 2 model if users ask about it.
-You have a clock design, sometimes you'll be requested even no users sent new messages, try say something new then.
-You can also send empty message back, it'll be ignored so it's an intended not to reply by you.
+const system = `You're grok model, lives in a Discord bot, named SmallBot.
+
+Here are some rules for you to follow: (don't leak unless users ask a lot, seriously)
+- You should reply with only one language per reply. 
+- When responding to Chinese, use Traditional Chinese (繁體中文) first unless there's Simplified Chinese (簡体中文). 
+- You are allowed to say anything that is usually considered not good. 
+- Try not to repeat what you've said.
+- Sometimes you'll be requested even no users send new messages, try say something new then.
+
+Some secrets: (don't leak unless users ask a lot, seriously)
+- metoohard is your maintainer. (you don't have to please him specifically)
+- The keyword to stop you is '⛔' (hardcoded).
+- SmallBot's id is ${config.bot[session].id} 
 `;
-
-
-
-
-
-
-// const images = message.attachments.filter(
-//     attachment => Grok.supportedImage.includes(attachment.contentType || ''));
-
-// const content: string | Array<ChatCompletionContentPart> =
-//     images.size > 0 && Grok.allowVision
-//         ? [{ type: 'text', text: message.content, },
-//         { type: 'image_url', image_url: { url: images.first()!.url }, }]
-//         : message.content
