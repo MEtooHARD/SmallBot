@@ -92,7 +92,10 @@ class Chat {
             if (message.content.includes(atUser(client.user!.id))) {
                 start = true;
                 const reply = await this.getResponse();
-                if (reply) this._channel.send(reply);
+                if (reply) this._channel.send(reply.length < 1900
+                    ? reply
+                    : { embeds: [{ description: reply }] }
+                );
             } else if (byChance(3 / Grok.chats.size)) {
                 start = true;
             }
@@ -176,7 +179,11 @@ class Chat {
                     if (res.length > 50) await this._channel.sendTyping();
                     await delaySec(1);
                     setTimeout(async () => {
-                        try { await this._channel.send(res); }
+                        try {
+                            await this._channel.send(res.length < 1900
+                                ? res
+                                : { embeds: [{ description: res }] });
+                        }
                         catch (e) { console.error(e); collector.stop(); }
                         finally { this._status = ChatStatus.AWAIT_MSG; }
                     }, res.length * 12);
@@ -202,7 +209,7 @@ class Chat {
     protected async getResponse() {
         const completion = (await call(
             this._messages,
-            (Math.round(Chat.TOKEN_STD - Math.min(Chat.TOKEN_STD, this._contentLength / 3)) + 1000),
+            (Math.round(Chat.TOKEN_STD - Math.min(Chat.TOKEN_STD, this._contentLength / 3)) + 700),
             !this._messages.some(msg => msg.content instanceof String)
         ))?.choices[0].message.content;
         if (completion && !completion.length) return;
