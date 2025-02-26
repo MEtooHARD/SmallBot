@@ -43,7 +43,7 @@ export class Grok {
     }
 }
 
-enum ChatStatus { AWAIT_MSG, TENDING };
+enum ChatStatus { AWAIT_MSG, TENDING, TYPING };
 
 class Chat {
     static readonly MAX_MESSAGES: number = 15;
@@ -156,7 +156,7 @@ class Chat {
             if (this._replyClock) clearInterval(this._replyClock);
             if (this._densityClock) clearInterval(this._densityClock);
             console.log(timestamp(), '[Grok] ended chat at', this._channel.name);
-            await delaySec(2);
+            await delaySec(1);
             this._channel.send(':wave:');
         });
 
@@ -172,6 +172,7 @@ class Chat {
 
             if (collector.collected.size > 20) collector.collected.clear();
             if (this._status === ChatStatus.TENDING && this._response.length === 0) {
+                this._status = ChatStatus.TYPING;
                 this._response = Grok.RP > 10 ? await this.getResponse() || '' : '';
                 if (this._response.length === 0) this._status = ChatStatus.AWAIT_MSG;
                 else {
@@ -378,7 +379,7 @@ function groupSections(sections: string[], maxLength = 3500): string[][] {
         groups.push(currentGroup);
     }
 
-    console.log(groups);
+    // console.log(groups);
 
     return groups;
 }
