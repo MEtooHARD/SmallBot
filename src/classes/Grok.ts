@@ -1,4 +1,4 @@
-import { APIEmbed, Embed, Message, PermissionFlagsBits, Snowflake, TextChannel } from "discord.js";
+import { APIEmbed, Embed, Message, MessageCollector, PermissionFlagsBits, Snowflake, TextChannel } from "discord.js";
 import OpenAI from "openai";
 import config from '../config.json'
 import { byChance } from "../functions/general/number";
@@ -54,7 +54,6 @@ class Chat {
     protected _chatting: boolean = false;
     protected _contentLength: number = 0;
     protected _status: ChatStatus = ChatStatus.AWAIT_MSG;
-    protected _response: string = '';
     protected _awaitCount: number = 0;
     protected _sentExtra: boolean = false;
     protected _msgAccum: number = 0;
@@ -62,7 +61,9 @@ class Chat {
     protected _hasIgnored: boolean = false;
     protected _msgDensRec: [number, number, number, number, number, number, number, number, number, number, number, number] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
+    static readonly ReplyInterval: number = 8_500;
     protected _replyClock: NodeJS.Timeout | null = null;
+    static readonly DensityInterval: number = 10_000;
     protected _densityClock: NodeJS.Timeout | null = null;
 
     get chatting(): boolean { return this._chatting; }
@@ -91,13 +92,7 @@ class Chat {
         if (!this._chatting) {
             if (message.content.includes(atUser(client.user!.id))) {
                 start = true;
-                const reply = await this.getResponse();
-                if (reply) {
-                    if (reply.length < 1900) this._channel.send(reply)
-                    else for (const embed of splitIntoEmbeds(reply))
-                        await this._channel.send({ embeds: [embed] });
-                }
-
+                await Chat.reply(this);
             } else if (byChance(3 / Grok.chats.size)) {
                 start = true;
             }
@@ -135,7 +130,7 @@ class Chat {
             this._msgAccum++;
             this._awaitCount = 0;
 
-            if (Grok.RP > 30 && this._status === ChatStatus.AWAIT_MSG)
+            if (Grok.RP > 100 && this._status === ChatStatus.AWAIT_MSG)
                 if (this._msgPerMin < 3 || byChance(100 - Math.min(50, this._msgPerMin * 10))) {
                     this._status = ChatStatus.TENDING;
                 } else {
@@ -147,8 +142,6 @@ class Chat {
 
         collector.on('end', async (_, reason) => {
             this._chatting = false;
-            // this.clearMsg();
-            // Grok.chats.delete(this._channel.id);
             this._msgAccum = 0;
             this._msgPerMin = 0;
             this._msgDensRec = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -160,51 +153,9 @@ class Chat {
             this._channel.send(':wave:');
         });
 
-        this._replyClock = setInterval(async () => {
-            if (session === Session.dev) {
-                console.log('await count', this._awaitCount);
-                console.log('msg accumed', this._msgAccum);
-                console.log('msg per min', this._msgPerMin);
-                console.log('sent extra', this._sentExtra,
-                    'chance', this._awaitCount / 12 + (this._hasIgnored ? 40 : 0));
-                console.log('-----');
-            }
-
-            if (collector.collected.size > 20) collector.collected.clear();
-            if (this._status === ChatStatus.TENDING && this._response.length === 0) {
-                const sT = Date.now();
-                this._status = ChatStatus.TYPING;
-                this._response = Grok.RP > 10 ? await this.getResponse() || '' : '';
-                const gT = Date.now();
-                if (this._response.length === 0) this._status = ChatStatus.AWAIT_MSG;
-                else {
-                    this._hasIgnored = false;
-                    let res = this._response;
-                    this._response = '';
-                    if (res.length > 50) await this._channel.sendTyping();
-                    await delaySec(1);
-                    setTimeout(async () => {
-                        try {
-                            const eT = Date.now();
-                            res = [`-# genT: ${gT - sT}ms totalT: ${eT - sT}ms\n`, res].join("");
-                            if (res.length < 1900)
-                                await this._channel.send(res)
-                            else for (const embed of splitIntoEmbeds(res))
-                                await this._channel.send({ embeds: [embed] });
-                        }
-                        catch (e) { console.error(e); collector.stop(); }
-                        finally { this._status = ChatStatus.AWAIT_MSG; }
-                    }, res.length * 10);
-                }
-            } else if (this._status === ChatStatus.AWAIT_MSG && !this._sentExtra) {
-                if (this._awaitCount++ > 20 && byChance(this._awaitCount / 12)
-                    || byChance(this._hasIgnored ? (40 + this._awaitCount / 4) : 0)) {
-                    this._status = ChatStatus.TENDING;
-                    this._sentExtra = true;
-                    if (session === Session.dev) console.log('send extra');
-                }
-            }
-        }, 8_500);
+        this._replyClock = setInterval(
+            () => { Chat.tendToReply(this, collector) },
+            Chat.ReplyInterval);
 
         this._densityClock = setInterval(() => {
             this._msgDensRec.push(this._msgAccum);
@@ -212,7 +163,59 @@ class Chat {
             this._msgPerMin = this._msgDensRec.reduce((acc, cur) => acc + cur, 0) / 2;
             this._msgAccum = 0;
             if (this._status === ChatStatus.TYPING) this._channel.sendTyping();
-        }, 10_000);
+        }, Chat.DensityInterval);
+    }
+
+    private static async tendToReply(chat: Chat, collector: MessageCollector) {
+        if (session === Session.dev) {
+            console.log('await count', chat._awaitCount);
+            console.log('msg accumed', chat._msgAccum);
+            console.log('msg per min', chat._msgPerMin);
+            console.log('sent extra', chat._sentExtra,
+                'chance', chat._awaitCount / 12 + (chat._hasIgnored ? 40 : 0));
+            console.log('-----');
+        }
+
+        if (collector.collected.size > 20) collector.collected.clear();
+        if (chat._status === ChatStatus.TENDING) {
+            await Chat.reply(chat, collector);
+        } else if (chat._status === ChatStatus.AWAIT_MSG && !chat._sentExtra) {
+            if (chat._awaitCount++ > 20 && byChance(chat._awaitCount / 12)
+                || chat._hasIgnored ? byChance((40 + chat._awaitCount / 4)) : 0) {
+                chat._status = ChatStatus.TENDING;
+                chat._sentExtra = true;
+                if (session === Session.dev) console.log('send extra');
+            }
+        }
+    }
+
+    private static async reply(chat: Chat, collector?: MessageCollector) {
+        chat._awaitCount = 0;
+        await chat._channel.sendTyping();
+        const sT = Date.now();
+        chat._status = ChatStatus.TYPING;
+        let res = Grok.RP > 10 ? await chat.getResponse() || '' : '';
+        const gT = Date.now();
+        if (res.length === 0) chat._status = ChatStatus.AWAIT_MSG;
+        else {
+            chat._hasIgnored = false;
+            await delaySec(1);
+            setTimeout(async () => {
+                try {
+                    const eT = Date.now();
+                    res = [
+                        `-# Tgen ${gT - sT}ms | ΣT ${eT - sT}ms | rph_t ${Grok.RP}\n`,
+                        res
+                    ].join("");
+                    if (res.length < 1900)
+                        await chat._channel.send(res)
+                    else for (const embed of splitIntoEmbeds(res))
+                        await chat._channel.send({ embeds: [embed] });
+                }
+                catch (e) { console.error(e); collector?.stop(); }
+                finally { chat._status = ChatStatus.AWAIT_MSG; }
+            }, res.length * 10);
+        }
     }
 
     protected async getResponse() {
@@ -383,8 +386,6 @@ function groupSections(sections: string[], maxLength = 3500): string[][] {
     if (currentGroup.length > 0) {
         groups.push(currentGroup);
     }
-
-    // console.log(groups);
 
     return groups;
 }
