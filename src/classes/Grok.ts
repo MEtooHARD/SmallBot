@@ -172,17 +172,21 @@ class Chat {
 
             if (collector.collected.size > 20) collector.collected.clear();
             if (this._status === ChatStatus.TENDING && this._response.length === 0) {
+                const sT = Date.now();
                 this._status = ChatStatus.TYPING;
                 this._response = Grok.RP > 10 ? await this.getResponse() || '' : '';
+                const gT = Date.now();
                 if (this._response.length === 0) this._status = ChatStatus.AWAIT_MSG;
                 else {
                     this._hasIgnored = false;
-                    const res = this._response;
+                    let res = this._response;
                     this._response = '';
                     if (res.length > 50) await this._channel.sendTyping();
                     await delaySec(1);
                     setTimeout(async () => {
                         try {
+                            const eT = Date.now();
+                            res = [`-# genT: ${gT - sT}ms totalT: ${eT - sT}ms\n`, res].join("");
                             if (res.length < 1900)
                                 await this._channel.send(res)
                             else for (const embed of splitIntoEmbeds(res))
@@ -190,7 +194,7 @@ class Chat {
                         }
                         catch (e) { console.error(e); collector.stop(); }
                         finally { this._status = ChatStatus.AWAIT_MSG; }
-                    }, res.length * 12);
+                    }, res.length * 10);
                 }
             } else if (this._status === ChatStatus.AWAIT_MSG && !this._sentExtra) {
                 if (this._awaitCount++ > 20 && byChance(this._awaitCount / 12)
@@ -207,6 +211,7 @@ class Chat {
             this._msgDensRec.shift();
             this._msgPerMin = this._msgDensRec.reduce((acc, cur) => acc + cur, 0) / 2;
             this._msgAccum = 0;
+            if (this._status === ChatStatus.TYPING) this._channel.sendTyping();
         }, 10_000);
     }
 
