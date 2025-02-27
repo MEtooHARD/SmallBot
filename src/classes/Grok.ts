@@ -32,6 +32,7 @@ export class Grok {
         console.log('[Grok] set rph interval')
         setInterval(() => {
             Grok.RP = Math.min(1200, Grok.RP + 1200);
+            Grok.chats.forEach(chat => { if (!chat.chatting) chat.clearMsg(); });
         }, 3_600_000);
     }
 
@@ -60,6 +61,7 @@ class Chat {
     protected _status: ChatStatus = ChatStatus.AWAIT_MSG;
     protected _awaitCount: number = 0;
     protected _sentExtra: boolean = false;
+    protected _resToBot: number = 0;
     protected _msgAccum: number = 0;
     protected _msgPerMin: number = 0;
     protected _hasIgnored: boolean = false;
@@ -77,6 +79,7 @@ class Chat {
     }
 
     clearMsg() { this._messages = []; }
+    resetResToBot() { this._resToBot = 0; }
 
     async accumulateMsg(message: Message): Promise<boolean> {
         if (message.author.id === config.bot[session].id) return false;
@@ -189,7 +192,9 @@ class Chat {
         if (chat._status === ChatStatus.TENDING) {
             await Chat.reply(chat, collector);
         } else if (chat._status === ChatStatus.AWAIT_MSG && !chat._sentExtra) {
-            if (chat._awaitCount++ > 20 && byChance(chat._awaitCount / 15)
+            if (chat._awaitCount++ > 20
+                && byChance(chat._awaitCount / 15)
+                && byChance(100 / chat._resToBot)
                 || chat._hasIgnored ? byChance((40 + chat._awaitCount / 4)) : 0) {
                 chat._status = ChatStatus.TENDING;
                 chat._sentExtra = true;
