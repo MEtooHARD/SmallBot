@@ -36,7 +36,7 @@ export const BugReportingChannel = '1267489062135009290';
 /* Define */
 
 /* Start Up Settings */
-export const session: Session = Session.main;
+export const session: Session = Session.dev;
 export const should_log_doc = false;
 export const should_log_commands = true;
 export const should_deploy_command = false;
