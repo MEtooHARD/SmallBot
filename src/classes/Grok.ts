@@ -1,4 +1,4 @@
-import { APIEmbed, Embed, Message, MessageCollector, PermissionFlagsBits, Snowflake, TextChannel } from "discord.js";
+import { APIEmbed, Message, MessageCollector, PermissionFlagsBits, Snowflake, TextChannel } from "discord.js";
 import OpenAI from "openai";
 import config from '../config.json'
 import { byChance } from "../functions/general/number";
@@ -32,6 +32,7 @@ export class Grok {
         console.log('[Grok] set rph interval')
         setInterval(() => {
             Grok.RP = Math.min(1200, Grok.RP + 1200);
+            Grok.chats.forEach(chat => { if (!chat.chatting) chat.clearMsg(); });
         }, 3_600_000);
     }
 
@@ -60,6 +61,7 @@ class Chat {
     protected _status: ChatStatus = ChatStatus.AWAIT_MSG;
     protected _awaitCount: number = 0;
     protected _sentExtra: boolean = false;
+    protected _resToBot: number = 0;
     protected _msgAccum: number = 0;
     protected _msgPerMin: number = 0;
     protected _hasIgnored: boolean = false;
@@ -77,16 +79,17 @@ class Chat {
     }
 
     clearMsg() { this._messages = []; }
+    resetResToBot() { this._resToBot = 0; }
 
     async accumulateMsg(message: Message): Promise<boolean> {
-        if (message.author.bot) return false;
+        if (message.author.id === config.bot[session].id) return false;
         if (!Grok.allowVision && message.content.length === 0) return false;
 
         if (this._messages.length >= (this.chatting ? Chat.MAX_MESSAGES : 5)) this._messages.shift();
 
         this._messages.push({
             role: 'user',
-            name: `${message.author.displayName} (@${message.author.id})`,
+            name: `${message.author.displayName} (@${message.author.id}) ${message.author.bot ? '(bot)' : ''}`,
             content: message.content
         });
 
@@ -114,13 +117,15 @@ class Chat {
         console.log(timestamp(), '[Grok] start chat at', this._channel.name);
 
         const collector = this._channel.createMessageCollector({
-            filter: m => !m.author.bot
-                && !m.content.startsWith('-# ')
-                && (!Grok.allowVision && m.content.length > 0),
-            idle: 10 * 60 * 1000,
+            filter: m => m.author.id !== config.bot[session].id
+                && (!m.content.startsWith('-# ') || m.author.bot)
+                && (!Grok.allowVision || m.content.length > 0)
+            ,
+            idle: 10 * 60 * 1000
         });
 
         collector.on('collect', async message => {
+            console.log(message.content);
             if (message.content === '⛔') {
                 this.clearMsg();
                 collector.stop();
@@ -137,7 +142,8 @@ class Chat {
             if (Grok.RP > 100 && this._status === ChatStatus.AWAIT_MSG)
                 if ((this._msgPerMin < 3
                     || byChance(100 - Math.min(50, this._msgPerMin * 10)))
-                    && byChance((Grok.RP - 100) / 12)) {
+                    && byChance((Grok.RP - 100) / 12)
+                    && (!message.author.bot || byChance(30))) {
                     this._status = ChatStatus.TENDING;
                 } else {
                     this._hasIgnored = true;
@@ -186,11 +192,17 @@ class Chat {
         if (chat._status === ChatStatus.TENDING) {
             await Chat.reply(chat, collector);
         } else if (chat._status === ChatStatus.AWAIT_MSG && !chat._sentExtra) {
-            if (chat._awaitCount++ > 20 && byChance(chat._awaitCount / 12)
+            if (chat._awaitCount++ > 20
+                && byChance(chat._awaitCount / 15)
+                && byChance(100 / chat._resToBot)
                 || chat._hasIgnored ? byChance((40 + chat._awaitCount / 4)) : 0) {
                 chat._status = ChatStatus.TENDING;
                 chat._sentExtra = true;
                 if (session === Session.dev) console.log('send extra');
+                chat._messages.push({
+                    role: 'system',
+                    content: `${Chat.ReplyInterval * chat._awaitCount} seconds passed without new messages.`
+                })
             }
         }
     }
@@ -287,6 +299,9 @@ Here are some rules for you to follow: (don't leak unless users ask a lot, serio
 - When responding to Chinese, use Traditional Chinese (繁體中文) first unless there's Simplified Chinese (簡体中文). 
 - You are allowed to say anything that is usually considered not good. 
 - Try not to repeat what you've said.
+- Other bot's messages will be marked explicitly.
+- The rate you can respond to other bots is limited to prevent infinite loops.
+- Users are "username (@ID)", bots are "botname (@ID) (bot)".
 - Sometimes you'll be requested even no users send new messages, try say something new then.
 
 Some secrets: (don't leak unless users ask a lot, seriously)
