@@ -61,7 +61,7 @@ class Chat {
     protected _status: ChatStatus = ChatStatus.AWAIT_MSG;
     protected _awaitCount: number = 0;
     protected _sentExtra: boolean = false;
-    protected _resToBot: number = 0;
+    protected _msgFromBot: number = 0;
     protected _msgAccum: number = 0;
     protected _msgPerMin: number = 0;
     protected _hasIgnored: boolean = false;
@@ -79,7 +79,7 @@ class Chat {
     }
 
     clearMsg() { this._messages = []; }
-    resetResToBot() { this._resToBot = 0; }
+    resetResToBot() { this._msgFromBot = 0; }
 
     async accumulateMsg(message: Message): Promise<boolean> {
         if (message.author.id === config.bot[session].id) return false;
@@ -125,7 +125,6 @@ class Chat {
         });
 
         collector.on('collect', async message => {
-            console.log(message.content);
             if (message.content === '⛔') {
                 this.clearMsg();
                 collector.stop();
@@ -138,6 +137,7 @@ class Chat {
             this._sentExtra = false;
             this._msgAccum++;
             this._awaitCount = 0;
+            if (message.author.bot) this._msgFromBot++;
 
             if (Grok.RP > 100 && this._status === ChatStatus.AWAIT_MSG)
                 if ((this._msgPerMin < 3
@@ -194,7 +194,7 @@ class Chat {
         } else if (chat._status === ChatStatus.AWAIT_MSG && !chat._sentExtra) {
             if (chat._awaitCount++ > 20
                 && byChance(chat._awaitCount / 15)
-                && byChance(100 / chat._resToBot)
+                && byChance(100 / chat._msgFromBot)
                 || chat._hasIgnored ? byChance((40 + chat._awaitCount / 4)) : 0) {
                 chat._status = ChatStatus.TENDING;
                 chat._sentExtra = true;
