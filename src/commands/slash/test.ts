@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, InteractionContextType, ComponentType, ButtonStyle } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, InteractionContextType, ComponentType, ButtonStyle, TextChannel } from "discord.js";
 import { ChatInputValidator, SlashCommand } from "../../classes/Command";
 import { Result } from "../../classes/GeneralTypes";
 import { Question } from "../../classes/ResponseCollector";
