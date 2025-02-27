@@ -59,6 +59,7 @@ export const supabase: boolean = true;
 
 /* Services */
 export const Services = {
-    ImageStorage: false && supabase
+    ImageStorage: false && supabase,
+    Grok: true
 }
 /* Services */

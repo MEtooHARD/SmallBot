@@ -20,15 +20,19 @@ export class Grok {
 
     static init() {
         console.log(timestamp(), '[Grok] init')
+
+        console.log('[Grok] set clear interval')
         setInterval(() => {
             Grok.chats.forEach(chat => {
                 if (!chat.chatting) chat.clearMsg();
             });
             console.log('[Grok] clear');
         }, 10 * 60 * 1000);
+
+        console.log('[Grok] set rph interval')
         setInterval(() => {
-            Grok.RP = Math.min(1200, Grok.RP + 10);
-        }, 30_000);
+            Grok.RP = Math.min(1200, Grok.RP + 1200);
+        }, 3_600_000);
     }
 
     static incomingMsg(message: Message) {
@@ -131,7 +135,9 @@ class Chat {
             this._awaitCount = 0;
 
             if (Grok.RP > 100 && this._status === ChatStatus.AWAIT_MSG)
-                if (this._msgPerMin < 3 || byChance(100 - Math.min(50, this._msgPerMin * 10))) {
+                if ((this._msgPerMin < 3
+                    || byChance(100 - Math.min(50, this._msgPerMin * 10)))
+                    && byChance((Grok.RP - 100) / 12)) {
                     this._status = ChatStatus.TENDING;
                 } else {
                     this._hasIgnored = true;
@@ -194,7 +200,7 @@ class Chat {
         await chat._channel.sendTyping();
         const sT = Date.now();
         chat._status = ChatStatus.TYPING;
-        let res = Grok.RP > 10 ? await chat.getResponse() || '' : '';
+        let res = await chat.getResponse() || '';
         const gT = Date.now();
         if (res.length === 0) chat._status = ChatStatus.AWAIT_MSG;
         else {
