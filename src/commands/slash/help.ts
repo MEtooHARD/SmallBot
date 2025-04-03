@@ -24,11 +24,9 @@ export class help extends SlashCommand {
         const collector = rp.createMessageComponentCollector({
             idle: 5 * 60 * 1000,
             componentType: ComponentType.StringSelect,
-            filter: i => i.message.id === rp.id
         });
 
         collector.on('collect', async i => {
-            // HelpCenter.handleInteraction(i);
             const doc = HelpCenter.getDoc(i.values[0].split('>'));
             try {
                 if (doc)

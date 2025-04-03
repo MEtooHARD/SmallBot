@@ -19,11 +19,12 @@ import { Docor } from "./classes/Docor";
 import path from 'node:path';
 import rootPath from "get-root-path";
 import { image_storage } from "./commands/slash/image_storage/command";
+import { zhuyinphrases } from "./commands/slash/zhuyinphrases";
 
 export const SlashCommands
     = new CommandManager<SlashCommand>([
-        bomb,/*  come_in ,*/ help, /* inm_archive, order_list, */
-            /*please,  referendum, */ /* stink, */ t0fe, test, track_chess,
+        bomb,/*  come_in ,*/ help, /* inm_archive,*/ order_list,
+            /*please,  referendum, */ /* stink, */ t0fe, test, track_chess, zhuyinphrases
         /* image_storage */
     ]);
 

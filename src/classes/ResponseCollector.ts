@@ -1,6 +1,7 @@
 import { ButtonComponent, Colors, ComponentType, InteractionReplyOptions, InteractionResponse, MessageCollectorOptionsParams, Snowflake, InteractionCallbackResponse, InteractionUpdateOptions, Message } from "discord.js";
 import { ButtonOptions } from "./ActionRow/Button";
 import ButtonRow from "./ActionRow/ButtonRow";
+import { tryCatch } from "./Basic/GeneralTypes";
 
 type ButtonsRow = [ButtonOptions]
     | [ButtonOptions, ButtonOptions]
@@ -18,6 +19,7 @@ export interface QuestionData {
     readonly title: string;
     readonly description?: string;
     readonly options: ButtonsLayout;
+    readonly color?: number;
     collectorData: MessageCollectorOptionsParams<ComponentType.Button>;
 }
 
@@ -25,12 +27,13 @@ export enum QuestionStatus { INIT, SET, CLOSED }
 
 type Answer = {
     userId: Snowflake;
-    text: string;
+    customId: string;
 }
 
 export class Question implements QuestionData {
     readonly title: string;
     readonly description?: string;
+    readonly color: number;
     readonly options: ButtonsLayout;
     protected readonly answers: Answer[] = [];
     collectorData: MessageCollectorOptionsParams<ComponentType.Button>;
@@ -41,19 +44,20 @@ export class Question implements QuestionData {
         title,
         options,
         description,
+        color,
         collectorData
     }: QuestionData) {
         this.title = title;
         this.options = options;
         this.description = description;
+        this.color = color || Colors.Blue;
         this.collectorData = collectorData;
     };
 
     getMessageOptions(): InteractionReplyOptions & InteractionUpdateOptions {
-
         return {
             embeds: [{
-                color: Colors.Blurple,
+                color: this.color,
                 title: this.title,
                 description: this.description,
                 footer: {
@@ -68,11 +72,10 @@ export class Question implements QuestionData {
 
     onResponse(message: Message | InteractionResponse) {
         return new Promise<Answer[]>((resolve, reject) => {
-
             const collector = message.createMessageComponentCollector(this.collectorData);
 
             collector.on('collect', interaction => {
-                this.answers.push({ userId: interaction.user.id, text: interaction.customId });
+                this.answers.push({ userId: interaction.user.id, customId: interaction.customId });
                 const button = interaction.component as ButtonComponent;
                 interaction.update({
                     embeds: [{
@@ -88,13 +91,25 @@ export class Question implements QuestionData {
                 });
             });
 
-            collector.on('end', (collected, reason) => {
+            collector.on('end', async (collected, reason) => {
                 this._endReason = reason;
                 this._status = QuestionStatus.CLOSED;
                 if (reason === 'limit')
                     resolve(this.answers);
-                else
+                else {
+                    if (reason === 'time') tryCatch(
+                        message.edit({
+                            embeds: [{
+                                color: Colors.Grey,
+                                title: this.title,
+                                description: this.description,
+                                footer: { text: 'Timed out!' }
+                            }],
+                            components: []
+                        })
+                    )
                     reject(reason);
+                }
             });
 
             this._status = QuestionStatus.SET;

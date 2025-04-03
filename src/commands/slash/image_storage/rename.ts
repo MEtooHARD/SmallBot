@@ -52,7 +52,7 @@ export const rename: {
             try {
                 const answers = await question.onResponse(response);
 
-                if (answers[0].text === 'No') {
+                if (answers[0].customId === 'No') {
                     interaction.followUp(`Rename cancelled.`);
                     return;
                 }
@@ -124,7 +124,7 @@ export const rename: {
         try {
             const answers = await question.onResponse(response);
 
-            if (answers[0].text === 'No') {
+            if (answers[0].customId === 'No') {
                 interaction.followUp(`Rename cancelled.`);
                 return;
             }
