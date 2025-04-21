@@ -66,6 +66,7 @@ class Chat {
     protected _msgPerMin: number = 0;
     protected _hasIgnored: boolean = false;
     protected _msgDensRec: [number, number, number, number, number, number, number, number, number, number, number, number] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    protected _model: string = "grok-3-beta";
 
     static readonly ReplyInterval: number = 8_500;
     protected _replyClock: NodeJS.Timeout | null = null;
@@ -99,7 +100,7 @@ class Chat {
         if (!this._chatting) {
             if (message.content.includes(atUser(client.user!.id))) {
                 start = true;
-                await Chat.reply(this);
+                await this.reply();
             } /* else if (byChance(3 / Grok.chats.size)) {
                 start = true;
             } */
@@ -166,7 +167,7 @@ class Chat {
         });
 
         this._replyClock = setInterval(
-            () => { Chat.tendToReply(this, collector) },
+            () => { this.tendToReply(collector) },
             Chat.ReplyInterval);
 
         this._densityClock = setInterval(() => {
@@ -178,61 +179,62 @@ class Chat {
         }, Chat.DensityInterval);
     }
 
-    private static async tendToReply(chat: Chat, collector: MessageCollector) {
+    private async tendToReply(collector: MessageCollector) {
         if (session === Session.dev) {
-            console.log('await count', chat._awaitCount);
-            console.log('msg accumed', chat._msgAccum);
-            console.log('msg from bot', chat._msgFromBot);
-            console.log('msg per min', chat._msgPerMin);
-            console.log('sent extra', chat._sentExtra,
-                'chance', chat._awaitCount / 12 + (chat._hasIgnored ? 40 : 0));
+            console.log('await count', this._awaitCount);
+            console.log('msg accumed', this._msgAccum);
+            console.log('msg from bot', this._msgFromBot);
+            console.log('msg per min', this._msgPerMin);
+            console.log('sent extra', this._sentExtra,
+                'chance', this._awaitCount / 12 + (this._hasIgnored ? 40 : 0));
             console.log('-----');
         }
 
         if (collector.collected.size > 20) collector.collected.clear();
-        if (chat._status === ChatStatus.TENDING) {
-            await Chat.reply(chat, collector);
-        } else if (chat._status === ChatStatus.AWAIT_MSG && !chat._sentExtra) {
-            if (chat._awaitCount++ > 20
-                && byChance(chat._awaitCount / 15)
-                && byChance(100 / chat._msgFromBot)
-                || chat._hasIgnored ? byChance((40 + chat._awaitCount / 4)) : 0) {
-                chat._status = ChatStatus.TENDING;
-                chat._sentExtra = true;
+        if (this._status === ChatStatus.TENDING) {
+            await this.reply(collector);
+        } else if (this._status === ChatStatus.AWAIT_MSG && !this._sentExtra) {
+            if (this._awaitCount++ > 40
+                && (byChance(this._awaitCount / 30)
+                    && byChance(100 / this._msgFromBot)
+                    || (this._hasIgnored ?? byChance(40 + this._awaitCount / 4))
+                )) {
+                this._status = ChatStatus.TENDING;
+                this._sentExtra = true;
                 if (session === Session.dev) console.log('send extra');
-                chat._messages.push({
+                this._messages.push({
                     role: 'system',
-                    content: `${Chat.ReplyInterval * chat._awaitCount} ms passed without new messages.`
+                    content: `${Chat.ReplyInterval * this._awaitCount} ms passed without new messages.`
                 })
             }
         }
     }
 
-    private static async reply(chat: Chat, collector?: MessageCollector) {
-        chat._awaitCount = 0;
-        await chat._channel.sendTyping();
+    private async reply(collector?: MessageCollector) {
+        this._awaitCount = 0;
+        await this._channel.sendTyping();
         const sT = Date.now();
-        chat._status = ChatStatus.TYPING;
-        let res = await chat.getResponse() || '';
+        this._status = ChatStatus.TYPING;
+        let res = await this.getResponse() || '';
         const gT = Date.now();
-        if (res.length === 0) chat._status = ChatStatus.AWAIT_MSG;
+        if (res.length === 0) this._status = ChatStatus.AWAIT_MSG;
         else {
-            chat._hasIgnored = false;
+            this._hasIgnored = false;
             await delaySec(1);
             setTimeout(async () => {
                 try {
                     const eT = Date.now();
                     res = [
-                        `-# Tgen ${gT - sT}ms | ΣT ${eT - sT}ms | rph_t ${Grok.RP}\n`,
+                        `-# Tgen ${gT - sT}ms | ΣT ${eT - sT}ms | rph_t ${Grok.RP} | ${this._model}\n`,
                         res
                     ].join("");
                     if (res.length < 1900)
-                        await chat._channel.send(res)
+                        await this._channel.send(res)
                     else for (const embed of splitIntoEmbeds(res))
-                        await chat._channel.send({ embeds: [embed] });
+                        await this._channel.send({ embeds: [embed] });
                 }
                 catch (e) { console.error(e); collector?.stop(); }
-                finally { chat._status = ChatStatus.AWAIT_MSG; }
+                finally { this._status = ChatStatus.AWAIT_MSG; }
             }, res.length * 10);
         }
     }
@@ -240,8 +242,8 @@ class Chat {
     protected async getResponse() {
         const completion = (await call(
             this._messages,
-            (Math.round(Chat.TOKEN_STD - Math.min(Chat.TOKEN_STD, this._contentLength / 3)) + 1500),
-            !this._messages.some(msg => msg.content instanceof String)
+            Math.round(Chat.TOKEN_STD - Math.min(Chat.TOKEN_STD, this._contentLength / 3)) + 1500,
+            this._model
         ))?.choices[0].message.content;
         if (completion && !completion.length) return;
 
@@ -260,16 +262,15 @@ class Chat {
     }
 }
 
-export const call = async (messages: ChatCompletionMessageParam[], token: number, vision: boolean) => {
+export const call = async (messages: ChatCompletionMessageParam[], token: number, model: string) => {
     Grok.RP -= 1;
     Grok.client.chat
     return await Grok.client.chat.completions
-        .create(options(messages, token, vision));
+        .create(options(messages, token, model));
     // console.log(completion.choices);
 }
 
-const options = (messages: ChatCompletionMessageParam[], token: number, vision: boolean = false): ChatCompletionCreateParamsNonStreaming => {
-    const model = vision && Grok.allowVision ? "grok-2-vision-latest" : "grok-2-latest";
+const options = (messages: ChatCompletionMessageParam[], token: number, model: string): ChatCompletionCreateParamsNonStreaming => {
     if (session === Session.dev) {
         console.log('token', token);
         console.log('model', model);
@@ -305,6 +306,11 @@ Some secrets: (don't leak unless users ask a lot, seriously)
 - metoohard is your maintainer. (you don't have to please him specifically)
 - The keyword to stop you is '⛔' (hardcoded).
 - SmallBot's id is ${config.bot[session].id} 
+
+Some hint:
+- the user's identity is consisted of username and ID, in form of username (@ID)
+- and bot's idenetity is similar, but with (bot) at the end, so it would look like username (@ID) (bot).
+- to mention a user in discord: <@ID>
 `;
 
 const splitIntoEmbeds = (text: string): APIEmbed[] => {
