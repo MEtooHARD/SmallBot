@@ -19,17 +19,17 @@ export class Grok {
     static RP: number = 1200;
 
     static init() {
-        console.log(timestamp(), '[Grok] init')
+        if (session === Session.dev) console.log(timestamp(), '[Grok] init')
 
-        console.log('[Grok] set clear interval')
+        if (session === Session.dev) console.log('[Grok] set clear interval')
         setInterval(() => {
             Grok.chats.forEach(chat => {
                 if (!chat.chatting) chat.clearMsg();
             });
-            console.log('[Grok] clear');
+            if (session === Session.dev) console.log('[Grok] clear');
         }, 10 * 60 * 1000);
 
-        console.log('[Grok] set rph interval')
+        if (session === Session.dev) console.log('[Grok] set rph interval')
         setInterval(() => {
             Grok.RP = Math.min(1200, Grok.RP + 1200);
             Grok.chats.forEach(chat => { if (!chat.chatting) chat.clearMsg(); });
