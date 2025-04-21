@@ -52,7 +52,7 @@ enum ChatStatus { AWAIT_MSG, TENDING, TYPING };
 
 class Chat {
     static readonly MAX_MESSAGES: number = 15;
-    static readonly LOG_MESSAGES: boolean = true;
+    static readonly LOG_MESSAGES: boolean = false;
     static readonly TOKEN_STD: number = 500;
     protected _messages: ChatCompletionMessageParam[] = [];
     protected _channel: TextChannel;
@@ -100,9 +100,9 @@ class Chat {
             if (message.content.includes(atUser(client.user!.id))) {
                 start = true;
                 await Chat.reply(this);
-            } else if (byChance(3 / Grok.chats.size)) {
+            } /* else if (byChance(3 / Grok.chats.size)) {
                 start = true;
-            }
+            } */
 
             if (start) {
                 this._chatting = true;
@@ -182,6 +182,7 @@ class Chat {
         if (session === Session.dev) {
             console.log('await count', chat._awaitCount);
             console.log('msg accumed', chat._msgAccum);
+            console.log('msg from bot', chat._msgFromBot);
             console.log('msg per min', chat._msgPerMin);
             console.log('sent extra', chat._sentExtra,
                 'chance', chat._awaitCount / 12 + (chat._hasIgnored ? 40 : 0));
@@ -201,7 +202,7 @@ class Chat {
                 if (session === Session.dev) console.log('send extra');
                 chat._messages.push({
                     role: 'system',
-                    content: `${Chat.ReplyInterval * chat._awaitCount} seconds passed without new messages.`
+                    content: `${Chat.ReplyInterval * chat._awaitCount} ms passed without new messages.`
                 })
             }
         }
@@ -260,13 +261,9 @@ class Chat {
 }
 
 export const call = async (messages: ChatCompletionMessageParam[], token: number, vision: boolean) => {
-    const client = new OpenAI({
-        apiKey: config.grok.key,
-        baseURL: "https://api.x.ai/v1",
-    });
-
     Grok.RP -= 1;
-    return await client.chat.completions
+    Grok.client.chat
+    return await Grok.client.chat.completions
         .create(options(messages, token, vision));
     // console.log(completion.choices);
 }
