@@ -1,1 +1,1 @@
-clearInterval(12123123);
+console.log(Array(4).fill(0))

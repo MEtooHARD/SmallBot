@@ -1,6 +1,6 @@
 import { ButtonStyle, ChatInputCommandInteraction, Colors, SlashCommandBuilder } from "discord.js";
 import { SlashCommand } from "../../classes/Command";
-import { ZhuyinPhrases } from "../../classes/ZhuyinPhrase";
+import { ZhuyinPhrase } from "../../classes/ZhuyinPhrase";
 import { Question } from "../../classes/ResponseCollector";
 import { tryCatch } from "../../classes/Basic/GeneralTypes";
 
@@ -35,7 +35,7 @@ export class zhuyin_phrases extends SlashCommand {
         );
 
     executor = async (interaction: ChatInputCommandInteraction) => {
-        if (ZhuyinPhrases.existsGame(interaction.channelId)
+        if (ZhuyinPhrase.existsGame(interaction.channelId)
             || await (async () => {
                 const question = new Question({
                     title: "There can be only one game at a time!",

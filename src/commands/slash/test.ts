@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, InteractionContextType, ComponentType, ButtonStyle, TextChannel } from "discord.js";
 import { ChatInputValidator, SlashCommand } from "../../classes/Command";
-import { Result } from "../../classes/Basic/GeneralTypes";
+import { Result_ } from "../../classes/Basic/GeneralTypes";
 import { Question } from "../../classes/ResponseCollector";
 import { delaySec } from "../../functions/general/delay";
 import axios from "axios";
@@ -24,7 +24,7 @@ export class test extends SlashCommand {
         ;
 
     validator: ChatInputValidator =
-        (interaction: ChatInputCommandInteraction): Result<string, string> => {
+        (interaction: ChatInputCommandInteraction): Result_<string, string> => {
             return [interaction.user.id === '732128546407055452',
                 'You are not allowed to use this command.'];
         };

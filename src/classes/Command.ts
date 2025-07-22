@@ -15,7 +15,7 @@ import { REST, Routes } from 'discord.js';
 import { session } from "../app";
 import config from '../config.json';
 import { Manager } from "./Basic/Manager";
-import { Result } from "./Basic/GeneralTypes";
+import { Result_ } from "./Basic/GeneralTypes";
 import { biSplitArray, groupElements } from "../functions/general/array";
 
 export type AutoComplete = (interaction: AutocompleteInteraction) => Promise<void>
@@ -35,9 +35,9 @@ export type CommandExecutor<T extends ApplicationCommandType> =
     T extends ApplicationCommandType.User ? UserContextMenuExecutor :
     never;
 
-export type ChatInputValidator = (interaction: ChatInputCommandInteraction) => Result<string, string>;
-export type MessageContextMenuValidator = (interaction: MessageContextMenuCommandInteraction) => Result<string, string>;
-export type UserContextMenuValidator = (interaction: UserContextMenuCommandInteraction) => Result<string, string>;
+export type ChatInputValidator = (interaction: ChatInputCommandInteraction) => Result_<string, string>;
+export type MessageContextMenuValidator = (interaction: MessageContextMenuCommandInteraction) => Result_<string, string>;
+export type UserContextMenuValidator = (interaction: UserContextMenuCommandInteraction) => Result_<string, string>;
 
 type CommandValidator<T extends ApplicationCommandType> =
     T extends ApplicationCommandType.ChatInput ? ChatInputValidator :
