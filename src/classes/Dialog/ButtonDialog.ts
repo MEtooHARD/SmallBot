@@ -1,4 +1,4 @@
-import { APIEmbed, APIEmbedAuthor, AnySelectMenuInteraction, ButtonInteraction, Collector, Colors, CommandInteraction, ComponentType, InteractionCollector, InteractionReplyOptions, InteractionUpdateOptions, Message, ModalSubmitInteraction } from "discord.js";
+import { APIEmbed, APIEmbedAuthor, AnySelectMenuInteraction, ButtonInteraction, Collector, Colors, CommandInteraction, ComponentType, InteractionCollector, InteractionEditReplyOptions, InteractionReplyOptions, InteractionUpdateOptions, Message, ModalSubmitInteraction } from "discord.js";
 import { ButtonOptions } from "../ActionRow/Button";
 import { randomColor } from "../../functions/discord/RandomColor";
 import { x_min_y_sec } from "../../functions/general/string";
@@ -71,7 +71,7 @@ export class ButtonDialog {
         else if (!data.interaction.deferred)
             this._poster = i => data.interaction.followUp({ ...i, fetchReply: true });
         else
-            this._poster = i => data.interaction.editReply(i);
+            this._poster = i => data.interaction.editReply(i as InteractionEditReplyOptions);
     };
 
     awaitResponse(question: Question): Promise<ButtonInteraction> {

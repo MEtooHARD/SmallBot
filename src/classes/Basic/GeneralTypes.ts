@@ -20,12 +20,12 @@ export type Result_<T, E> = [true, T] | [false, E];
 
 export async function tryCatch<T, E = Error>(
     promise: Promise<T>,
-): Promise<Result_<T, E>> {
+): Promise<Result<T, E>> {
     try {
         const result = await promise;
-        return [true, result];
+        return [result, null];
     } catch (e) {
-        return [false, e as E];
+        return [null, e as E];
     }
 }
 

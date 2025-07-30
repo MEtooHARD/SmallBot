@@ -26,7 +26,7 @@ const end = async (interaction: ButtonInteraction, orderlist: OrderList) => {
                     console.log(e);
                 });
         } else {
-            await interaction.reply(OrderList.notOrganizerRpMsg());
+            await interaction.reply(OrderList.notOrganizerRpMsg(false));
         }
 
     } catch (e) {

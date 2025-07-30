@@ -1,4 +1,4 @@
-import { ButtonStyle, Colors, EmbedBuilder, GuildMember, InteractionReplyOptions, InteractionUpdateOptions, ModalComponentData, Snowflake, TextInputStyle, User } from 'discord.js';
+import { ButtonStyle, Colors, EmbedBuilder, GuildMember, InteractionEditReplyOptions, InteractionReplyOptions, InteractionUpdateOptions, ModalComponentData, Snowflake, TextInputStyle, User } from 'discord.js';
 import Person from './Orderlist/Person';
 import { Button } from './ActionRow/Button';
 import ButtonRow from './ActionRow/ButtonRow';
@@ -208,10 +208,10 @@ class OrderList {
         }
     }
 
-    static endCheckRpMsg = (): InteractionReplyOptions => {
+    static endCheckRpMsg = (): InteractionEditReplyOptions => {
         return {
-            flags: 'Ephemeral',
-            fetchReply: true,
+            // flags: 'Ephemeral',
+            // fetchReply: true,
             embeds: [
                 {
                     color: Colors.Yellow,
@@ -230,10 +230,12 @@ class OrderList {
         }
     }
 
-    static notOrganizerRpMsg = (): InteractionReplyOptions => {
+    static notOrganizerRpMsg(editRp: true): InteractionEditReplyOptions;
+    static notOrganizerRpMsg(editRp: false): InteractionReplyOptions;
+    static notOrganizerRpMsg(editRp: boolean): InteractionEditReplyOptions | InteractionReplyOptions {
         return {
-            flags: 'Ephemeral',
-            fetchReply: true,
+            flags: (editRp ? undefined : 'Ephemeral'),
+            fetchReply: (editRp ? undefined : true),
             embeds: [
                 {
                     color: Colors.Yellow,
@@ -243,7 +245,7 @@ class OrderList {
         }
     }
 
-    static endRpMsg = (): InteractionUpdateOptions => {
+    static endRpMsg(): InteractionUpdateOptions {
         return {
             embeds: [
                 {

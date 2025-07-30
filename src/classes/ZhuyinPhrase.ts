@@ -18,13 +18,13 @@ export class ZhuyinPhrase {
         return Array.from({ length: length }, (_ => randomInt(0, ZhuyinPhrase.ZCount - 1)));
     }
 
-    // static createGame(channelId: string, length: number): void {
-    //     ZhuyinPhrase.Games.push(new Game(channelId, length));
-    // }
+    static createGame(channelId: string, length: number): void {
+        ZhuyinPhrase.Games.push(new Game(channelId, length));
+    }
 
-    // static existsGame(channelId: string): boolean {
-    //     return ZhuyinPhrase.Games.some(_ => _.ChannelID === channelId);
-    // }
+    static existsGame(channelId: string): boolean {
+        return ZhuyinPhrase.Games.some(_ => _.ChannelID === channelId);
+    }
 }
 
 class Game {

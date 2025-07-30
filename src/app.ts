@@ -5,6 +5,7 @@ import {
     Partials
 } from "discord.js";
 import config from './config.json';
+import { Report } from "./classes/MessageFeature";
 
 export const client = new Client(
     {
@@ -21,10 +22,22 @@ export const client = new Client(
         ]
     }
 );
+client.options.failIfNotExists = false;
 
 export const login = async (token: string) => { client.login(token) };
-export const on = (event: keyof ClientEvents, callback = (...args: any) => { }) => {
-    client.on(event, callback);
+export const on = (event: keyof ClientEvents, callback: (...args: any) => Promise<Report>) => {
+    client.on(event, async (...args) => {
+        const report = await callback(...args);
+        if (!report.handled) {
+            console.log('[djs client] unhandled event ' + event);
+        } else {
+            if (!report.success) {
+                console.log('failure on event ' + event + ': ' + report.message);
+                console.log(report.error);
+                console.log(report.metadata);
+            }
+        }
+    });
     console.log('[djs client] on ' + event);
 };
 

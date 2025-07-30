@@ -1,25 +1,25 @@
-import { help } from "./commands/slash/help";
-import { inm_archive } from './commands/slash/inm_archive/main';
-import { bomb } from "./commands/slash/bomb";
-import { come_in } from "./commands/slash/come_in";
-import { order_list } from "./commands/slash/order_list";
-import { please } from "./commands/slash/please";
-import { referendum } from "./commands/slash/referendum";
-import { stink } from "./commands/slash/stink";
-import { t0fe } from "./commands/slash/t0fe";
-import { track_chess } from "./commands/slash/track_chess";
-import { test } from "./commands/slash/test";
+import { help } from "./commands/app/slash/help";
+import { inm_archive } from './commands/app/slash/inm_archive/main';
+import { bomb } from "./commands/app/slash/bomb";
+import { come_in } from "./commands/app/slash/come_in";
+import { order_list } from "./commands/app/slash/order_list";
+import { please } from "./commands/app/slash/please";
+import { referendum } from "./commands/app/slash/referendum";
+import { stink } from "./commands/app/slash/stink";
+import { t0fe } from "./commands/app/slash/t0fe";
+import { track_chess } from "./commands/app/slash/track_chess";
+import { test } from "./commands/app/slash/test";
 
 import { CommandManager, MessageContextMenuCommand, SlashCommand, UserContextMenuCommand } from "./classes/Command";
-import { ii45i4_mc } from "./commands/message/ii45i4";
-import { wife } from "./commands/user/wife";
-import { gay } from "./commands/user/gay";
+import { ii45i4_mc } from "./commands/app/message/ii45i4";
+import { wife } from "./commands/app/user/wife";
+import { gay } from "./commands/app/user/gay";
 import { Docor } from "./classes/Docor";
 
 import path from 'node:path';
 import rootPath from "get-root-path";
-import { image_storage } from "./commands/slash/image_storage/command";
-import { zhuyin_phrases } from "./commands/slash/zhuyinphrases";
+import { image_storage } from "./commands/app/slash/image_storage/command";
+import { zhuyin_phrases } from "./commands/app/slash/zhuyinphrases";
 
 export const SlashCommands
     = new CommandManager<SlashCommand>([

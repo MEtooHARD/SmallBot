@@ -2,7 +2,6 @@ import {
     ApplicationCommandType,
     AutocompleteInteraction,
     ChatInputCommandInteraction,
-    CommandInteraction,
     ContextMenuCommandBuilder,
     MessageContextMenuCommandInteraction,
     PermissionFlagsBits,
@@ -15,7 +14,7 @@ import { REST, Routes } from 'discord.js';
 import { session } from "../app";
 import config from '../config.json';
 import { Manager } from "./Basic/Manager";
-import { Result_ } from "./Basic/GeneralTypes";
+import { Result, Result_ } from "./Basic/GeneralTypes";
 import { biSplitArray, groupElements } from "../functions/general/array";
 
 export type AutoComplete = (interaction: AutocompleteInteraction) => Promise<void>
@@ -88,7 +87,7 @@ export class CommandManager
 
     isActivated(name: string): boolean { return Boolean(this.get(name)?.activated); };
 
-    static async registerCommands(commands: AppCommand<ApplicationCommandType>[]): Promise<[boolean, any]> {
+    static async registerCommands(commands: AppCommand<ApplicationCommandType>[]): Promise<Result<boolean>> {
         const rest = new REST().setToken(config.bot[session].token);
 
         const [global, dedicated] = biSplitArray(commands, c => c.guilds.length === 0);
@@ -110,7 +109,7 @@ export class CommandManager
             return [true, null];
         } catch (e) {
             console.error(e);
-            return [false, e];
+            return [null, e as Error];
         }
     };
 };

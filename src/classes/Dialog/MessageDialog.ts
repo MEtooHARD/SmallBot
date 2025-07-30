@@ -1,4 +1,4 @@
-import { APIEmbed, APIEmbedAuthor, Colors, InteractionReplyOptions, Message, MessageCollector, PartialGroupDMChannel, Snowflake } from "discord.js";
+import { APIEmbed, APIEmbedAuthor, Colors, InteractionEditReplyOptions, InteractionReplyOptions, Message, MessageCollector, PartialGroupDMChannel, Snowflake } from "discord.js";
 import { DialogOptions } from "./ButtonDialog";
 import { randomColor } from "../../functions/discord/RandomColor";
 import { x_min_y_sec } from "../../functions/general/string";
@@ -63,7 +63,7 @@ export class MessageDialog {
         else if (!data.interaction.deferred)
             this._poster = i => data.interaction.followUp({ ...i, fetchReply: true });
         else
-            this._poster = i => data.interaction.editReply(i);
+            this._poster = i => data.interaction.editReply(i as InteractionEditReplyOptions);
     };
 
     awaitResponse(question: Question): Promise<Message> {

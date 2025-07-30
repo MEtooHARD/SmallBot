@@ -26,7 +26,7 @@ const edit = async (interaction: ButtonInteraction, orderlist: OrderList, end: F
                 console.log(`${chalk.green('[' + OrderList.serviceName + ']')}[end][button] ended. Reason: ${chalk.yellow(reason)}`)
             });
         } else {
-            interaction.editReply(OrderList.notOrganizerRpMsg());
+            interaction.editReply(OrderList.notOrganizerRpMsg(true));
         }
     } catch (e) {
         console.log(chalk.red('end'));

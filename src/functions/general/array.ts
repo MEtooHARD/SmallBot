@@ -130,3 +130,43 @@ export function groupElements<T>
 
     return [...map.entries()];
 }
+
+/**
+ * Groups elements into maximal subarrays satisfying the provided condition.
+ * Singleton elements failing the condition are included as groups unless `includeInvalidSingleton` is `false`.
+ * The condition receives the current group, next element, and a group-scoped memo for optimization.
+ * 
+ * @param arr Input array of elements to group.
+ * @param condition Determines if adding the next element is valid, returning [isValid, updatedMemo].
+ * @param includeInvalidSingleton If `false`, excludes invalid singletons; defaults to `true`.
+ * @returns Array of grouped elements, each satisfying the condition or a singleton if allowed.
+ */
+export function adaptiveGroup<T, M>(
+    arr: T[],
+    condition: (eles: T[], nextEle: T, memo: M | undefined) => [boolean, M | undefined],
+    includeInvalidSingleton: boolean = true
+): T[][] {
+    let index = 0;
+    let groups: T[][] = [];
+
+    while (index < arr.length) {
+        let group: T[] = [];
+        let memo: M | undefined = undefined;
+
+        while (index < arr.length) {
+            const [valid, nextMemo] = condition(group, arr[index], memo);
+            memo = nextMemo;
+            if (valid) group.push(arr[index++]);
+            else break;
+        }
+
+        if (group.length > 0)   // normal group
+            groups.push(group);
+        else {                  // singleton
+            if (includeInvalidSingleton)
+                groups.push([arr[index]]);
+            index++;
+        }
+    }
+    return groups;
+}
