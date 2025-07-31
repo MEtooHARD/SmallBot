@@ -8,6 +8,8 @@ import { connectMongoDB } from "./mongoose";
     unknownError();
     loadHelpCenter();
     onDiscordEvents();
+    // onSIGINT();
+    // onExit();
     /* setup */
 
     // onInmMaterialInsert();

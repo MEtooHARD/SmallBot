@@ -4,7 +4,6 @@ import { botConfig, Services, session, shouldLogIgnoredCustomID } from "../app";
 import { tryCatch } from "../classes/Basic/GeneralTypes";
 import { Manager } from "../classes/Basic/Manager";
 import { MediaStorage } from "../classes/ImageStorage";
-import { Grok } from "../classes/LLM/Grok_";
 import { MessageCommand } from "../classes/MessageFeature";
 import { fUCKoFF } from "../commands/msg/commands/fUCKoFF";
 import { quit } from "../commands/msg/commands/quit";
@@ -16,11 +15,8 @@ import { TimeStamp } from "../functions/discord/mention";
 import { getSvcInfo } from "../functions/discord/service";
 import { doAfterSec } from "../functions/general/delay";
 import { MessageMenuCommands, SlashCommands, UserMenuCommands } from "../utilities";
-import { handleMessageContextMenuCommand } from "./interactionCreate/MessagContextMenu";
-import { handleSlashCommand } from "./interactionCreate/SlashCommand";
-import { handleUserContextMenuCommand } from "./interactionCreate/UserContextMenu";
 import autocomplete from "./interactionCreate/autocomplete";
-import button from "./interactionCreate/button";
+import { handleButtonInteraction, handleMessageContextMenuCommand, handleSlashCommand, handleUserContextMenuCommand } from "./interactionCreate/handleInteractions";
 import menu from "./interactionCreate/menu";
 import modal from "./interactionCreate/modal";
 
@@ -115,7 +111,7 @@ export const handleInteractionCreate = async (interaction: BaseInteraction): Pro
                     await interaction.reply({ flags: 'Ephemeral', content: 'service not found' });
                 }
             } else {
-                if (interaction.isButton()) await button(interaction);
+                if (interaction.isButton()) await handleButtonInteraction(interaction);
                 else if (interaction.isModalSubmit()) await modal(interaction);
                 else if (interaction.isAnySelectMenu()) await menu(interaction);
             }

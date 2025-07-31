@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { CommandInteraction, Message } from "discord.js";
 import { prefix } from "../../app";
 
-export const timestamp = (): string => chalk.bgBlackBright(new Date().toISOString());
+export function timestamp(): string { return chalk.bgBlackBright(new Date().toISOString()); }
 
 export const logSlashCommand = (interaction: CommandInteraction): void => {
     console.log(timestamp() +

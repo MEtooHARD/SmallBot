@@ -4,6 +4,7 @@ import path from 'node:path';
 import { on } from "./app";
 import { InmArchive, MaterialSchema } from "./classes/InmArchive/InmArchive";
 import { Report } from './classes/MessageFeature';
+import { sendDebugMessage } from "./events/other/unknowError";
 import { getDirectories } from "./functions/general/path";
 import { handleClientReady, handleGuildCreate, handleGuildMemberAdd, handleGuildMemberRemove, handleInteractionCreate, handleMessageCreate, handleMessageDelete, handleVoiceStateUpdate } from "./handleEvent/misc";
 import { HelpCenter } from './utilities';
@@ -28,7 +29,7 @@ export const onDiscordEvents = () => {
         return {
             handled: true,
             success: true,
-        }
+        };
     });
     on(Events.InteractionCreate, async (interaction: Interaction): Promise<Report> => {
         await handleInteractionCreate(interaction);
@@ -65,6 +66,25 @@ export const onDiscordEvents = () => {
             success: true,
         };
     });
+}
+
+export function onExit() {
+    process.on('exit', () => {
+        // if (session === Session.main)
+        console.log('exit');
+        // const reportChannel = client
+        //     .guilds.cache.get('1213341621542719548')
+        //     ?.channels.cache.get('1267489062135009290');
+        // if (reportChannel && reportChannel.isTextBased())
+        //     reportChannel.send(atUser('732128546407055452') + ' process ended.');
+        sendDebugMessage(new Error(), new Promise(() => { }));
+    });
+}
+
+export function onSIGINT() {
+    process.on('SIGINT', () => {
+        process.exit(0);
+    })
 }
 
 export const onMongoDBEvents = () => {
