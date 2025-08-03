@@ -1,6 +1,7 @@
 import {
     ApplicationCommandType,
     AutocompleteInteraction,
+    CacheType,
     ChatInputCommandInteraction,
     ContextMenuCommandBuilder,
     MessageContextMenuCommandInteraction,
@@ -53,13 +54,14 @@ abstract class AppCommand<T extends ApplicationCommandType> {
     activated: Readonly<boolean> = true;
     abstract readonly data: CommandRegisterData<T>;
     readonly requiredPerms: CommandPermissions = [];
-    readonly guilds: Guilds = [];
-    readonly validator: CommandValidator<T> = ((interaction: any) => [true]) as CommandValidator<T>;
-    abstract readonly executor: CommandExecutor<T>;
+    readonly guilds: Guilds | null = null;
+    readonly verify: CommandValidator<T> = ((interaction: any) => [true]) as CommandValidator<T>;
+    abstract executor(interaction: Parameters<CommandExecutor<T>>[0]): ReturnType<CommandExecutor<T>>;
 };
 
 export abstract class SlashCommand extends AppCommand<ApplicationCommandType.ChatInput> {
     readonly complete: AutoComplete | undefined;
+    abstract executor(interaction: ChatInputCommandInteraction<CacheType>): Promise<void>;
 };
 
 export abstract class MessageContextMenuCommand extends AppCommand<ApplicationCommandType.Message> { }
@@ -87,10 +89,12 @@ export class CommandManager
 
     isActivated(name: string): boolean { return Boolean(this.get(name)?.activated); };
 
-    static async registerCommands(commands: AppCommand<ApplicationCommandType>[]): Promise<Result<boolean>> {
+    static async registerCommands(
+        commands: AppCommand<ApplicationCommandType>[]
+    ): Promise<Result<boolean>> {
         const rest = new REST().setToken(config.bot[session].token);
 
-        const [global, dedicated] = biSplitArray(commands, c => c.guilds.length === 0);
+        const [global, dedicated] = biSplitArray(commands, c => c.guilds === null);
 
         try {
             await rest.put(
@@ -98,7 +102,7 @@ export class CommandManager
                 { body: global.map(c => c.data) },
             );
 
-            groupElements(dedicated, function* (c) { yield* c.guilds })
+            groupElements(dedicated, function* (c) { yield* c.guilds as Guilds; })
                 .forEach(async ([guild, commands]) => {
                     await rest.put(
                         Routes.applicationGuildCommands(config.bot[session].id, guild),

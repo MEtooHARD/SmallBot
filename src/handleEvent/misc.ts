@@ -11,14 +11,13 @@ import { say } from "../commands/msg/commands/say";
 import { InmArchive } from "../features/InmArchive";
 import { OrderList } from "../features/OrderList";
 import { Referendum } from "../features/Referendum";
-import { TimeStamp } from "../functions/discord/mention";
+import { atUser, TimeStamp } from "../functions/discord/mention";
 import { getSvcInfo } from "../functions/discord/service";
-import { doAfterSec } from "../functions/general/delay";
+import { delaySec, doAfterSec } from "../functions/general/delay";
 import { MessageMenuCommands, SlashCommands, UserMenuCommands } from "../utilities";
-import autocomplete from "./interactionCreate/autocomplete";
-import { handleButtonInteraction, handleMessageContextMenuCommand, handleSlashCommand, handleUserContextMenuCommand } from "./interactionCreate/handleInteractions";
-import menu from "./interactionCreate/menu";
-import modal from "./interactionCreate/modal";
+import { handleAutoComplete } from "./interactionCreate/handleAutocomplete";
+import { handleMessageContextMenuCommand, handleSlashCommand, handleUserContextMenuCommand } from "./interactionCreate/handleCommandInteractions";
+import { handleButton, handleModal, handleSelectMenu } from "./interactionCreate/handleComponentInteractions";
 
 
 const listCommand = (list: IterableIterator<string>) => [...list].map(name => chalk.blue(name)).join(', ');
@@ -71,7 +70,6 @@ export const handleMessageCreate = async (message: Message) => {
                 handled: true,
                 success: true,
             };
-
         }
     }
 }
@@ -97,7 +95,7 @@ export const handleInteractionCreate = async (interaction: BaseInteraction): Pro
     else if (interaction.isUserContextMenuCommand())
         handleUserContextMenuCommand(interaction);
     else if (interaction.isAutocomplete())
-        autocomplete(interaction);
+        handleAutoComplete(interaction);
     else if (interaction.isMessageComponent() || interaction.isModalSubmit()) {
         if (!interaction.customId.startsWith('$')) {
             console.log(interaction.customId);
@@ -111,9 +109,9 @@ export const handleInteractionCreate = async (interaction: BaseInteraction): Pro
                     await interaction.reply({ flags: 'Ephemeral', content: 'service not found' });
                 }
             } else {
-                if (interaction.isButton()) await handleButtonInteraction(interaction);
-                else if (interaction.isModalSubmit()) await modal(interaction);
-                else if (interaction.isAnySelectMenu()) await menu(interaction);
+                if (interaction.isButton()) await handleButton(interaction);
+                else if (interaction.isModalSubmit()) await handleModal(interaction);
+                else if (interaction.isAnySelectMenu()) await handleSelectMenu(interaction);
             }
         } else {
             if (shouldLogIgnoredCustomID) console.log(interaction.customId);
@@ -167,9 +165,15 @@ export const handleGuildCreate = async (guild: Guild): Promise<void> => {
 }
 
 
-export const handleGuildMemberAdd = (member: GuildMember) => {
-    if (member.guild.systemChannel)
-        member.guild.systemChannel.send('真真高興地見到你||（棒讀||');
+export async function handleGuildMemberAdd(member: GuildMember) {
+    if (member.guild.systemChannel) {
+        const [msg1, error] = await tryCatch(member.guild.systemChannel.send('Some badass landed.'));
+        if (msg1) {
+            await member.guild.systemChannel.sendTyping();
+            await delaySec(3);
+            await tryCatch(member.guild.systemChannel.send(`Who is the badass? ||${atUser(member.id)}||`));
+        }
+    }
 }
 
 

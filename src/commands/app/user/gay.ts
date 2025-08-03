@@ -1,4 +1,4 @@
-import { ContextMenuCommandBuilder, ApplicationCommandType, ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits, AttachmentBuilder } from "discord.js";
+import { ContextMenuCommandBuilder, ApplicationCommandType, ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits, AttachmentBuilder, UserContextMenuCommandInteraction } from "discord.js";
 import { CommandExecutor, UserContextMenuCommand } from "../../../classes/Command";
 import axios from "axios";
 import sharp from "sharp";
@@ -26,7 +26,7 @@ export class gay extends UserContextMenuCommand {
         PermissionFlagsBits.AttachFiles,
     ]
 
-    executor: CommandExecutor<ApplicationCommandType.User> = async (interaction) => {
+    async executor(interaction: UserContextMenuCommandInteraction) {
 
         await interaction.deferReply();
 

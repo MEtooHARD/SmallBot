@@ -1,7 +1,8 @@
-import { ApplicationCommandType, AutocompleteInteraction, CacheType, ChatInputCommandInteraction, InteractionContextType, SlashCommandBuilder } from "discord.js";
-import { SlashCommand } from "../../../classes/Command";
-import { picPath } from "../../../functions/general/path";
+import { ChatInputCommandInteraction, InteractionContextType, SlashCommandBuilder, User } from "discord.js";
 import fs from 'node:fs';
+import { SlashCommand } from "../../../classes/Command";
+import { atUser } from "../../../functions/discord/mention";
+import { picPath } from "../../../functions/general/path";
 
 const items: string[] = [
     'God\'s Hands'
@@ -28,3 +29,22 @@ export class stink extends SlashCommand {
         });
     }
 }
+
+
+export class please extends SlashCommand {
+    activated = true;
+
+    data = new SlashCommandBuilder()
+        .setName('please')
+        .setDescription('Please a person.')
+        .addUserOption(option => option
+            .setName('target')
+            .setDescription("The person you wonna please.")
+            .setRequired(true))
+        .setContexts(InteractionContextType.Guild);
+
+    executor = async (interaction: ChatInputCommandInteraction) => {
+        const target = (interaction.options.getUser('target') as User);
+        interaction.reply(atUser(target) + "\n# 🟢 Accepted");
+    }
+};

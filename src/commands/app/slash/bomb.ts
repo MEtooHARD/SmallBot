@@ -1,9 +1,9 @@
-import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember, InteractionContextType, MessageComponentInteraction, PartialGroupDMChannel, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
-import { SlashCommand, CommandExecutor } from "../../../classes/Command";
-import { doAfterSec } from "../../../functions/general/delay";
-import { atUser } from "../../../functions/discord/mention";
-import Bomber from "../../../classes/Bomber";
+import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember, InteractionContextType, MessageComponentInteraction, PartialGroupDMChannel, SlashCommandBuilder } from "discord.js";
 import ButtonRow from "../../../classes/ActionRow/ButtonRow";
+import Bomber from "../../../classes/Bomber";
+import { CommandExecutor, SlashCommand } from "../../../classes/Command";
+import { atUser } from "../../../functions/discord/mention";
+import { doAfterSec } from "../../../functions/general/delay";
 
 export class bomb extends SlashCommand {
     activated = true;
@@ -28,7 +28,7 @@ export class bomb extends SlashCommand {
             .setMinValue(2)
             .setMaxValue(15));
 
-    executor: CommandExecutor<ApplicationCommandType.ChatInput> = async (interaction: ChatInputCommandInteraction) => {
+    async executor(interaction: ChatInputCommandInteraction) {
         const target = interaction.options.getMember('target');
         const count = Number(interaction.options.getNumber('count'));
         const period = Number(interaction.options.getNumber('period')) || 5;

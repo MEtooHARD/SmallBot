@@ -23,7 +23,7 @@ export class test extends SlashCommand {
         )
         ;
 
-    validator: ChatInputValidator =
+    verify: ChatInputValidator =
         (interaction: ChatInputCommandInteraction): Result_<string, string> => {
             return [interaction.user.id === '732128546407055452',
                 'You are not allowed to use this command.'];

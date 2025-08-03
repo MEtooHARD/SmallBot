@@ -21,7 +21,7 @@ export class image_storage extends SlashCommand {
         PermissionFlagsBits.AttachFiles,
     ];
 
-    validator: ChatInputValidator = validator;
+    verify: ChatInputValidator = validator;
 
     complete: AutoComplete | undefined = complete;
 

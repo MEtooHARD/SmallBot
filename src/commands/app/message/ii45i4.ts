@@ -29,7 +29,7 @@ export class ii45i4_mc extends MessageContextMenuCommand {
             ApplicationIntegrationType.GuildInstall
         );
 
-    validator: MessageContextMenuValidator = (interaction): Result_<string, string> => {
+    verify: MessageContextMenuValidator = (interaction): Result_<string, string> => {
         // const hasImage = interaction.targetMessage.attachments
         //     .filter(_ => _.contentType && supported.includes(_.contentType))
         //     .size > 0;

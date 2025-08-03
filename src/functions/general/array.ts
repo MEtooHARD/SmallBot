@@ -104,7 +104,9 @@ export class PosRange implements Iterator<number> {
     [Symbol.iterator]() { return this; };
 };
 
-
+/**
+ * true goes to the first array
+ */
 export function biSplitArray<T>
     (arr: T[], splitBy: (element: T) => boolean)
     : [Y: T[], X: T[]] {
@@ -117,9 +119,10 @@ export function biSplitArray<T>
     return [Y, X];
 }
 
-export function groupElements<T>
-    (arr: T[], genKey: (ele: T) => Iterable<string>)
-    : [string, T[]][] {
+export function groupElements<T>(
+    arr: T[],
+    genKey: (ele: T) => Iterable<string>
+): [string, T[]][] {
     const map = new Map<string, T[]>();
 
     for (const obj of arr)

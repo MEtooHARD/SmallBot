@@ -1,6 +1,4 @@
-import { ButtonInteraction, ChatInputCommandInteraction, Colors, MessageContextMenuCommandInteraction, PermissionFlagsBits, UserContextMenuCommandInteraction } from "discord.js";
-import fs from 'node:fs';
-import path from 'node:path';
+import { ChatInputCommandInteraction, Colors, MessageContextMenuCommandInteraction, PermissionFlagsBits, UserContextMenuCommandInteraction } from "discord.js";
 import { CommandInteractionIn } from "../../functions/discord/scope";
 import { logSlashCommand } from "../../functions/general/log";
 import { MessageMenuCommands, SlashCommands, UserMenuCommands } from "../../utilities";
@@ -14,7 +12,7 @@ export const handleSlashCommand = async (interaction: ChatInputCommandInteractio
     /* skip permission checking for DMChannel */
     if (interaction.channel.isDMBased()) {
         logSlashCommand(interaction);
-        command.validator(interaction) && command.executor(interaction);
+        command.verify(interaction) && command.executor(interaction);
         return;
     }
     /* check permission */
@@ -31,7 +29,7 @@ export const handleSlashCommand = async (interaction: ChatInputCommandInteractio
         return;
     }
 
-    const [success, reason] = command.validator(interaction);
+    const [success, reason] = command.verify(interaction);
 
     if (success) {
         logSlashCommand(interaction);
@@ -48,22 +46,13 @@ export const handleSlashCommand = async (interaction: ChatInputCommandInteractio
 };
 
 
-export const handleButtonInteraction = async (interaction: ButtonInteraction) => {
-    for (const name of fs.readdirSync(path.join(__dirname, 'button'))
-        .filter(file => file.endsWith('.js')))
-        if (name === interaction.customId.concat('.js'))
-            await require('./button/' + interaction.customId)(interaction);
-
-}
-
-
 export const handleUserContextMenuCommand = async (interaction: UserContextMenuCommandInteraction) => {
     /* get command */
     const command = UserMenuCommands.get(interaction.commandName);
     if (!command) return;
     /* skip permission checking for DMChannel */
     if (CommandInteractionIn['BotDM'](interaction) || CommandInteractionIn['PrivateChannel'](interaction)) {
-        const [success, reason] = command.validator(interaction);
+        const [success, reason] = command.verify(interaction);
 
         if (success) {
             command.executor(interaction);
@@ -102,7 +91,7 @@ export const handleUserContextMenuCommand = async (interaction: UserContextMenuC
         //     return;
         // }
 
-        const [success, reason] = command.validator(interaction);
+        const [success, reason] = command.verify(interaction);
 
         if (success) {
             command.executor(interaction);
@@ -125,7 +114,7 @@ export const handleMessageContextMenuCommand = async (interaction: MessageContex
     if (!command) return;
     /* skip permission checking for DMChannel */
     if (CommandInteractionIn['BotDM'](interaction) || CommandInteractionIn['PrivateChannel'](interaction)) {
-        const [success, reason] = command.validator(interaction);
+        const [success, reason] = command.verify(interaction);
 
         if (success) {
             command.executor(interaction);
@@ -164,7 +153,7 @@ export const handleMessageContextMenuCommand = async (interaction: MessageContex
         //     return;
         // }
 
-        const [success, reason] = command.validator(interaction);
+        const [success, reason] = command.verify(interaction);
 
         if (success) {
             command.executor(interaction);

@@ -4,8 +4,8 @@ import {
     IntentsBitField,
     Partials
 } from "discord.js";
-import config from './config.json';
 import { Report } from "./classes/MessageFeature";
+import config from './config.json';
 
 export const client = new Client(
     {
