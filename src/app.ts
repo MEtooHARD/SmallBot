@@ -28,7 +28,7 @@ export const login = async (token: string) => { client.login(token) };
 export const on = (event: keyof ClientEvents, callback: (...args: any) => Promise<Report>) => {
     client.on(event, async (...args) => {
         const report = await callback(...args);
-        if (!report.handled) {
+        if (!report.success && !report.handled) {
             console.log('[djs client] unhandled event ' + event);
         } else {
             if (!report.success) {

@@ -46,3 +46,8 @@ export const ellipsis = (content: string, maxlen: number, symbol: string = '…'
         ? `${content.substring(0, Math.floor(maxlen / 2))}${symbol.repeat(width)}${content.slice(-(half - symbol.length * width))}`
         : content;
 }
+
+
+export function tag(tag: string, content: string): string {
+    return `<${tag}>${content}</${tag}>`;
+}

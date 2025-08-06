@@ -1,13 +1,15 @@
 import chalk from "chalk";
 import { BaseInteraction, Client, Colors, Guild, GuildMember, Message, MessageComponentInteraction, PermissionFlagsBits, PermissionsBitField, TextChannel, VoiceState } from "discord.js";
 import { botConfig, Services, session, shouldLogIgnoredCustomID } from "../app";
+import { ActivityManager } from "../classes/Activity";
 import { tryCatch } from "../classes/Basic/GeneralTypes";
 import { Manager } from "../classes/Basic/Manager";
 import { MediaStorage } from "../classes/ImageStorage";
-import { MessageCommand } from "../classes/MessageFeature";
+import { MessageCommand, Report } from "../classes/MessageFeature";
 import { fUCKoFF } from "../commands/msg/commands/fUCKoFF";
 import { quit } from "../commands/msg/commands/quit";
 import { say } from "../commands/msg/commands/say";
+import { t } from "../commands/msg/commands/t";
 import { InmArchive } from "../features/InmArchive";
 import { OrderList } from "../features/OrderList";
 import { Referendum } from "../features/Referendum";
@@ -37,12 +39,22 @@ export const handleClientReady = async (client: Client): Promise<void> => {
 
 const MCommands: MessageCommand[] = (() => {
     const list = [say];
+    if (session === 'dev') {
+        list.push(t);
+    }
     return list;
 })();
 const DMCommands: MessageCommand[] = [
     quit, fUCKoFF,
 ]
-export const handleMessageCreate = async (message: Message) => {
+export async function handleMessageCreate(message: Message): Promise<Report> {
+    const activity = ActivityManager.getActivity(message.channel.id);
+    if (activity) {
+        activity.onMessage(message);
+        return {
+            success: true
+        }
+    }
     const [commandInfo, error] = MessageCommand.parseCommand(message.content);
     if (commandInfo === null) { // non-command
         return {

@@ -30,3 +30,8 @@ export async function tryCatch<T, E = Error>(
 }
 
 export type AnyFunction = (...args: any[]) => any;
+
+export type ChannelLocation = {
+    guildID: string;
+    channelID: string;
+}

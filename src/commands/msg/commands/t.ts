@@ -10,9 +10,7 @@ export const t: MessageCommand = {
         return [true, null];
     },
     exe: async (message, commandInfo): Promise<Report> => {
-        // if (!message.channel.isDMBased())
-        // message.channel.send(message.content);
-        console.log(message.content);
+        console.log(message.reference);
         return { success: true };
     }
 };

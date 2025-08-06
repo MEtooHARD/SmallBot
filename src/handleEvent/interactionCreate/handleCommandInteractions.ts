@@ -1,9 +1,10 @@
 import { ChatInputCommandInteraction, Colors, MessageContextMenuCommandInteraction, PermissionFlagsBits, UserContextMenuCommandInteraction } from "discord.js";
+import { tryCatch } from "../../classes/Basic/GeneralTypes";
 import { CommandInteractionIn } from "../../functions/discord/scope";
 import { logSlashCommand } from "../../functions/general/log";
 import { MessageMenuCommands, SlashCommands, UserMenuCommands } from "../../utilities";
 
-export const handleSlashCommand = async (interaction: ChatInputCommandInteraction) => {
+export async function handleSlashCommand(interaction: ChatInputCommandInteraction) {
     if (!interaction.channel || !interaction.guild?.members.me)
         return;
     /* get (slash) command */
@@ -33,7 +34,7 @@ export const handleSlashCommand = async (interaction: ChatInputCommandInteractio
 
     if (success) {
         logSlashCommand(interaction);
-        command.executor(interaction);
+        const [success, error] = await tryCatch(command.executor(interaction));
     } else {
         interaction.reply({
             flags: 'Ephemeral',
@@ -167,5 +168,4 @@ export const handleMessageContextMenuCommand = async (interaction: MessageContex
             });
         }
     };
-};
-
+}; 

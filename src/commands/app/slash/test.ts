@@ -1,9 +1,9 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, InteractionContextType, ComponentType, ButtonStyle, TextChannel } from "discord.js";
-import { ChatInputValidator, SlashCommand } from "../../../classes/Command";
+import { ChatInputCommandInteraction, InteractionContextType, Message, SlashCommandBuilder, TextChannel } from "discord.js";
+import { Activity, ActivityManager } from "../../../classes/Activity";
 import { Result_ } from "../../../classes/Basic/GeneralTypes";
-import { Question } from "../../../classes/ResponseCollector";
+import { ChatInputValidator, SlashCommand } from "../../../classes/Command";
+import { Chat } from "../../../classes/LLM/Chat";
 import { delaySec } from "../../../functions/general/delay";
-import axios from "axios";
 
 export class test extends SlashCommand {
     activated = true;
@@ -20,8 +20,7 @@ export class test extends SlashCommand {
         .addAttachmentOption(option => option
             .setName('image')
             .setDescription('.')
-        )
-        ;
+        );
 
     verify: ChatInputValidator =
         (interaction: ChatInputCommandInteraction): Result_<string, string> => {
@@ -30,17 +29,28 @@ export class test extends SlashCommand {
         };
 
     executor = async (interaction: ChatInputCommandInteraction) => {
-        await interaction.deferReply();
-        const image = interaction.options.getAttachment('image');
-        if (image) {
-            const { data: imageArrayBuffer } = await axios.get(
-                image.url,
-                { responseType: 'arraybuffer' }
-            )
-            const imageBase64 = Buffer.from(imageArrayBuffer).toString('base64');
-            interaction.followUp(imageBase64);
+        const [activity, err] = ActivityManager.registerActivity(
+            interaction.channel! as TextChannel,
+            Chat
+        )
+        if (activity) {
+            interaction.reply({
+                // flags: 'Ephemeral',
+                content: 'activity registered',
+            });
+            await delaySec(60);
+            if (interaction.channel) {
+                ActivityManager.revokeActivity(interaction.channel.id, activity);
+                interaction.followUp({
+                    // flags: 'Ephemeral',
+                    content: `activity revoked`
+                });
+            }
         } else {
-            interaction.followUp('fa');
+            interaction.reply({
+                // flags: 'Ephemeral',
+                content: `failed registering activity`
+            });
         }
     }
 }

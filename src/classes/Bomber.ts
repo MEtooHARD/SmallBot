@@ -60,7 +60,7 @@ class Bomber {
     /**
      * Start bombing.
      */
-    bomb = async (): Promise<void> => {
+    async bomb(): Promise<void> {
         if (!isNaN(this.count))
             range(1, this.count).forEach(async x => {
                 await doAfterSec(async () => {
@@ -72,7 +72,7 @@ class Bomber {
     /**
      * @returns The button for the target to stop the bomb.
      */
-    imHere = (): Button => {
+    imHere(): Button {
         return new Button({
             customId: '$stopbomb',
             label: 'OK~OK~Ok~ Just stop that shit!',
@@ -82,7 +82,7 @@ class Bomber {
     /**
      * @returns The rendom selected additional message, which wil be attached after the target tag.
      */
-    additionalMessage = (): string => {
+    additionalMessage(): string {
         const index = randomInt(0, this.randomMessages.length - 1);
         return this.randomMessages.splice(index, 1)[0];
     }
