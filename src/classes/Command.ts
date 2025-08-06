@@ -60,7 +60,7 @@ abstract class AppCommand<T extends ApplicationCommandType> {
 };
 
 export abstract class SlashCommand extends AppCommand<ApplicationCommandType.ChatInput> {
-    readonly complete: AutoComplete | undefined;
+    complete?(interaction: AutocompleteInteraction): Promise<void>;
     abstract executor(interaction: ChatInputCommandInteraction<CacheType>): Promise<void>;
 };
 

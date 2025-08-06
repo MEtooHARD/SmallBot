@@ -29,4 +29,20 @@ export async function tryCatch<T, E = Error>(
     }
 }
 
+export async function tryCatch_flat<T>(
+    promise: Promise<Result<T>>,
+): Promise<Result<T>> {
+    try {
+        const result = await promise;
+        return result;
+    } catch (e) {
+        return [null, e as any];
+    }
+}
+
 export type AnyFunction = (...args: any[]) => any;
+
+export type ChannelLocation = {
+    guildID: string;
+    channelID: string;
+}

@@ -1,5 +1,5 @@
 import { Result } from '../Basic/GeneralTypes';
-import { GrokChatCompletion, GrokPostParams, GrokModelInfo, RateType, Pricing, LiveSearchPrice } from './types';
+import { GrokChatCompletion, GrokPostParams, GrokModelInfo, RateType, Pricing, LiveSearchPrice, Cost } from './types';
 import { RateCounter } from '../RateCounter';
 
 export class GrokModel<Model extends GrokModelInfo> {
@@ -49,14 +49,14 @@ export class GrokModel<Model extends GrokModelInfo> {
         }
     }
 
-    static textModelCost(
+    static calcCost(
         info: GrokModelInfo,
-        usage: GrokChatCompletion['usage']
+        cost: Cost
     ): number {
-        const prompt_tokens = usage.prompt_tokens;
-        const cached_tokens = usage.prompt_tokens_details.cached_tokens;
+        const prompt_tokens = cost.prompt_tokens;
+        const cached_tokens = cost.cached_tokens;
         const break_point = info.HighInputPoint;
-        const citations = usage.num_sources_used || 0;
+        const citations = cost.citations;
 
         const pricing: Pricing = info.Pricing;
         if (break_point && info.HighInputPoint && prompt_tokens + cached_tokens > break_point) {
@@ -69,10 +69,20 @@ export class GrokModel<Model extends GrokModelInfo> {
         return citations * LiveSearchPrice +
             pricing.input * prompt_tokens +
             pricing.cached * cached_tokens +
-            pricing.output * (
-                usage.completion_tokens +
-                usage.completion_tokens_details.reasoning_tokens
-            );
+            pricing.output * (cost.output_reasoning + cost.output_text);
+    }
+
+    static extractCost(
+        usage: GrokChatCompletion['usage']
+    ): Cost {
+        return {
+            prompt_tokens: usage.prompt_tokens,
+            cached_tokens: usage.prompt_tokens_details.cached_tokens,
+            citations: usage.num_sources_used || 0,
+            output_reasoning: usage.completion_tokens_details.reasoning_tokens,
+            output_text: usage.completion_tokens
+
+        }
     }
 }
 
@@ -142,6 +152,6 @@ const Grok_3_mini = {
 } as const satisfies GrokModelInfo;
 
 export const GrokModels = {
-    Grok_4_0709: Grok_4_0709,
-    Grok_3_mini: Grok_3_mini
+    Grok_4_0709: new GrokModel(Grok_4_0709),
+    Grok_3_mini: new GrokModel(Grok_3_mini)
 } as const;

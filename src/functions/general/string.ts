@@ -46,3 +46,20 @@ export const ellipsis = (content: string, maxlen: number, symbol: string = '…'
         ? `${content.substring(0, Math.floor(maxlen / 2))}${symbol.repeat(width)}${content.slice(-(half - symbol.length * width))}`
         : content;
 }
+
+
+export function tag(
+    tag: string,
+    content: string | null,
+    ...attrs: Array<Record<string, string | number | boolean>>
+): string {
+    const attrString = attrs.length === 0
+        ? ''
+        : ' ' + attrs.map(attr => {
+            const [key, value] = Object.entries(attr)[0];
+            return key + '=' + value + '';
+        }).join(' ');
+    return content === null
+        ? '<' + tag + attrString + ' />'
+        : `<${tag}${attrString}>${content}</${tag}>`;
+}

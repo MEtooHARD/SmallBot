@@ -14,7 +14,7 @@ export const sendDebugMessage = async (err: Error | unknown, origin: NodeJS.Unca
         if (reportChannel && reportChannel.isTextBased()) {
             const msg = atUser('732128546407055452') + ' please debug:\n'
                 + `Caught exception: ${err}\n`
-                + `Exception origin: ${origin}`;
+                + `Exception origin: ${await origin}`;
             for (const section of sections(6000, msg))
                 await reportChannel.send(section);
         }

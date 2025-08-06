@@ -1,9 +1,6 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, InteractionContextType, ComponentType, ButtonStyle, TextChannel } from "discord.js";
-import { ChatInputValidator, SlashCommand } from "../../../classes/Command";
+import { AutocompleteInteraction, ChatInputCommandInteraction, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import { Result_ } from "../../../classes/Basic/GeneralTypes";
-import { Question } from "../../../classes/ResponseCollector";
-import { delaySec } from "../../../functions/general/delay";
-import axios from "axios";
+import { ChatInputValidator, SlashCommand } from "../../../classes/Command";
 
 export class test extends SlashCommand {
     activated = true;
@@ -17,11 +14,22 @@ export class test extends SlashCommand {
             InteractionContextType.Guild,
             InteractionContextType.BotDM
         )
-        .addAttachmentOption(option => option
-            .setName('image')
-            .setDescription('.')
+        .addStringOption(option => option
+            .setName('model')
+            .setDescription('the model to use')
+            .setAutocomplete(true)
         )
-        ;
+
+    async complete(interaction: AutocompleteInteraction) {
+        if (interaction.options.getFocused() === 'model') {
+            interaction.respond([
+                { name: 'model C', value: 'model C' },
+                { name: 'model F', value: 'model F' }
+            ]);
+            return;
+        }
+        // else if ()
+    }
 
     verify: ChatInputValidator =
         (interaction: ChatInputCommandInteraction): Result_<string, string> => {
@@ -30,17 +38,5 @@ export class test extends SlashCommand {
         };
 
     executor = async (interaction: ChatInputCommandInteraction) => {
-        await interaction.deferReply();
-        const image = interaction.options.getAttachment('image');
-        if (image) {
-            const { data: imageArrayBuffer } = await axios.get(
-                image.url,
-                { responseType: 'arraybuffer' }
-            )
-            const imageBase64 = Buffer.from(imageArrayBuffer).toString('base64');
-            interaction.followUp(imageBase64);
-        } else {
-            interaction.followUp('fa');
-        }
     }
 }

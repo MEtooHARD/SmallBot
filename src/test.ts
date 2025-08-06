@@ -1,19 +1,32 @@
 
-type f1 = (i: number) => string;
-type f2 = (i: string) => void;
-type f<T extends any> =
-    T extends number ? f1 :
-    T extends string ? f2 :
-    never;
+// function tag1(tag: string, content: string): string {
+//     return `<${tag}>${content}</${tag}>`;
+// }
 
-abstract class a<T extends any> {
-    abstract f(i: Parameters<f<T>>[0]): Promise<ReturnType<f<T>>>;
-}
+import { Chat } from "./classes/LLM/Chat";
 
-abstract class b extends a<number> { }
+// function tag2(tag: string, content: string): string {
+//     return '<' + tag + '>' + content + '</' + tag + '>';
+// }
 
-const C = new class c extends b {
-    async f(i: number) {
-        return "result";
-    }
-}
+// const start1 = Date.now();
+// for (let i = 0; i < 9999999999; i++) {
+//     tag1('t', 'sdasddsfsdfsdfsdfs');
+// }
+// const end1 = Date.now();
+// console.log('Time1: ' + (end1 - start1) + 'ms');
+
+
+// const start2 = Date.now();
+// for (let i = 0; i < 9999999999; i++) {
+//     tag2('t', 'sdasddsfsdfsdfsdfs');
+// }
+// const end2 = Date.now();
+// console.log('Time2: ' + (end2 - start2) + 'ms');
+
+const content = `<action>h</action>
+<bction>hasdasdasd</bction>`;
+
+const reg = /^<(\w+?)>(.+?)<\/\1>$/gm;
+
+console.log(content.matchAll(reg).toArray());

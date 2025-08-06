@@ -28,7 +28,7 @@ export const login = async (token: string) => { client.login(token) };
 export const on = (event: keyof ClientEvents, callback: (...args: any) => Promise<Report>) => {
     client.on(event, async (...args) => {
         const report = await callback(...args);
-        if (!report.handled) {
+        if (!report.success && !report.handled) {
             console.log('[djs client] unhandled event ' + event);
         } else {
             if (!report.success) {
@@ -50,6 +50,7 @@ export const BugReportingChannel = '1267489062135009290';
 
 /* Start Up Settings */
 export const session: Session = config.session === 0 ? Session.main : Session.dev;
+export const isDev = session === Session.dev;
 export const should_log_doc = false;
 export const should_log_commands = true;
 export const should_deploy_command = false;

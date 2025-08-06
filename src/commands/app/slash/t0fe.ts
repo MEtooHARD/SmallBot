@@ -1,6 +1,6 @@
-import { ApplicationCommandType, ChatInputCommandInteraction, ComponentType, InteractionContextType, Message, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, ComponentType, InteractionContextType, Message, SlashCommandBuilder } from "discord.js";
+import { SlashCommand } from "../../../classes/Command";
 import T0FE from "../../../classes/games/T0FE";
-import { SlashCommand, CommandExecutor } from "../../../classes/Command";
 
 export class t0fe extends SlashCommand {
     activated = true;

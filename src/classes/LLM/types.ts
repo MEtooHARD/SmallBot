@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { Result } from "../Basic/GeneralTypes";
-import { ChatCompletionCreateParamsBase } from "openai/resources/chat/completions";
+import { ChatCompletionCreateParamsBase, ChatCompletionDeveloperMessageParam, ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 export enum RateType { Request, Token }
 export interface RateLimit {
@@ -135,16 +135,31 @@ type ReasoningModelParams<I extends GrokModelInfo> = I['ReasoningModel'] extends
         stop?: never
     };
 
+export type GrokSupportedMessageParam = Exclude<
+    ChatCompletionMessageParam,
+    ChatCompletionDeveloperMessageParam
+>;
+
 export type GrokPostParams<I extends GrokModelInfo> = (
     OpenAI.Chat.Completions.ChatCompletionCreateParams |
     OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming
 ) &
     CommonGrokParams &
     ReasoningEffortParam<I> &
-    ReasoningModelParams<I>
+    ReasoningModelParams<I> & {
+        messages: Array<GrokSupportedMessageParam>
+    }
 
 export type GrokPostFunction = <I extends GrokModelInfo>(
     url: string,
     key: string,
     params: GrokPostParams<I>
 ) => Promise<Result<GrokChatCompletion>>;
+
+export type Cost = {
+    prompt_tokens: number,
+    cached_tokens: number,
+    output_text: number,
+    output_reasoning: number,
+    citations: number,
+}
