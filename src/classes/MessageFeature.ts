@@ -41,6 +41,8 @@ export namespace MessageCommand {
             level: MessageCommandInfo['level'],
             params: string[];
         const [pref, postterm] = commandStr.split(divider);
+        if (!pref || !postterm) return [null, 'NaC'];
+
         if (pref === prefix) level = 'general';
         else if (pref === devPrefix) level = 'dev';
         else return [null, 'NaC'];

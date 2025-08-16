@@ -4,6 +4,7 @@ import {
     CacheType,
     ChatInputCommandInteraction,
     ContextMenuCommandBuilder,
+    ContextMenuCommandType,
     MessageContextMenuCommandInteraction,
     PermissionFlagsBits,
     SlashCommandOptionsOnlyBuilder,
@@ -64,9 +65,12 @@ export abstract class SlashCommand extends AppCommand<ApplicationCommandType.Cha
     abstract executor(interaction: ChatInputCommandInteraction<CacheType>): Promise<void>;
 };
 
-export abstract class MessageContextMenuCommand extends AppCommand<ApplicationCommandType.Message> { }
+export abstract class MessageContextMenuCommand extends AppCommand<ApplicationCommandType.Message> {
+}
 
-export abstract class UserContextMenuCommand extends AppCommand<ApplicationCommandType.User> { }
+export abstract class UserContextMenuCommand extends AppCommand<ApplicationCommandType.User> {
+    // abstract readonly data: ContextMenuCommandBuilder
+}
 
 export class CommandManager
     <C extends AppCommand<ApplicationCommandType>>

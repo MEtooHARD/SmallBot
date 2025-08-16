@@ -1,7 +1,6 @@
 import { GuildTextBasedChannel, Message, User } from "discord.js";
 import { ChatCompletionSystemMessageParam } from "openai/resources";
-import { client, isDev, Session, session } from "../../app";
-import config from '../../config.json';
+import { client, isDev } from "../../app";
 import { atUser } from "../../functions/discord/mention";
 import { isReply, isSelfMessage } from "../../functions/discord/verify";
 import { tag } from "../../functions/general/string";
@@ -11,10 +10,13 @@ import { Report } from "../MessageFeature";
 import { GrokModelInfo, GrokSupportedMessageParam } from "./types";
 import { GrokModel, GrokModels } from "./Wrapper";
 
-export class Chat extends Activity {
-    protected model: GrokModel<GrokModelInfo>;
-    private key: string;
+import config from '../../config.json';
 
+type Key = { key: string, inuse: boolean };
+const GrokKeys = Object.values(config.grok.keys)
+    .map(k => ({ key: k, inuse: false }));
+
+export class Chat extends Activity {
     protected stack: Chat.MessageStack = [];
     protected status: Chat.Status;
     private usersmessages: Chat.UserMessage[] = [];
@@ -32,14 +34,20 @@ export class Chat extends Activity {
     protected rpMsgVer: string = 'v1';
     protected usrPrmptVer: string = 'v1';
 
-    constructor(
+    public static UseChat(): Chat | null {
+
+
+        return new Chat();
+    }
+
+    private constructor(
         readonly channel: GuildTextBasedChannel,
-        readonly token: string
+        protected model: GrokModel<GrokModelInfo>,
+        readonly key: string
     ) {
-        super(channel, token);
+        super();
         this.status = Chat.Status.IDLE;
         this.model = GrokModels.Grok_4_0709;
-        this.key = config.grok.key;
 
         if (isDev) console.log(
             '[Chat] initialized at: ', channel.name,

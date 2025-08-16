@@ -40,6 +40,10 @@ export async function tryCatch_flat<T>(
     }
 }
 
+export async function suppress(promise: Promise<any>): Promise<void> {
+    try { await promise; } catch (e) { }
+}
+
 export type AnyFunction = (...args: any[]) => any;
 
 export type ChannelLocation = {

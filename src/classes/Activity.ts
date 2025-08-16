@@ -5,10 +5,7 @@ import { Result } from "./Basic/GeneralTypes";
 export abstract class Activity {
     // readonly location: ChannelLocation;
 
-    constructor(
-        readonly channel: GuildTextBasedChannel,
-        readonly token: string
-    ) { }
+    // constructor() { }
 
     abstract onMessage(message: Message): void;
 
@@ -22,13 +19,12 @@ export class ActivityManager {
 
     static registerActivity<T extends Activity = Activity>(
         channel: GuildTextBasedChannel,
-        ActivityConstructor: new (channel: GuildTextBasedChannel, token: string) => T
+        ActivityConstructor: new () => T
     ): Result<T, string> {
         if (channel === null) return [null, 'channel is null.'];
         if (this.activities.has(channel.id)) return [null, 'Channel is occupied.'];
 
-        const token = v4();
-        const activity = new ActivityConstructor(channel, token);
+        const activity = new ActivityConstructor();
         this.activities.set(channel.id, activity);
         return [activity, null];
     }

@@ -5,10 +5,10 @@ import { GrokModels } from "../../../classes/LLM/Wrapper";
 const models: Array<keyof typeof GrokModels> =
     Object.keys(GrokModels) as Array<keyof typeof GrokModels>;
 
-export class LLM extends SlashCommand {
+export class chat extends SlashCommand {
     data = new SlashCommandBuilder()
-        .setName('llm')
-        .setDescription('start chatting with LLMs')
+        .setName('chat')
+        .setDescription('llm chat service for losers')
         .setContexts(InteractionContextType.Guild)
         .addStringOption(option => option
             .setAutocomplete(true)
