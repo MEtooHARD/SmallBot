@@ -62,7 +62,7 @@ export class Roast_This extends MessageContextMenuCommand {
 
         try {
             const [res, err] = await tryCatch_flat(GrokModels.Grok_4_0709.post(
-                config.grok.key, {
+                config.models.grok.keys[0], {
                 messages: params
             }))
 

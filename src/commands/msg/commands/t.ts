@@ -20,7 +20,7 @@ export const t: MessageCommand = {
         message.channel.sendTyping();
 
         const [response, error] = await GrokModels.Grok_3_mini.post(
-            config.grok.key,
+            config.models.grok.keys[0],
             {
                 messages: [
                     {

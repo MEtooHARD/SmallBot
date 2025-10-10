@@ -1,0 +1,55 @@
+{
+    "session": 1,
+    "bot": {
+        "main": {
+            "token": "<TOKEN>",
+            "id": "<ID>"
+        },
+        "dev": {
+            "token": "<TOKEN>",
+            "id": "<ID>"
+        }
+    },
+    "mongodb": {
+        "main": {
+            "username": "<USERNAME>",
+            "password": "<PASSWORD>",
+            "serial": "<SERIAL>"
+        },
+        "dev": {
+            "username": "<USERNAME>",
+            "password": "<PASSWORD>",
+            "serial": "<SERIAL>"
+        }
+    },
+    "supabase": {
+        "main": {
+            "project_url": "https://<PROJECT_ID>.supabase.co",
+            "AnonKey": "<ANON_KEY>",
+            "ServiceKey": "<SERVICE_KEY>"
+        },
+        "dev": {
+            "project_url": "https://<PROJECT_ID>.supabase.co",
+            "AnonKey": "<ANON_KEY>",
+            "ServiceKey": "<SERVICE_KEY>"
+        }
+    },
+    "models": {
+        "grok": {
+            "keys": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            }
+        },
+        "gemini": {
+            "keys": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

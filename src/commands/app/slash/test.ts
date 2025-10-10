@@ -21,7 +21,7 @@ export class test extends SlashCommand {
         )
 
     async complete(interaction: AutocompleteInteraction) {
-        if (interaction.options.getFocused() === 'model') {
+        if (interaction.options.getFocused(true).name === 'model') {
             interaction.respond([
                 { name: 'model C', value: 'model C' },
                 { name: 'model F', value: 'model F' }

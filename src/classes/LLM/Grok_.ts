@@ -11,7 +11,7 @@ import { atUser } from "../../functions/discord/mention";
 export class Grok {
     static readonly chats: Map<Snowflake, Chat> = new Map();
     static readonly client: OpenAI = new OpenAI({
-        apiKey: config.grok.key,
+        apiKey: config.models.grok.keys[0],
         baseURL: "https://api.x.ai/v1",
     });
     static readonly supportedImage = ["image/jpeg", "image/jpg", "image/png"];

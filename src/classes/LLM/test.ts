@@ -7,7 +7,7 @@ const Grok_3_mini = GrokModels.Grok_3_mini;
 
 (async () => {
     const [response, error] = await Grok_4.post(
-        config.grok.key,
+        config.models.grok.keys[0],
         {
             messages: [
                 {

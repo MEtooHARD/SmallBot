@@ -13,7 +13,7 @@ import { GrokModel, GrokModels } from "./Wrapper";
 import config from '../../config.json';
 
 type Key = { key: string, inuse: boolean };
-const GrokKeys = Object.values(config.grok.keys)
+const GrokKeys = config.models.grok.keys
     .map(k => ({ key: k, inuse: false }));
 
 export class Chat extends Activity {
@@ -34,11 +34,11 @@ export class Chat extends Activity {
     protected rpMsgVer: string = 'v1';
     protected usrPrmptVer: string = 'v1';
 
-    public static UseChat(): Chat | null {
+    // public static UseChat(): Chat | null {
 
 
-        return new Chat();
-    }
+    //     return new Chat();
+    // }
 
     private constructor(
         readonly channel: GuildTextBasedChannel,
