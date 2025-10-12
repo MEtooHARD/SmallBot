@@ -4,7 +4,7 @@ import { client, isDev } from "../../app";
 import { atUser } from "../../functions/discord/mention";
 import { isReply, isSelfMessage } from "../../functions/discord/verify";
 import { tag } from "../../functions/general/string";
-import { Activity } from "../Activity";
+import { ChannelActivity } from "../Activity";
 import { tryCatch, tryCatch_flat } from "../Basic/GeneralTypes";
 import { Report } from "../MessageFeature";
 import { GrokModelInfo, GrokSupportedMessageParam } from "./types";
@@ -16,7 +16,8 @@ type Key = { key: string, inuse: boolean };
 const GrokKeys = config.models.grok.keys
     .map(k => ({ key: k, inuse: false }));
 
-export class Chat extends Activity {
+export class Chat extends ChannelActivity {
+    readonly name: string = '';
     protected stack: Chat.MessageStack = [];
     protected status: Chat.Status;
     private usersmessages: Chat.UserMessage[] = [];

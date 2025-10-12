@@ -1,11 +1,8 @@
 import { GuildTextBasedChannel, Message, Snowflake } from "discord.js";
-import { v4 } from "uuid";
 import { Result } from "./Basic/GeneralTypes";
 
-export abstract class Activity {
-    // readonly location: ChannelLocation;
-
-    // constructor() { }
+export abstract class ChannelActivity {
+    abstract readonly name: string;
 
     abstract onMessage(message: Message): void;
 
@@ -13,30 +10,31 @@ export abstract class Activity {
 }
 
 export class ActivityManager {
-    private static activities: Map<Snowflake, Activity> = new Map();
+    private static activities: Map<Snowflake, ChannelActivity> = new Map();
 
     constructor() { }
 
-    static registerActivity<T extends Activity = Activity>(
+    static registerActivity<T extends ChannelActivity = ChannelActivity>(
         channel: GuildTextBasedChannel,
-        ActivityConstructor: new () => T
+        ActivityConstructor: () => T
     ): Result<T, string> {
         if (channel === null) return [null, 'channel is null.'];
-        if (this.activities.has(channel.id)) return [null, 'Channel is occupied.'];
+        if (this.activities.has(channel.id))
+            return [null, `Channel is occupied by service: ${this.activities.get(channel.id)!.name}.`];
 
-        const activity = new ActivityConstructor();
+        const activity = ActivityConstructor();
         this.activities.set(channel.id, activity);
         return [activity, null];
     }
 
-    static getActivity(channelId: Snowflake): Activity | undefined {
+    static getActivity(channelId: Snowflake): ChannelActivity | undefined {
         const activity = this.activities.get(channelId);
         if (activity) return activity;
 
         return undefined;
     }
 
-    static revokeActivity(channelId: Snowflake, activity: Activity): Result<boolean, string> {
+    static revokeActivity(channelId: Snowflake, activity: ChannelActivity): Result<boolean, string> {
         const existingActivity = this.activities.get(channelId);
         if (existingActivity === activity) {
             existingActivity.stop();

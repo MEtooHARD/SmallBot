@@ -4,9 +4,9 @@
  * 註冊所有可用的 LLM 適配器
  */
 
-import { AdapterFactory } from './BaseAdapter';
-import { GrokAdapter } from './GrokAdapter';
-import { GrokModels } from './Wrapper';
+import { AdapterFactory } from './_BaseAdapter';
+import { GrokAdapter } from './_GrokAdapter';
+import { GrokModels } from '../Wrapper';
 
 /**
  * 初始化所有 LLM 適配器

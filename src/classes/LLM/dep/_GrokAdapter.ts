@@ -4,8 +4,8 @@
  * 將通用格式轉換為 Grok API 格式,並處理 Grok 特有的功能
  */
 
-import { Result, tryCatch_flat } from '../Basic/GeneralTypes';
-import { LLMAdapter } from './BaseAdapter';
+import { Result, tryCatch_flat } from '../../Basic/GeneralTypes';
+import { LLMAdapter } from './_BaseAdapter';
 import {
     UniversalChatRequest,
     UniversalChatResponse,
@@ -16,22 +16,19 @@ import {
     ModelInfo,
     LLMError,
     LLMErrorType,
-} from './UniversalTypes';
+} from './_UniversalTypes';
 import {
     GrokModelInfo,
     GrokChatCompletion,
     GrokSupportedMessageParam,
     GrokPostParams,
-} from './types';
-import { GrokModel } from './Wrapper';
+} from './../types';
+import { GrokModel } from './../Wrapper';
 
 /**
  * Grok 適配器
  */
 export class GrokAdapter extends LLMAdapter {
-    estimateTokens(text: string): number {
-        throw new Error('Method not implemented.');
-    }
     private grokModel: GrokModel<GrokModelInfo>;
 
     constructor(apiKey: string, modelName: string) {

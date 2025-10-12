@@ -5,10 +5,10 @@
  */
 
 // 初始化適配器 (必須先執行)
-import './init';
+import './dep/init';
 
 // 主要 API
-export { UniversalLLM, LLMSessionConfig } from './UniversalLLM';
+export { UniversalLLM, LLMSessionConfig } from './dep/_UniversalLLM';
 
 // 類型定義
 export {
@@ -38,11 +38,11 @@ export {
     // 錯誤
     LLMError,
     LLMErrorType,
-} from './UniversalTypes';
+} from './dep/_UniversalTypes';
 
 // 適配器相關 (通常不需要直接使用)
-export { LLMAdapter, AdapterFactory } from './BaseAdapter';
-export { GrokAdapter } from './GrokAdapter';
+export { LLMAdapter, AdapterFactory } from './_BaseAdapter';
+export { GrokAdapter } from './_GrokAdapter';
 
 // 工廠函數
-export { initializeLLMAdapters } from './init';
+export { initializeLLMAdapters } from './dep/init';

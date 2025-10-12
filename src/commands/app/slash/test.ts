@@ -1,6 +1,9 @@
 import { AutocompleteInteraction, ChatInputCommandInteraction, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import { Result_ } from "../../../classes/Basic/GeneralTypes";
 import { ChatInputValidator, SlashCommand } from "../../../classes/Command";
+// import { Grok } from "../../../classes/LLM/__GrokAdapter";
+import { ActivityManager } from "../../../classes/Activity";
+import { Chat } from "../../../classes/LLM/__Chat";
 
 export class test extends SlashCommand {
     activated = true;
@@ -12,7 +15,7 @@ export class test extends SlashCommand {
         .setDescription('test')
         .setContexts(
             InteractionContextType.Guild,
-            InteractionContextType.BotDM
+            // InteractionContextType.BotDM
         )
         .addStringOption(option => option
             .setName('model')
@@ -37,6 +40,7 @@ export class test extends SlashCommand {
                 'You are not allowed to use this command.'];
         };
 
-    executor = async (interaction: ChatInputCommandInteraction) => {
+    executor = async (interaction: ChatInputCommandInteraction<'cached'>) => {
+        // ActivityManager.registerActivity(interaction.channel!, () => new Chat(Grok));
     }
 }

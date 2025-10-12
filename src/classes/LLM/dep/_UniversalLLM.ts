@@ -9,8 +9,8 @@
  * 4. 記錄和統計
  */
 
-import { Result } from '../Basic/GeneralTypes';
-import { LLMAdapter, AdapterFactory } from './BaseAdapter';
+import { Result } from '../../Basic/GeneralTypes';
+import { LLMAdapter, AdapterFactory } from './_BaseAdapter';
 import {
     UniversalChatRequest,
     UniversalChatResponse,
@@ -18,7 +18,7 @@ import {
     UniversalMessage,
     ModelInfo,
     LLMError,
-} from './UniversalTypes';
+} from './_UniversalTypes';
 
 /**
  * LLM 會話配置

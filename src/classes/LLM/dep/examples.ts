@@ -4,8 +4,8 @@
  * 展示如何使用新的通用 LLM 架構
  */
 
-import { UniversalLLM } from './UniversalLLM';
-import { UniversalMessage } from './UniversalTypes';
+import { UniversalLLM } from './_UniversalLLM';
+import { UniversalMessage } from './_UniversalTypes';
 import './init'; // 確保適配器已註冊
 
 // ==================== 範例 1: 簡單對話 ====================

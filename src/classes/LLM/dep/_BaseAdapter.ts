@@ -8,7 +8,7 @@
  * 3. 處理該服務特有的功能和限制
  */
 
-import { Result } from '../Basic/GeneralTypes';
+import { Result } from '../../Basic/GeneralTypes';
 import {
     UniversalChatRequest,
     UniversalChatResponse,
@@ -16,11 +16,8 @@ import {
     UniversalCost,
     ModelInfo,
     LLMError,
-} from './UniversalTypes';
+} from './_UniversalTypes';
 
-/**
- * LLM 適配器抽象基類
- */
 export abstract class LLMAdapter {
     constructor(
         protected apiKey: string,
@@ -90,7 +87,7 @@ export abstract class LLMAdapter {
      * 輔助方法: 計算訊息中的 token 數 (粗略估計)
      * 各個適配器可以覆寫這個方法使用更精確的計算
      */
-    abstract estimateTokens(text: string): number;
+    // abstract estimateTokens(text: string): number;
 
     /**
      * 取得模型資訊
