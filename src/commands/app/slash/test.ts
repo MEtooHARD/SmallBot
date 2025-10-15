@@ -4,6 +4,12 @@ import { ChatInputValidator, SlashCommand } from "../../../classes/Command";
 // import { Grok } from "../../../classes/LLM/__GrokAdapter";
 import { ActivityManager } from "../../../classes/Activity";
 import { Chat } from "../../../classes/LLM/__Chat";
+import { Grok } from "../../../classes/LLM/Grok/GrokAdapter";
+
+import config from '../../../config.json';
+
+const temp_keyring = new Keyring();
+const temp_key = temp_keyring.createKey('xAI', 'grok_1', config.models.grok.keys[0]);
 
 export class test extends SlashCommand {
     activated = true;
@@ -41,6 +47,10 @@ export class test extends SlashCommand {
         };
 
     executor = async (interaction: ChatInputCommandInteraction<'cached'>) => {
-        // ActivityManager.registerActivity(interaction.channel!, () => new Chat(Grok));
+        ActivityManager.registerActivity(interaction.channel!, () => new Chat(Grok._4, [temp_key]));
+        await interaction.reply({
+            flags: ['Ephemeral'],
+            content: 'Activated.'
+        });
     }
 }

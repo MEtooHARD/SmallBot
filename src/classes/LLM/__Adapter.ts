@@ -1,7 +1,4 @@
-import { ULLMTypes } from "./__Types";
-import { KEYType } from "./KEY";
-
-
+import { ULLM } from "./__Types";
 
 export abstract class Adapter {
     abstract readonly model_info: {
@@ -10,5 +7,5 @@ export abstract class Adapter {
 
     protected constructor() { }
 
-    abstract post(req: ULLMTypes.ChatRequest): Promise<ULLMTypes.Response>;
+    abstract post(req: ULLM.ChatRequest): Promise<ULLM.Response>;
 }

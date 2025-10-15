@@ -28,3 +28,14 @@ export namespace TimeStamp {
     };
 };
 
+export const EmojiRegex = /<a?:(\w+):(\d{19})>/g;
+
+/**
+ * @returns [isAnimated, name, id]
+ */
+export type EmojiRepresentation = [boolean, string, string];
+
+export function* extractEmojis(content: string): Generator<EmojiRepresentation> {
+    for (const match of content.matchAll(EmojiRegex))
+        yield [match[0].startsWith('<a:'), match[1], match[2]];
+}
