@@ -1,0 +1,397 @@
+============Chat============
+[grok-4-fast-reasoning] received from: SmallBot_dev
+Content: Activated. Model: grok-4-fast-reasoning
+Files: 0
+============Chat============
+[grok-4-fast-reasoning] received from: Deleted Account
+Content: write me a simple hash map in cpp 
+Files: 0
+passed self-check
+arranged history
+passed status-check
+calling LLM
+===params===
+{
+  model: 'grok-4-fast-reasoning',
+  messages: [
+    { role: 'system', content: 'You are a discord user.' },
+    { role: 'user', content: [Array], name: 'metoohard' }
+  ],
+  search_parameters: {},
+  stream: true,
+  stream_options: { include_usage: true }  
+}
+===messages===
+[
+  { role: 'system', content: 'You are a discord user.' },
+  { role: 'user', content: [ [Object] ], name: 'metoohard' }
+]
+===contents===
+You are a discord user.
+[ { type: 'text', text: 'write me a simple 
+hash map in cpp' } ]
+Response headers: text/event-stream
+============Response===========
+Stream response start
+In GatherLines: { role: 'assistant' }
+[CHUNK]: { role: 'assistant' }
+In GatherLines: {
+  content: "Sure, here's a basic hash map implementation in C++ from scratch. It uses 
+separate chaining (lists for collisions) and a simple hash function for integers. I kept it super simple—no templates or fancy stuff."
+}
+In GatherLines: { content: '' }
+In GatherLines: { content: '```cpp', code: 
+'start', lang: 'cpp' }
+[CHUNK]: {
+  content: "Sure, here's a basic hash map implementation in C++ from scratch. It uses 
+separate chaining (lists for collisions) and a simple hash function for integers. I kept it super simple—no templates or fancy stuff.\n"
+}
+In GatherLines: { content: '#include <iostream>', code: 'middle', lang: 'cpp' }       
+In GatherLines: { content: '#include <vector>', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '#include <list>', code: 'middle', lang: 'cpp' }
+In GatherLines: {
+  content: '#include <functional>  // For std::hash',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: 'class SimpleHashMap {', code: 'middle', lang: 'cpp' }     
+In GatherLines: { content: 'private:', code: 'middle', lang: 'cpp' }
+In GatherLines: {
+  content: '    static const int TABLE_SIZE = 100;  // Number of buckets',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '    std::vector<std::list<std::pair<int, std::string>>> table;  // Buckets: key=int, value=string',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: {
+  content: '    // Simple hash function for int keys',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '    size_t hash(int key) {', code: 'middle', lang: 'cpp' }In GatherLines: {
+  content: '        return (key % TABLE_SIZE + TABLE_SIZE) % TABLE_SIZE;  // Handle negative keys',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '    }', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: 'public:', code: 'middle', lang: 'cpp' }
+In GatherLines: {
+  content: '    SimpleHashMap() : table(TABLE_SIZE) {}',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: {
+  content: '    // Insert or update key-value pair',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '    void insert(int key, std::string value) {',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '        size_t index = hash(key);',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '        auto& bucket = table[index];',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: {
+  content: '        // Check if key exists, update if so',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '        for (auto& pair : bucket) {',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '            if (pair.first == key) {',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '                pair.second = value;',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '
+ return;', code: 'middle', lang: 'cpp' }   
+In GatherLines: { content: '            }', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '        }', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '        // Insert new pair', code: 'middle', lang: 'cpp' }In GatherLines: {
+  content: '        bucket.push_back({key, 
+value});',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '    }', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: {
+  content: '    // Get value by key, return empty string if not found',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '    std::string get(int key) {',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '        size_t index = hash(key);',
+  code: 'middle',
+  lang: 'cpp'
+}
+[CHUNK]: {
+  content: '```cpp\n' +
+    '#include <iostream>\n' +
+    '#include <vector>\n' +
+    '#include <list>\n' +
+    '#include <functional>  // For std::hash\n' +
+    '\n' +
+    'class SimpleHashMap {\n' +
+    'private:\n' +
+    '    static const int TABLE_SIZE = 100;  // Number of buckets\n' +
+    '    std::vector<std::list<std::pair<int, std::string>>> table;  // Buckets: key=int, value=string\n' +
+    '\n' +
+    '    // Simple hash function for int keys\n' +
+    '    size_t hash(int key) {\n' +       
+    '        return (key % TABLE_SIZE + TABLE_SIZE) % TABLE_SIZE;  // Handle negative 
+keys\n' +
+    '    }\n' +
+    '\n' +
+    'public:\n' +
+    '    SimpleHashMap() : table(TABLE_SIZE) {}\n' +
+    '\n' +
+    '    // Insert or update key-value pair\n' +
+    '    void insert(int key, std::string value) {\n' +
+    '        size_t index = hash(key);\n' +    '        auto& bucket = table[index];\n' +
+    '\n' +
+    '        // Check if key exists, update if so\n' +
+    '        for (auto& pair : bucket) {\n' +
+    '            if (pair.first == key) {\n' +
+    '                pair.second = value;\n' +
+    '                return;\n' +
+    '            }\n' +
+    '        }\n' +
+    '\n' +
+    '        // Insert new pair\n' +       
+    '        bucket.push_back({key, value});\n' +
+    '    }\n' +
+    '\n' +
+    '    // Get value by key, return empty 
+string if not found\n' +
+    '    std::string get(int key) {\n' +   
+    '        size_t index = hash(key);'    
+}
+In GatherLines: {
+  content: '        auto& bucket = table[index];',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: {
+  content: '        for (const auto& pair : bucket) {',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '            if (pair.first == key) {',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '                return pair.second;',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '            }', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '        }', code: 'middle', lang: 'cpp' }
+In GatherLines: {
+  content: '        return "";  // Key not 
+found',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '    }', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '    // Remove key', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '    void remove(int key) {', code: 'middle', lang: 'cpp' }In GatherLines: {
+  content: '        size_t index = hash(key);',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '        auto& bucket = table[index];',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: {
+  content: '        for (auto it = bucket.begin(); it != bucket.end(); ++it) {',      
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '            if (it->first == key) {',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '                bucket.erase(it);',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '
+ return;', code: 'middle', lang: 'cpp' }   
+In GatherLines: { content: '            }', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '        }', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '    }', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '};', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: 'int main() {', 
+code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '    SimpleHashMap map;', code: 'middle', lang: 'cpp' }    
+In GatherLines: { content: '    map.insert(1, "apple");', code: 'middle', lang: 'cpp' 
+}
+In GatherLines: {
+  content: '    map.insert(2, "banana");', 
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '    map.insert(101, "cherry"); 
+ // Collides with 1 (101 % 100 = 1)',      
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: {
+  content: '    std::cout << map.get(1) << 
+std::endl;    // apple',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '    std::cout << map.get(2) << 
+std::endl;    // banana',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: {
+  content: '    std::cout << map.get(3) << 
+std::endl;    // (empty)',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '    map.remove(1);', code: 'middle', lang: 'cpp' }        
+In GatherLines: {
+  content: '    std::cout << map.get(1) << 
+std::endl;    // (empty)',
+  code: 'middle',
+  lang: 'cpp'
+}
+In GatherLines: { content: '', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '    return 0;', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '}', code: 'middle', lang: 'cpp' }
+In GatherLines: { content: '```', code: 'end', lang: 'cpp' }
+In GatherLines: { content: '' }
+[CHUNK]: {
+  content: '        auto& bucket = table[index];\n' +
+    '\n' +
+    '        for (const auto& pair : bucket) {\n' +
+    '            if (pair.first == key) {\n' +
+    '                return pair.second;\n' +
+    '            }\n' +
+    '        }\n' +
+    '        return "";  // Key not found\n' +
+    '    }\n' +
+    '\n' +
+    '    // Remove key\n' +
+    '    void remove(int key) {\n' +
+    '        size_t index = hash(key);\n' +    '        auto& bucket = table[index];\n' +
+    '\n' +
+    '        for (auto it = bucket.begin(); it != bucket.end(); ++it) {\n' +
+    '            if (it->first == key) {\n' +
+    '                bucket.erase(it);\n' +    '                return;\n' +
+    '            }\n' +
+    '        }\n' +
+    '    }\n' +
+    '};\n' +
+    '\n' +
+    'int main() {\n' +
+    '    SimpleHashMap map;\n' +
+    '    map.insert(1, "apple");\n' +
+    '    map.insert(2, "banana");\n' +
+    '    map.insert(101, "cherry");  // Collides with 1 (101 % 100 = 1)\n' +
+    '\n' +
+    '    std::cout << map.get(1) << std::endl;    // apple\n' +
+    '    std::cout << map.get(2) << std::endl;    // banana\n' +
+    '    std::cout << map.get(3) << std::endl;    // (empty)\n' +
+    '\n' +
+    '    map.remove(1);\n' +
+    '    std::cout << map.get(1) << std::endl;    // (empty)\n' +
+    '\n' +
+    '    return 0;\n' +
+    '}\n' +
+    '```',
+  code: 'complete',
+  lang: 'cpp'
+}
+In GatherLines: {
+  usage: {
+    prompt_tokens: 177,
+    completion_tokens: 611,
+    total_tokens: 1037,
+    prompt_tokens_details: {
+      text_tokens: 177,
+      audio_tokens: 0,
+      image_tokens: 0,
+      cached_tokens: 167
+    },
+    completion_tokens_details: {
+      reasoning_tokens: 249,
+      audio_tokens: 0,
+      accepted_prediction_tokens: 0,
+      rejected_prediction_tokens: 0
+    },
+    num_sources_used: 0
+  }
+}
+[CHUNK]: { content: '' }
+[CHUNK]: {
+  usage: {
+    prompt_tokens: 177,
+    completion_tokens: 611,
+    total_tokens: 1037,
+    prompt_tokens_details: {
+      text_tokens: 177,
+      audio_tokens: 0,
+      image_tokens: 0,
+      cached_tokens: 167
+    },
+    completion_tokens_details: {
+      reasoning_tokens: 249,
+      audio_tokens: 0,
+      accepted_prediction_tokens: 0,
+      rejected_prediction_tokens: 0
+    },
+    num_sources_used: 0
+  }
+}
+===============================

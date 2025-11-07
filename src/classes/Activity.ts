@@ -16,13 +16,13 @@ export class ActivityManager {
 
     static registerActivity<T extends ChannelActivity = ChannelActivity>(
         channel: GuildTextBasedChannel,
-        ActivityConstructor: () => T
+        activityFactory: () => T
     ): Result<T, string> {
         if (channel === null) return [null, 'channel is null.'];
         if (this.activities.has(channel.id))
-            return [null, `Channel is occupied by service: ${this.activities.get(channel.id)!.name}.`];
+            return [null, `Channel is occupied by service: **${this.activities.get(channel.id)!.name}**`];
 
-        const activity = ActivityConstructor();
+        const activity = activityFactory();
         this.activities.set(channel.id, activity);
         return [activity, null];
     }

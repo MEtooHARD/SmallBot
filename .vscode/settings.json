@@ -74,6 +74,7 @@
     "C_Cpp_Runner.msvcSecureNoWarnings": false,
     "debug.console.fontSize": 12,
     "terminal.integrated.fontSize": 10,
+    "terminal.integrated.scrollback": 10000,
     "editor.scrollbar.horizontalScrollbarSize": 12,
     "editor.scrollbar.verticalScrollbarSize": 14
 }

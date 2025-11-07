@@ -1,7 +1,7 @@
-import { Snowflake, TextChannel } from "discord.js";
+import { SendableChannels, Snowflake, TextBasedChannel, TextChannel } from "discord.js";
 import { delaySec } from "../general/delay";
 
-export async function typing(channel: TextChannel, sec: number): Promise<void> {
+export async function typing(channel: SendableChannels, sec: number): Promise<void> {
     await channel.sendTyping();
     await delaySec(sec);
 }
