@@ -13,9 +13,9 @@ import { randomPick } from "../../../functions/general/array";
 
 
 export class ii45i4_mc extends MessageContextMenuCommand {
-    activated: Readonly<boolean> = true;
+    override activated: Readonly<boolean> = true;
 
-    requiredPerms: bigint[] = [PermissionFlagsBits.SendMessages];
+    override requiredPerms: bigint[] = [PermissionFlagsBits.SendMessages];
 
     data: ContextMenuCommandBuilder = new ContextMenuCommandBuilder()
         .setName('114514')
@@ -29,7 +29,7 @@ export class ii45i4_mc extends MessageContextMenuCommand {
             ApplicationIntegrationType.GuildInstall
         );
 
-    verify: MessageContextMenuValidator = (interaction): Result_<string, string> => {
+    override verify: MessageContextMenuValidator = (interaction): Result_<string, string> => {
         // const hasImage = interaction.targetMessage.attachments
         //     .filter(_ => _.contentType && supported.includes(_.contentType))
         //     .size > 0;

@@ -3,7 +3,7 @@ import { SlashCommand } from "../../../classes/Command";
 import T0FE from "../../../classes/games/T0FE";
 
 export class t0fe extends SlashCommand {
-    activated = true;
+    override activated = true;
 
     data = new SlashCommandBuilder()
         .setName('2048')

@@ -62,7 +62,7 @@ abstract class AppCommand<T extends ApplicationCommandType> {
 
 export abstract class SlashCommand extends AppCommand<ApplicationCommandType.ChatInput> {
     complete?(interaction: AutocompleteInteraction): Promise<void>;
-    abstract executor(interaction: ChatInputCommandInteraction<CacheType>): Promise<void>;
+    abstract override executor(interaction: ChatInputCommandInteraction<CacheType>): Promise<void>;
 };
 
 export abstract class MessageContextMenuCommand extends AppCommand<ApplicationCommandType.Message> {

@@ -9,7 +9,7 @@ const items: string[] = [
 ];
 
 export class stink extends SlashCommand {
-    activated = true;
+    override activated = true;
 
     data = new SlashCommandBuilder()
         .setName('stink')
@@ -32,7 +32,7 @@ export class stink extends SlashCommand {
 
 
 export class please extends SlashCommand {
-    activated = true;
+    override activated = true;
 
     data = new SlashCommandBuilder()
         .setName('please')

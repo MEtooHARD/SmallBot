@@ -8,9 +8,9 @@ const editSubmit = async (interaction: ModalSubmitInteraction, orderlist: OrderL
 
     try {
         const response = await interaction.deferUpdate();
-        const [restaurant, description] = [interaction.components[0].components[0].value, interaction.components[1].components[0].value];
-        orderlist.setRestaurant(restaurant);
-        orderlist.setDescription(description);
+        // const [restaurant, description] = [interaction.components[0].components[0].value, interaction.components[1].components[0].value];
+        // orderlist.setRestaurant(restaurant);
+        // orderlist.setDescription(description);
 
         await response.edit({
             embeds: [orderlist.board()],

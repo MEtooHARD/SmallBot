@@ -23,7 +23,7 @@ export class wife extends UserContextMenuCommand {
             InteractionContextType.PrivateChannel
         );
 
-    requiredPerms: bigint[] = [
+    override requiredPerms: bigint[] = [
         PermissionFlagsBits.AttachFiles,
     ]
 

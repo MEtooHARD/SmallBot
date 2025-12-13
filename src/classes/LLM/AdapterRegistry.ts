@@ -1,14 +1,18 @@
-import { ULLM } from "./__Types";
+import { UniLLM } from "./__Types";
 import { Adapter } from "./__Adapter";
 import { Grok } from "./Grok/GrokAdapter";
+import { Gemini } from "./Gemini/GeminiAdapter";
 
-export const AdapterProviders: { [key in ULLM.Providers]?: Adapter[] } = {
+export const AdapterProviders: { [key in UniLLM.Providers]?: Adapter[] } = {
     xai: [
         Grok._4,
         Grok._4_fast_reasoning,
-        Grok._3_mini
+        Grok._3_mini,
+        Grok._4_1_fast_reasoning
     ],
-    // google: []
+    google: [
+        // Gemini
+    ]
 }
 
 export const AdapterNameMapping: { [key: string]: Adapter }

@@ -14,41 +14,40 @@ import { emojiUrl } from "../../../functions/discord/messaging";
 import { GuildMessage } from "../../Basic/DiscordTypes";
 import { Result, tryCatch } from "../../Basic/GeneralTypes";
 import { Adapter } from "../__Adapter";
-import { ULLM } from "../__Types";
+import { UniLLM } from "../__Types";
 import { FetchProxy } from "../Keyring";
-import { grok_3_mini_info, grok_4_fast_reasoning_info, grok_4_info } from "./ModelInfo";
+import { grok_3_mini_info, grok_4_1_fast_reasoning_info, grok_4_fast_reasoning_info, grok_4_info } from "./ModelInfo";
 import chalk from "chalk";
+import { dev_log } from "../../../functions/general/log";
 
 
-type GrokMedia = ULLM.Media<'url', string, Omit<ULLM.MediaOrigin, 'sticker'>>;
+type GrokMedia = UniLLM.Media<'url', string, Omit<UniLLM.MediaOrigin, 'sticker'>>;
 
 // #region GrokAdapter
 abstract class GrokAdapter extends Adapter implements Adapter {
     readonly Provider: string = 'xai';
-    abstract readonly model_info: GrokModelInfo;
+    abstract override readonly model_info: GrokModelInfo;
 
     protected static readonly ChatCompletionURL = 'https://api.x.ai/v1/chat/completions';
 
-    protected readonly supMimeTypes: string[] = Object.values(ULLM.MediaType);
-    protected readonly supMediaRepresentations: ULLM.MediaRepresentation[] = ['url'];
+    protected readonly supMimeTypes: string[] = Object.values(UniLLM.MediaType);
+    protected readonly supMediaRepresentations: UniLLM.MediaRepresentation[] = ['url'];
 
     constructor() { super(); }
     // #region post
-    async post(fetch: FetchProxy, req: ULLM.ChatRequest & { stream: true }): Promise<ULLM.StreamResponse>;
-    async post(fetch: FetchProxy, req: ULLM.ChatRequest & { stream?: false }): Promise<ULLM.NonStreamResponse>;
-    async post(fetch: FetchProxy, req: ULLM.ChatRequest): Promise<ULLM.Response> {
+    async post(fetch: FetchProxy, req: UniLLM.ChatRequest & { stream: true }): Promise<UniLLM.StreamResponse>;
+    async post(fetch: FetchProxy, req: UniLLM.ChatRequest & { stream?: false }): Promise<UniLLM.NonStreamResponse>;
+    async post(fetch: FetchProxy, req: UniLLM.ChatRequest): Promise<UniLLM.Response> {
         const input_messages = this.formInputMessageSeq(req);
         const headers = this.buildHeaders(req);
         const params = this.buildParams(input_messages, req);
 
-        if (isDev) {
-            console.log('===params===');
-            console.log(params);
-            console.log('===messages===');
-            console.log(params.messages);
-            console.log('===contents===');
-            for (const msg of params.messages) console.log(msg.content);
-        }
+        dev_log('===params===');
+        dev_log(params);
+        dev_log('===messages===');
+        dev_log(params.messages);
+        dev_log('===contents===');
+        for (const msg of params.messages) dev_log(msg.content);
 
         const [res, err] = await tryCatch<Response>(
             fetch(GrokAdapter.ChatCompletionURL, {
@@ -69,7 +68,7 @@ abstract class GrokAdapter extends Adapter implements Adapter {
 
         // Stream mode: 回傳 ReadableStream
         if (req.stream) {
-            if (isDev) console.log(`Response headers: ${res.headers.get('content-type')}`);
+            dev_log(`Response headers: ${res.headers.get('content-type')}`);
             if (!res.body) throw new Error('No stream body');
             return { stream: this.parseSSEStream(res.body) };
         }
@@ -82,10 +81,12 @@ abstract class GrokAdapter extends Adapter implements Adapter {
         const content = data.choices?.[0]?.message?.content;
         if (!content) throw new Error('No content in response');
 
-        return { content } as ULLM.NonStreamResponse;
+        return { content } as UniLLM.NonStreamResponse;
     }
 
-    async *parseSSEStream(stream: ReadableStream): AsyncGenerator<ULLM.Chunk, void, unknown> {
+    async *parseSSEStream(
+        stream: ReadableStream
+    ): AsyncGenerator<UniLLM.Chunk, void, unknown> {
         const reader = stream.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
@@ -107,7 +108,19 @@ abstract class GrokAdapter extends Adapter implements Adapter {
 
                     try {
                         const json = JSON.parse(data);
-                        const delta = json.choices?.[0]?.delta;
+                        const choice0 = json.choices[0];
+
+                        if ('usage' in json) { // usage
+                            yield { usage: json.usage }
+                            continue;
+                        }
+
+                        if (!choice0) { // idk what this can be
+                            console.log('no choice 0:', json);
+                            continue;
+                        }
+
+                        const delta = choice0.delta;
                         let yielded: boolean = false;
 
                         if (isDev) {
@@ -124,26 +137,31 @@ abstract class GrokAdapter extends Adapter implements Adapter {
                             continue;
                         }
 
-                        if (delta.role) {
-                            yield { role: delta.role };
+                        // console.log('in adapter:', delta);
+
+                        if ('role' in delta) {
+                            yield { role: UniLLM.Role.SELF };
                             yielded = true;
                         }
-                        if (delta.content) {
-                            yield { content: delta.content };
+                        if ('content' in delta) {
+                            yield { content: delta.content as string };
                             yielded = true;
                         }
-                        if (delta.reasoning_content) {
+                        if ('reasoning_content' in delta) {
                             yield { reasoning: delta.reasoning_content };
                             yielded = true;
                         }
-                        if (delta.finish_reason) {
+                        if ('finish_reason' in choice0) {
                             yield {
-                                finishReason: delta.finish_reason,
-                                citations: json.citations || undefined
+                                finish_reason: choice0.finish_reason,
+                                // citations: json.citations || undefined
                             };
                             yielded = true;
                         }
-                        if (!yielded) console.warn(chalk.red('Unprocessed chunk:'), delta);
+                        if (!yielded) {
+                            console.warn(chalk.red('Unprocessed chunk:'), delta);
+                            console.warn('choice 0:', json.choices[0]);
+                        }
                     } catch (err) {
                         console.error('Failed to parse SSE chunk:', data, err);
                     }
@@ -156,17 +174,17 @@ abstract class GrokAdapter extends Adapter implements Adapter {
     //#endregion
 
     protected * formInputMessageSeq(
-        req: ULLM.ChatRequest
-    ): Generator<ULLM.InputMessage> {
+        req: UniLLM.ChatRequest
+    ): Generator<UniLLM.InputMessage> {
         yield* req.system_prompts;
         yield* req.dc_messages;
     }
 
-    protected buildHeaders(req: ULLM.ChatRequest): Record<string, string> { return {} }
+    protected buildHeaders(req: UniLLM.ChatRequest): Record<string, string> { return {} }
 
     protected buildParams(
-        input_messages: IterableIterator<ULLM.InputMessage>,
-        req: ULLM.ChatRequest
+        input_messages: IterableIterator<UniLLM.InputMessage>,
+        req: UniLLM.ChatRequest
     ): GrokPostParams<GrokModelInfo> {
         const messages = Array.from(this.transformMessages(input_messages, req));
 
@@ -180,13 +198,13 @@ abstract class GrokAdapter extends Adapter implements Adapter {
     };
 
     protected * transformMessages(
-        messages: IterableIterator<ULLM.InputMessage>,
-        req: ULLM.ChatRequest
+        messages: IterableIterator<UniLLM.InputMessage>,
+        req: UniLLM.ChatRequest
     ): Generator<GrokSupportedMessageParam> {
         for (const message of messages)
             switch (message.role) {
-                case ULLM.Role.USER:
-                case ULLM.Role.BOT:
+                case UniLLM.Role.USER:
+                case UniLLM.Role.BOT:
                     const content: GrokContentPart[] = [];
                     // Add text
                     content.push(...this.toTextContent(message.obj));
@@ -196,10 +214,10 @@ abstract class GrokAdapter extends Adapter implements Adapter {
                     if (content.length > 0)
                         yield { role: 'user', content, name: message.obj.author.username };
                     break;
-                case ULLM.Role.SELF:
+                case UniLLM.Role.SELF:
                     yield { role: 'assistant', content: message.content };
                     break;
-                case ULLM.Role.SYSTEM:
+                case UniLLM.Role.SYSTEM:
                     yield { role: 'system', content: message.content };
                     break;
             }
@@ -208,7 +226,7 @@ abstract class GrokAdapter extends Adapter implements Adapter {
     protected * toTextContent(message: GuildMessage): Generator<GrokContentPart> {
         if (message.content.length > 0) yield { type: 'text', text: message.content };
     }
-    protected * collectMedia(message: GuildMessage, req: ULLM.ChatRequest): Generator<GrokMedia> {
+    protected * collectMedia(message: GuildMessage, req: UniLLM.ChatRequest): Generator<GrokMedia> {
         if (req.include_custom_emoji) yield* this.collectEmojiMedia(message.content);
         if (req.include_images) yield* this.collectImageMedia(message.attachments.values());
     }
@@ -236,6 +254,7 @@ abstract class GrokAdapter extends Adapter implements Adapter {
 class Grok_4 extends GrokAdapter { readonly model_info = grok_4_info; }
 class Grok_4_fast_reasoning extends GrokAdapter { readonly model_info = grok_4_fast_reasoning_info; }
 class Grok_3_mini extends GrokAdapter { readonly model_info = grok_3_mini_info; }
+class Grok_4_1_fast_reasoning extends GrokAdapter { readonly model_info: GrokModelInfo = grok_4_1_fast_reasoning_info; }
 
 export class Grok {
     private constructor() { }
@@ -243,6 +262,7 @@ export class Grok {
     static readonly _4 = new Grok_4();
     static readonly _4_fast_reasoning = new Grok_4_fast_reasoning();
     static readonly _3_mini = new Grok_3_mini();
+    static readonly _4_1_fast_reasoning = new Grok_4_1_fast_reasoning();
 }
 // #endregion
 
@@ -263,12 +283,12 @@ export interface GrokModelInfo {
         readonly Reasoning: boolean
     }
     readonly RateLimits: {
-        readonly request: ULLM.RPM<number> | ULLM.RPS<number> | null,
-        readonly token: ULLM.TPM<number> | null
+        readonly request: UniLLM.RPM<number> | UniLLM.RPS<number> | null,
+        readonly token: UniLLM.TPM<number> | null
     };
 
-    readonly Pricing: ULLM.Pricing;
-    readonly HighPricing: Partial<ULLM.Pricing>;
+    readonly Pricing: UniLLM.Pricing;
+    readonly HighPricing: Partial<UniLLM.Pricing>;
     readonly LiveSearchPricing: number | null;
     readonly HighInputPoint: number | null;
     readonly Context: number;

@@ -5,7 +5,7 @@ import { Referendum } from "../../../classes/Referendum";
 import { ConnectionStates } from "mongoose";
 
 export class referendum extends SlashCommand {
-    activated = true;
+    override activated = true;
 
     data = new SlashCommandBuilder()
         .setName('referendum')

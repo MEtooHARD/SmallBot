@@ -22,12 +22,11 @@ export class gay extends UserContextMenuCommand {
             InteractionContextType.PrivateChannel
         );
 
-    requiredPerms: bigint[] = [
+    override requiredPerms: bigint[] = [
         PermissionFlagsBits.AttachFiles,
     ]
 
-    async executor(interaction: UserContextMenuCommandInteraction) {
-
+    override async executor(interaction: UserContextMenuCommandInteraction) {
         await interaction.deferReply();
 
         try {

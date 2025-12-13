@@ -12,9 +12,9 @@ const creation = async (interaction: ModalSubmitInteraction, svcInfo: string[]) 
 
     const orderlist = new OrderList(interaction.user/* , interaction.client */);
 
-    orderlist.setRestaurant(interaction.components[0].components[0].value);
-    if (interaction?.components[1]?.components[0])
-        orderlist.setDescription(interaction.components[1].components[0].value);
+    // orderlist.setRestaurant(interaction.components[0].components[0].value);
+    // if (interaction?.components[1]?.components[0])
+    //     orderlist.setDescription(interaction.components[1].components[0].value);
 
     const response = await interaction.reply({
         embeds: [orderlist.board()],

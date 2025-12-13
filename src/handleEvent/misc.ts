@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { BaseInteraction, Client, Colors, Guild, GuildMember, Message, MessageComponentInteraction, PermissionFlagsBits, PermissionsBitField, TextChannel, VoiceState } from "discord.js";
-import { botConfig, Services, session, shouldLogIgnoredCustomID } from "../app";
+import { botConfig, client, Services, session, shouldLogIgnoredCustomID } from "../app";
 import { ActivityManager } from "../classes/Activity";
 import { tryCatch } from "../classes/Basic/GeneralTypes";
 import { Manager } from "../classes/Basic/Manager";
@@ -40,14 +40,14 @@ export const handleClientReady = async (client: Client): Promise<void> => {
 
 const MCommands: MessageCommand[] = (() => {
     const list = [say];
+    // list.push(reloadSC);
     if (session === 'dev') {
         list.push(t);
-        list.push(reloadSC);
     }
     return list;
 })();
 const DMCommands: MessageCommand[] = [
-    quit, fUCKoFF,
+    quit, fUCKoFF, reloadSC
 ]
 export async function handleMessageCreate(message: Message): Promise<Report> {
     const activity = ActivityManager.getActivity(message.channel.id);
@@ -65,8 +65,8 @@ export async function handleMessageCreate(message: Message): Promise<Report> {
         }
     } else { // command
         const command = commandInfo.level === 'general'
-            ? MCommands.find(cmd => cmd.name === commandInfo?.command)
-            : DMCommands.find(cmd => cmd.name === commandInfo?.command);
+            ? MCommands.find(cmd => cmd.name === commandInfo.command)
+            : DMCommands.find(cmd => cmd.name === commandInfo.command);
         if (command) { // valid command
             if (command.param.required && commandInfo.params.length === 0) {
                 tryCatch(message.reply({
@@ -192,7 +192,7 @@ export async function handleGuildMemberAdd(member: GuildMember) {
 
 export const handleGuildMemberRemove = async (member: GuildMember) => {
     console.log(`${member.user.username} left ${member.guild.name}`);
-    if (member.guild.systemChannel) {
+    if (member.id !== member.client.user.id && member.guild.systemChannel) {
         // await member.guild.systemChannel.send('珍重再見');
         await member.guild.systemChannel.send(`輕輕的 ${member.user.username} 走了，有沒有一點尊嚴啊`);
         doAfterSec(async () => {

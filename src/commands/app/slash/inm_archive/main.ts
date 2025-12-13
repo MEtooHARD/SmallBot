@@ -10,11 +10,11 @@ import { handleRegister } from "./register";
 import { handleFeed } from "./feed";
 
 export class inm_archive extends SlashCommand {
-    activated = true;
+    override activated = true;
 
     data = data;
 
-    executor: CommandExecutor<ApplicationCommandType.ChatInput> = async (interaction: ChatInputCommandInteraction) => {
+    override executor: CommandExecutor<ApplicationCommandType.ChatInput> = async (interaction: ChatInputCommandInteraction) => {
         const subgroup = interaction.options.getSubcommandGroup();
         const subcommand = interaction.options.getSubcommand();
 

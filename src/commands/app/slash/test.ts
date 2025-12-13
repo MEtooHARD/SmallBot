@@ -3,22 +3,24 @@ import { ActivityManager } from "../../../classes/Activity";
 import { Result_ } from "../../../classes/Basic/GeneralTypes";
 import { ChatInputValidator, SlashCommand } from "../../../classes/Command";
 import { Chat, ChatOptions } from "../../../classes/LLM/__Chat";
-import { ULLM } from "../../../classes/LLM/__Types";
+import { UniLLM } from "../../../classes/LLM/__Types";
 import { AdapterNameMapping, AdapterProviders, ModelNameList } from "../../../classes/LLM/AdapterRegistry";
 import { Grok } from "../../../classes/LLM/Grok/GrokAdapter";
 import { LLMKeyring } from "../../../classes/LLM/Keyring";
 
-export class test extends SlashCommand {
-    activated = true;
+const start_cmd_name = 'setup';
 
-    guilds: string[] = ['1213341621542719548', '1146136373225586828'];
+export class test extends SlashCommand {
+    override activated = true;
+
+    override guilds: string[] = ['1213341621542719548', '1146136373225586828'];
 
     data = new SlashCommandBuilder()
         .setName('test')
         .setDescription('test')
         .setContexts(InteractionContextType.Guild)
         .addSubcommand(c => c
-            .setName('setup')
+            .setName(start_cmd_name)
             .setDescription('Start a chat or change settings.')
             .addStringOption(option => option
                 .setAutocomplete(true)
@@ -29,6 +31,10 @@ export class test extends SlashCommand {
                 .setAutocomplete(true)
                 .setName('model')
                 .setDescription('the model to use')
+            )
+            .addBooleanOption(option => option
+                .setName('reasoning_content')
+                .setDescription('Include reasoning content in responses.')
             )
             .addBooleanOption(o => o
                 .setName('stream')
@@ -52,10 +58,10 @@ export class test extends SlashCommand {
             .setDescription('Stop the current chat.')
         )
 
-    async complete(interaction: AutocompleteInteraction): Promise<void> {
+    override async complete(interaction: AutocompleteInteraction): Promise<void> {
         const subcommand_name = interaction.options.getSubcommand(true);
         switch (subcommand_name) {
-            case 'start':
+            case start_cmd_name:
                 if (interaction.options.getFocused(true).name === 'provider') {
                     const choices = Object.keys(AdapterProviders);
                     const filtered = choices.filter(choice => choice.startsWith(interaction.options.getFocused()));
@@ -66,7 +72,7 @@ export class test extends SlashCommand {
                 const model = interaction.options.getFocused(); // should be 'model'
 
                 const choices = provider
-                    ? (AdapterProviders[provider as ULLM.Providers] || [])  // 只取特定 provider
+                    ? (AdapterProviders[provider as UniLLM.Providers] || [])  // 只取特定 provider
                     : Object.values(AdapterProviders).flat();
 
                 const filtered = choices
@@ -80,12 +86,12 @@ export class test extends SlashCommand {
         }
     }
 
-    verify: ChatInputValidator =
+    override verify: ChatInputValidator =
         (interaction: ChatInputCommandInteraction): Result_<string, string> => {
             return [interaction.user.id === '732128546407055452', 'You are not allowed to use this command.'];
         };
 
-    executor = async (interaction: ChatInputCommandInteraction<'cached'>) => {
+    override executor = async (interaction: ChatInputCommandInteraction<'cached'>) => {
         if (!interaction.channel?.id) {
             await interaction.reply('This command can only be used in a server channel.');
             return;
@@ -106,7 +112,7 @@ export class test extends SlashCommand {
         if (subcommand === 'stop') {
             if (chat) {
                 ActivityManager.revokeActivity(interaction.channel.id, chat);
-                interaction.reply('Chat has been stopped.');
+                interaction.reply('Deactivated.');
             } else {
                 interaction.reply('No active Chat in this channel.\n' + '');
             }
@@ -120,76 +126,114 @@ export class test extends SlashCommand {
         const op_incremental_history = interaction.options.getBoolean('incremental_history');
         const op_show_usage = interaction.options.getBoolean('show_usage');
         const op_web_search = interaction.options.getBoolean('web_search');
+        const op_reasoning_content = interaction.options.getBoolean('reasoning_content');
 
         const messages: string[] = [];
 
         const new_options: Partial<ChatOptions> = {};
 
         // determine options
+        let current_options: ChatOptions | null = null;
         if (chat) {
             // If activity exists, current_options definitely exists
-            const current_options = chat.settings();
-            new_options.adapter = op_model !== current_options.adapter.model_info.Name ? AdapterNameMapping[op_model] : current_options.adapter;
+            current_options = chat.settings();
+            new_options.adapter = op_model ? AdapterNameMapping[op_model] : current_options.adapter;
             new_options.stream = op_stream ?? current_options.stream;
             new_options.incremental_history = op_incremental_history ?? current_options.incremental_history;
             new_options.show_usage = op_show_usage ?? current_options.show_usage;
             new_options.web_search = op_web_search ?? current_options.web_search;
+            new_options.reasoning_content = op_reasoning_content ?? (current_options.reasoning_content ?? false);
         } else {
             new_options.adapter = AdapterNameMapping[op_model] || Grok._4_fast_reasoning;
             new_options.stream = op_stream ?? true;
             new_options.incremental_history = op_incremental_history ?? true;
             new_options.show_usage = op_show_usage ?? true;
             new_options.web_search = op_web_search ?? false;
+            new_options.reasoning_content = op_reasoning_content ?? false;
         }
         // #endregion
 
-        let current_options: Partial<ChatOptions> = {};
-
         if (!chat) {
             // #region Start New Chat
-            const token = LLMKeyring.acquire(ULLM.Providers.XAI, interaction.channel!.id)
+            const token = LLMKeyring.acquire(UniLLM.Providers.XAI, interaction.channel!.id)
             if (!token) { // no valid token
                 interaction.reply('Unable to start with selected model: ' + new_options.adapter!.model_info.Name);
                 return;
             }
 
-            const [chat, error] = ActivityManager.registerActivity(
+            const [new_chat, error] = ActivityManager.registerActivity(
                 interaction.channel!, () => new Chat(
                     token, {
                     adapter: new_options.adapter!,
                     stream: new_options.stream!,
                     incremental_history: new_options.incremental_history!,
                     show_usage: new_options.show_usage!,
-                    web_search: new_options.web_search!
+                    web_search: new_options.web_search!,
+                    reasoning_content: new_options.reasoning_content!,
                 })
             );
-            if (error) await interaction.reply({ content: 'Failed to start chat: ' + error });
-            messages.push('Activated. Model: ' + new_options.adapter!.model_info.Name);
+            if (!new_chat) {
+                await interaction.reply({ content: 'Failed to start chat: ' + error });
+                return;
+            }
+            current_options = new_chat.settings();
+            messages.push('Activated.');
             // #endregion
         } else {
             // #region Change Settings
             messages.push('Condiguration changed:');
-            current_options = chat.settings();
-            if (new_options.adapter.Provider !== current_options.adapter!.Provider) {
-                const token = LLMKeyring.acquire(ULLM.Providers.XAI, interaction.channelId);
+            const old_options = current_options!;
+            if (new_options.adapter!.Provider !== old_options.adapter.Provider) {
+                const token = LLMKeyring.acquire(UniLLM.Providers.XAI, interaction.channelId);
                 if (!token) {
-                    messages.push('Unable to switch to selected model: ' + new_options.adapter.model_info.Name);
-                    if (new_options.adapter.Provider !== current_options.adapter!.Provider)
-                        messages.push(`Model remains the same that there's no viable token for the provider of desired model: \`${current_options.adapter!.model_info.Name}\``);
+                    messages.push('Unable to switch to selected model: ' + new_options.adapter!.model_info.Name);
+                    messages.push(`Model remains the same that there's no viable token for the provider of desired model: \`${old_options.adapter.model_info.Name}\``);
                 } else {
                     chat.update_token(token);
                 }
             }
+            // Apply new options
+            chat.set(new_options as ChatOptions);
+            current_options = old_options; // Keep old values for comparison display
             // #endregion
         }
 
-        messages.push(change_or_not('Stream mode', new_options.stream, current_options.stream ?? new_options.stream));
-        messages.push(change_or_not('Incremental chat history', new_options.incremental_history, current_options.incremental_history ?? new_options.incremental_history));
-        if (new_options.incremental_history) messages.push('-# Enable incremental chat history may effect model\'s understanding to the chat behavior');
-        messages.push(change_or_not('Show token/search usage', new_options.show_usage, current_options.web_search ?? new_options.show_usage));
-        messages.push(change_or_not('Enable web search', new_options.web_search, current_options.web_search ?? new_options.web_search));
-        messages.push('');
-        messages.push('-# Some settings may be overwritten/ignored by model specifications.');
+        try {
+
+            messages.push(change_or_not(
+                'Model',
+                current_options!.adapter?.model_info.Name || new_options.adapter!.model_info.Name,
+                new_options.adapter!.model_info.Name
+            ));
+            messages.push(change_or_not(
+                'Stream mode',
+                current_options!.stream ?? new_options.stream,
+                new_options.stream
+            ));
+            messages.push(change_or_not(
+                'Incremental chat history',
+                current_options!.incremental_history ?? new_options.incremental_history,
+                new_options.incremental_history
+            ));
+            if (new_options.incremental_history) messages.push('-# Enable incremental chat history may effect model\'s understanding to the chat behavior');
+            messages.push(change_or_not(
+                'Show token/search usage',
+                current_options!.show_usage ?? new_options.show_usage,
+                new_options.show_usage
+            ));
+            messages.push(change_or_not(
+                'Enable web search',
+                current_options!.web_search ?? new_options.web_search,
+                new_options.web_search
+            ));
+            messages.push(change_or_not(
+                'Show reasoning content',
+                current_options!.reasoning_content ?? new_options.reasoning_content,
+                new_options.reasoning_content
+            ));
+            messages.push('');
+            messages.push('-# Some settings may be overwritten/ignored by model specifications.');
+        } catch (e) { console.error(e); }
 
         interaction.reply(messages.join('\n'));
     }

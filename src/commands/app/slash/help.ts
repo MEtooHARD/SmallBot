@@ -3,7 +3,7 @@ import { SlashCommand } from '../../../classes/Command';
 import { HelpCenter } from '../../../utilities';
 
 export class help extends SlashCommand {
-    activated = true;
+    override activated = true;
 
     data = new SlashCommandBuilder()
         .setName('help')

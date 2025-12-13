@@ -6,7 +6,7 @@ import { atUser } from "../../../functions/discord/mention";
 import { doAfterSec } from "../../../functions/general/delay";
 
 export class bomb extends SlashCommand {
-    activated = true;
+    override activated = true;
 
     data = new SlashCommandBuilder()
         .setName('bomb')

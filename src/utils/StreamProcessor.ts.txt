@@ -1,0 +1,40 @@
+export class StreamProcessor {
+    /**
+     * Assembles strings and turns them into units splitted by given separator.
+     * @param stream Input stream
+     * @param get_str Function to extract text from an item
+     * @param as_item Function to create an item from text
+     * @param separator Separator (default `\n`)
+     */
+    static AsyncAssembler(
+        stream: AsyncIterable<string>,
+        get_str: undefined,
+        as_item: undefined,
+        separator?: string
+    ): AsyncGenerator<string>
+    static AsyncAssembler<T>(
+        stream: AsyncIterable<T>,
+        get_str: (item: T) => string,
+        as_item: (text: string) => T,
+        separator?: string
+    ): AsyncGenerator<T>
+    static async * AsyncAssembler<T extends any>(
+        stream: AsyncIterable<T>,
+        get_str?: (item: T) => string,
+        as_item?: (text: string) => T,
+        separator: string = '\n'
+    ): AsyncGenerator<T> {
+        let buffer = '';
+
+        for await (const item of stream) {
+            buffer += get_str ? get_str(item) : (item as unknown as string);
+
+            const parts = buffer.split(separator);
+            buffer = parts.pop() || '';
+
+            for (const part of parts) yield as_item ? as_item(part) : (part as unknown as T);
+        }
+        // final flush
+        if (buffer.length > 0) yield as_item ? as_item(buffer) : (buffer as unknown as T);
+    }
+}

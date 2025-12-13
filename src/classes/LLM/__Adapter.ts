@@ -1,4 +1,4 @@
-import { ULLM } from "./__Types";
+import { UniLLM } from "./__Types";
 import { FetchProxy } from "./Keyring";
 
 export abstract class Adapter {
@@ -12,14 +12,14 @@ export abstract class Adapter {
 
     abstract post(
         fetch: FetchProxy,
-        req: ULLM.ChatRequest & { stream: true }
-    ): Promise<ULLM.StreamResponse>;
+        req: UniLLM.ChatRequest & { stream: true }
+    ): Promise<UniLLM.StreamResponse>;
     abstract post(
         fetch: FetchProxy,
-        req: ULLM.ChatRequest & { stream?: false }
-    ): Promise<ULLM.NonStreamResponse>;
+        req: UniLLM.ChatRequest & { stream?: false }
+    ): Promise<UniLLM.NonStreamResponse>;
     abstract post(
         fetch: FetchProxy,
-        req: ULLM.ChatRequest
-    ): Promise<ULLM.Response>;
+        req: UniLLM.ChatRequest
+    ): Promise<UniLLM.Response>;
 }

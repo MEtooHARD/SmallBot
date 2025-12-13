@@ -2,11 +2,11 @@ import * as Discord from 'discord.js';
 import { GuildMessage } from '../Basic/DiscordTypes';
 
 
-export namespace ULLM {
+export namespace UniLLM {
     export enum Providers {
         // OPENAI = 'openai',
         // ANTHROPIC = 'anthropic',
-        // GOOGLE = 'google',
+        GOOGLE = 'google',
         XAI = 'xai'
     }
     // #region Media
@@ -96,6 +96,16 @@ export namespace ULLM {
     export function isStreamResponse(res: Response)
         : res is StreamResponse { return 'stream' in res; }
 
+    export interface Usage {
+        prompt_tokens: number,
+        completion_tokens: number,
+        total_tokens: number,
+        prompt_tokens_details: { text_tokens: number, audio_tokens: number, image_tokens: number, cached_tokens: number },
+        completion_tokens_details: { reasoning_tokens: number, audio_tokens: number, accepted_prediction_tokens: number, rejected_prediction_tokens: number },
+        num_sources_used: number
+    }
+    // #endregion
+    // #region Stream
     // Chunk 根據 Grok streaming 流程設計：
     // 1. RoleChunk - 指示回應者角色（首個 chunk）
     // 2. ReasoningChunk - 思考過程（如果模型支援）
@@ -103,39 +113,24 @@ export namespace ULLM {
     // 4. ToolCallChunk - Function calling（預留）
     // 5. FinishChunk - 結束標記
     // 6. [DONE] - SSE 協議標記，Generator 內部處理，不暴露給使用者
-
+    export type ChunkType = 'role' | 'reasoning' | 'content' | 'usage' | 'done';
     export type CodeStage = 'start' | 'middle' | 'end' | 'complete';
 
-    export type RoleChunk = { role: 'assistant' /* | 'tool' */; };
-    export type ReasoningChunk =
-        | { reasoning: string; }
-        | { reasoning: string; code: CodeStage; lang: string };
-    export type ContentChunk =
-        | { content: string; }
-        | { content: string; code: CodeStage; lang: string };
+    export type RoleChunk = { role: Role.SELF /* | 'tool' */; };
+    export type ReasoningChunk = { reasoning: string; } | { reasoning: string; code: CodeStage; lang: string };
+    export type ContentChunk = { content: string; } | { content: string; code: CodeStage; lang: string };
     export type ToolCallChunk = { tool_calls: unknown[];  /* 預留，之後再細化 */ };
-    export type UsageChunk = {
-        usage: {
-            prompt_tokens: number,
-            completion_tokens: number,
-            total_tokens: number,
-            prompt_tokens_details: { text_tokens: number, audio_tokens: number, image_tokens: number, cached_tokens: number },
-            completion_tokens_details: { reasoning_tokens: number, audio_tokens: number, accepted_prediction_tokens: number, rejected_prediction_tokens: number },
-            num_sources_used: number
-        }
-    }
-    export type FinishChunk = {
-        finishReason: 'stop' | 'length' | 'error';
-        citations?: string[];
-    };
+    export type UsageChunk = { usage: Usage; }
+    export type FinishChunk = { finish_reason: 'stop' | 'length' | 'error'; /* citations?: string[]; */ };
 
     export type Chunk =
         | RoleChunk
-        | ReasoningChunk   // 只有當 RC = true 時才包含
+        | ReasoningChunk
         | ContentChunk
         // | ToolCallChunk
         | UsageChunk
         | FinishChunk;
+    export type TextChunk = ReasoningChunk | ContentChunk;
     // #endregion
     // #region General
     export enum RateType { Request, Token }

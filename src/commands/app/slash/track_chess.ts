@@ -3,7 +3,7 @@ import { SlashCommand } from "../../../classes/Command";
 import { Piece, TrackChess } from "../../../classes/games/TrackChess";
 
 export class track_chess extends SlashCommand {
-    activated = true;
+    override activated = true;
 
     data = new SlashCommandBuilder()
         .setName('track_chess')
@@ -14,7 +14,7 @@ export class track_chess extends SlashCommand {
             .setDescription('Choose your opponent.')
             .setRequired(true));
 
-    executor = async (interaction: ChatInputCommandInteraction) => {
+    override async executor(interaction: ChatInputCommandInteraction): Promise<void> {
         const p1 = interaction.user;
         const p2 = (interaction.options.getUser('opponent') as User);
         const reply = await interaction.reply(TrackChess.inviteCheck(p1, p2));

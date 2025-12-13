@@ -3,7 +3,7 @@ import { SlashCommand } from '../../../classes/Command';
 import OrderList from '../../../classes/OrderList';
 
 export class order_list extends SlashCommand {
-    activated = true;
+    override activated = true;
 
     data = new SlashCommandBuilder()
         .setName('order_list')

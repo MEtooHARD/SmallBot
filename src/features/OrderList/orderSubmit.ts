@@ -8,13 +8,13 @@ const orderSubmit = async (interaction: ModalSubmitInteraction, orderlist: Order
 
     try {
         await interaction.deferUpdate();
-        const [content, price] = [interaction.components[0].components[0].value, interaction.components[1].components[0].value];
+        // const [content, price] = [interaction.components[0].components[0].value, interaction.components[1].components[0].value];
 
         const member = orderlist.getMember(interaction.user.id);
         if (member) {
-            member.setContent(content);
-            if (!Number.isNaN(price))
-                member.setPrice(Number(price));
+            // member.setContent(content);
+            // if (!Number.isNaN(price))
+            //     member.setPrice(Number(price));
         }
 
         await interaction.message?.edit({

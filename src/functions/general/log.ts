@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { CommandInteraction, Message } from "discord.js";
-import { prefix } from "../../app";
+import { isDev, prefix } from "../../app";
 
 export function timestamp(): string { return chalk.bgBlackBright(new Date().toISOString()); }
 
@@ -26,4 +26,8 @@ export const logMsgFeature = (message: Message, feature: string): void => {
     console.log(timestamp() +
         `\n\t${chalk.blueBright(message.author.username)} in ${chalk.greenBright(message.guild?.name)}\n` +
         `\t\ttriggerred ${chalk.yellow(feature)}`);
+}
+
+export function dev_log(message?: any, ...optionalParams: any[]): void {
+    if (isDev) console.log(chalk.gray('[DEV]'), message, ...optionalParams);
 }

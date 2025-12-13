@@ -1,9 +1,9 @@
 import { AutocompleteInteraction, CacheType, ChatInputCommandInteraction, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import { SlashCommand } from "../../../classes/Command";
-import { GrokModels } from "../../../classes/LLM/Wrapper";
+// import { GrokModels } from "../../../classes/LLM/Wrapper";
 
-const models: Array<keyof typeof GrokModels> =
-    Object.keys(GrokModels) as Array<keyof typeof GrokModels>;
+// const models: Array<keyof typeof GrokModels> =
+//     Object.keys(GrokModels) as Array<keyof typeof GrokModels>;
 
 export class chat extends SlashCommand {
     data = new SlashCommandBuilder()
@@ -30,13 +30,13 @@ export class chat extends SlashCommand {
             .setMaxLength(1000)
         )
 
-    async complete(interaction: AutocompleteInteraction): Promise<void> {
+    override async complete(interaction: AutocompleteInteraction): Promise<void> {
         switch (interaction.options.getFocused()) {
             case 'model':
-                interaction.respond(models.map(model => ({
-                    name: model,
-                    value: model
-                })));
+                // interaction.respond(models.map(model => ({
+                //     name: model,
+                //     value: model
+                // })));
                 return;
         }
     }

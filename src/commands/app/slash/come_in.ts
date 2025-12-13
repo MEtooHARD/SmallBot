@@ -4,7 +4,7 @@ import { SlashCommand } from "../../../classes/Command";
 import { atVoiceChannel } from "../../../functions/discord/mention";
 
 export class come_in extends SlashCommand {
-    activated = true;
+    override activated = true;
 
     data = new SlashCommandBuilder()
         .setName('come_in')

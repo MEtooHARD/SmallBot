@@ -1,7 +1,7 @@
 import { Snowflake } from "discord.js";
 import { v4 } from 'uuid';
 import config from '../../config.json';
-import { ULLM } from "./__Types";
+import { UniLLM } from "./__Types";
 
 export enum KEY_STATUS { READY, IN_USE, RATE_LIMITED, SUSPENDED }
 
@@ -130,7 +130,7 @@ class Keyring<P extends string = string> {
     }
 }
 
-export const LLMKeyring = new Keyring<ULLM.Providers>({
-    // google: new Set(config.models.gemini.keys.map(k => k)),
+export const LLMKeyring = new Keyring<UniLLM.Providers>({
+    google: new Set(config.models.gemini.keys.map(k => k)),
     xai: new Set(config.models.grok.keys.map(k => k))
 });

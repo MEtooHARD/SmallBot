@@ -12,20 +12,20 @@ import { validator } from "./validator";
 export const strNotEmpty = (s: string) => (s.length > 0 && s.match(/\S+/))
 
 export class image_storage extends SlashCommand {
-    guilds: string[] = ['1213341621542719548'];
+    override guilds: string[] = ['1213341621542719548'];
 
     data = data;
 
-    requiredPerms: bigint[] = [
+    override requiredPerms: bigint[] = [
         PermissionFlagsBits.SendMessages,
         PermissionFlagsBits.AttachFiles,
     ];
 
-    verify: ChatInputValidator = validator;
+    override verify: ChatInputValidator = validator;
 
-    complete: AutoComplete | undefined = complete;
+    override complete: AutoComplete | undefined = complete;
 
-    executor: ChatInputExecutor = async (interaction) => {
+    override executor: ChatInputExecutor = async (interaction) => {
         const subG = interaction.options.getSubcommandGroup() || '';
         const subC = interaction.options.getSubcommand();
 

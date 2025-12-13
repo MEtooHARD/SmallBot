@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
 import { prefix, Session, session } from "../../app";
-import { Grok } from "../../classes/LLM/Grok_";
+// import { Grok } from "../../classes/LLM/Grok_";
 import { MessageCommand, MessageFeature } from "../../classes/MessageFeature";
 import { shouldRpMsg } from "../../functions/config/shouldReply";
 import { getCmdInfo } from "../../functions/discord/msgCommand";
@@ -38,7 +38,7 @@ export = new class Selecter extends MessageFeature {
             for (let i = 0; i < features.length; i++) {
                 const featureName = features[Number(randomPick(temp, 1, true)[0])];
                 const feature = require(path.join(__dirname, "features", featureName)) as typeof MessageFeature;
-                if (feature.filter(message) && !Grok.chats.get(message.channel.id)?.chatting) {
+                if (feature.filter(message)/*  && !Grok.chats.get(message.channel.id)?.chatting */) {
                     logMsgFeature(message, featureName);
                     hitFeature = true;
                     await feature.exe(message);
@@ -46,8 +46,8 @@ export = new class Selecter extends MessageFeature {
                 }
             }
 
-            if (!hitFeature && !(session === Session.main && message.channel.id === '1151741686389690428'))
-                Grok.incomingMsg(message);
+            // if (!hitFeature && !(session === Session.main && message.channel.id === '1151741686389690428'))
+            //     Grok.incomingMsg(message);
         }
     };
 }

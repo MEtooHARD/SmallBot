@@ -1,0 +1,125 @@
+import * as fs from 'fs';
+import path from 'path';
+const config = require('./src/config.json');
+
+const API_KEY = config.models.grok.keys[0];
+const API_URL = 'https://api.x.ai/v1/chat/completions';
+
+async function main() {
+    console.log('🚀 Fetching from Grok API directly...\n');
+
+    const request = {
+        model: 'grok-3-mini',
+        messages: [
+            {
+                role: 'user',
+                content: 'Hi, how are you? Just a quick hello!'
+            }
+        ],
+        stream: true,
+        temperature: 1.0,
+        top_p: 0.9,
+        stream_options: {
+            include_usage: true
+        }
+    };
+
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(request)
+        });
+
+        if (!response.ok) {
+            const error = await response.text();
+            console.error(`❌ API Error: ${response.status} ${response.statusText}`);
+            console.error(error);
+            return;
+        }
+
+        if (!response.body) {
+            console.error('❌ No response body');
+            return;
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let lineIndex = 0;
+        const allLines: string[] = [];
+
+        console.log('📨 Raw stream lines:\n');
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+
+            // Keep the last incomplete line in buffer
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+                lineIndex++;
+
+                if (line.trim()) {
+                    console.log(`[Line ${lineIndex}] ${line}`);
+                    allLines.push(line);
+                }
+            }
+        }
+
+        // Process any remaining data
+        if (buffer.trim()) {
+            lineIndex++;
+            console.log(`[Line ${lineIndex}] ${buffer}`);
+            allLines.push(buffer);
+        }
+
+        // Save to file
+        const outputPath = path.join(process.cwd(), 'raw_stream_output.txt');
+        let fileContent = '=== Raw Grok 3 Mini Stream Output ===\n\n';
+        fileContent += `Total lines: ${lineIndex}\n\n`;
+        fileContent += '--- All lines ---\n';
+        fileContent += allLines.join('\n');
+
+        fs.writeFileSync(outputPath, fileContent);
+        console.log(`\n✅ Saved raw output to: ${outputPath}`);
+
+        // Also save parsed SSE data
+        const parseSSE = () => {
+            const sseData: any[] = [];
+            for (const line of allLines) {
+                if (line.startsWith('data: ')) {
+                    const dataStr = line.slice(6);
+                    if (dataStr === '[DONE]') {
+                        sseData.push({ type: 'DONE' });
+                    } else {
+                        try {
+                            const json = JSON.parse(dataStr);
+                            sseData.push(json);
+                        } catch (e) {
+                            console.error(`Failed to parse: ${dataStr}`);
+                        }
+                    }
+                }
+            }
+            return sseData;
+        };
+
+        const sseData = parseSSE();
+        const jsonPath = path.join(process.cwd(), 'raw_stream_output.json');
+        fs.writeFileSync(jsonPath, JSON.stringify(sseData, null, 2));
+        console.log(`✅ Saved parsed SSE data to: ${jsonPath}`);
+
+    } catch (error) {
+        console.error('❌ Error:', error);
+    }
+}
+
+main();
