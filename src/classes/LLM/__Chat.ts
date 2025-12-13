@@ -8,7 +8,7 @@ import { tryCatch } from "../Basic/GeneralTypes";
 import { Adapter } from "./__Adapter";
 import { UniLLM } from "./__Types";
 import { Token } from "./Keyring";
-import * as ChunkProcessors from "./new_ChunkStreamProcessor";
+import * as ChunkProcessors from "./ChunkStreamProcessor";
 
 type ChatStatus = 'idle' | 'delay' | 'thinking' | 'summarizing' | 'judging';
 
